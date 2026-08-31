@@ -5,9 +5,10 @@ fraud intelligence platform. It is intended for banks, insurers, forensic
 laboratories, law enforcement, cybersecurity teams, and other regulated
 organizations.
 
-This repository currently contains the platform foundation and the Phase 3
-case/evidence preservation data path. It deliberately does not contain AI
-models, OCR, forensic workflows, fraud rules, or analysis implementations.
+This repository currently contains the platform foundation, Phase 3
+case/evidence preservation, and the Phase 4 evidence processing pipeline. It
+deliberately does not contain AI models, OCR, forensic workflows, fraud rules,
+or analysis implementations.
 
 ## Architecture
 
@@ -20,7 +21,7 @@ backend/
 │   ├── application/    # Use-case and service boundaries
 │   ├── core/           # Cross-cutting configuration and platform concerns
 │   ├── domain/         # Framework-independent contracts and ports
-│   ├── models/         # Persistence models for cases, evidence, and custody
+│   ├── models/         # Persistence models for cases, evidence, jobs, artifacts
 │   ├── ai_engines/     # Future engine modules; intentionally empty
 │   └── infrastructure/ # Database, cache, messaging, storage, and audit seams
 └── alembic/             # Database migration environment
@@ -37,10 +38,10 @@ scalability guidance.
 
 ## Frontend workspace
 
-Phase 2/3 adds a separate Vite/React investigation workspace under
+Phase 2/3/4 adds a separate Vite/React investigation workspace under
 [`frontend/`](frontend/). It contains route-level UI architecture and
-backend-health integration plus real case/evidence registration; it does not
-process evidence for analysis or produce forensic results.
+backend-health integration plus real case/evidence registration, processing
+state, and derived-artifact metadata; it does not produce forensic results.
 
 ```bash
 cd frontend
@@ -106,11 +107,14 @@ The API is stateless and can scale horizontally behind a load balancer.
 Long-running work belongs in Celery workers, with RabbitMQ as the broker and
 Redis as the result backend/cache. PostgreSQL connections are pooled per
 process, so pool limits must be sized against the database connection budget
-when replicas or workers are added. Phase 3 uses local storage under
-`data/evidence/` for development. Durable object storage, outbox/idempotency
-patterns, observability, and authentication remain later architecture
-increments. See [`docs/case-evidence.md`](docs/case-evidence.md) for the
-preservation and custody contract.
+when replicas or workers are added. Phase 4 uses a deterministic local runner
+and local storage under `data/evidence/` for development. The runner hashes
+read-only originals, classifies files, extracts basic metadata, and stores
+independently hashed preview manifests, metadata, and classification artifacts.
+A real worker queue can call the same orchestrator later without changing
+processors. See [`docs/case-evidence.md`](docs/case-evidence.md) and
+[`docs/processing-pipeline.md`](docs/processing-pipeline.md) for the
+preservation, custody, and processing contracts.
 
 See [`docs/operations.md`](docs/operations.md) and
 [`deployment/README.md`](deployment/README.md) before creating a production

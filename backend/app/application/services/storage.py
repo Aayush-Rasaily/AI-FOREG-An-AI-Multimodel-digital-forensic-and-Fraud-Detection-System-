@@ -3,6 +3,7 @@
 from contextlib import AbstractAsyncContextManager
 from pathlib import Path
 from typing import BinaryIO, Protocol
+from uuid import UUID
 
 
 class StorageService(Protocol):
@@ -10,6 +11,15 @@ class StorageService(Protocol):
 
     def temporary_key(self) -> str:
         """Return a collision-resistant key for a temporary upload object."""
+        ...
+
+    def artifact_key(
+        self,
+        case_id: UUID,
+        evidence_id: UUID,
+        artifact_id: UUID,
+    ) -> str:
+        """Return the opaque derived-artifact key for one evidence item."""
         ...
 
     async def save_stream(

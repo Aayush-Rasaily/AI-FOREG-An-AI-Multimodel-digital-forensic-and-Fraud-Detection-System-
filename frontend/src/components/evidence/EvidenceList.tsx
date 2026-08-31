@@ -3,6 +3,7 @@ import { FileArchive } from "lucide-react";
 import type { EvidenceRecord } from "../../types/evidence";
 import { EvidenceCard } from "./EvidenceCard";
 import { EmptyState } from "../ui/EmptyState";
+import { EvidenceProcessingPanel } from "./EvidenceProcessingPanel";
 
 interface EvidenceListProps {
   items: EvidenceRecord[];
@@ -45,6 +46,7 @@ export function EvidenceList({ items }: EvidenceListProps) {
           <p className="mt-1 break-all px-3 font-mono text-[10px] text-slate-600">
             SHA-256: {item.sha256_hash}
           </p>
+          <EvidenceProcessingPanel evidence={item} />
         </div>
       ))}
     </div>

@@ -83,6 +83,17 @@ class StorageError(ApplicationError):
     code = "STORAGE_UNAVAILABLE"
 
 
+class ProcessingError(ApplicationError):
+    """Raised when a processing job fails with a safe public code."""
+
+    status_code = status.HTTP_422_UNPROCESSABLE_CONTENT
+    code = "PROCESSOR_FAILED"
+
+    def __init__(self, error_code: str, message: str) -> None:
+        super().__init__(message)
+        self.code = error_code
+
+
 def _error_payload(
     *,
     code: str,

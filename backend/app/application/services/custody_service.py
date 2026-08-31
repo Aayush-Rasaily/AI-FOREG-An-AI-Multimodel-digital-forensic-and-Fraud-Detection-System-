@@ -53,5 +53,5 @@ class ChainOfCustodyService:
             actor_id=event.actor_id,
             description=event.description,
             sha256_hash=event.sha256_hash,
-            metadata={},
+            metadata=event.metadata_json,
         )

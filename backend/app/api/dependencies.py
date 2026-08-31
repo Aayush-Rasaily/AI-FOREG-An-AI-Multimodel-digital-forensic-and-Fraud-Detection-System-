@@ -9,6 +9,9 @@ from backend.app.application.services.case_service import CaseService
 from backend.app.application.services.evidence_service import EvidenceService
 from backend.app.application.services.file_validation import FileValidationService
 from backend.app.application.services.hashing import HashService
+from backend.app.application.services.processing_service import (
+    ProcessingOrchestrator,
+)
 from backend.app.application.services.storage import StorageService
 from backend.app.core.config import Settings
 from backend.app.core.exceptions import StorageError
@@ -78,6 +81,22 @@ def get_evidence_service(
     )
 
 
+def get_processing_orchestrator(
+    session: SessionDependency,
+    storage: Annotated[StorageService, Depends(get_storage_service)],
+    hash_service: Annotated[HashService, Depends(get_hash_service)],
+    settings: RuntimeSettingsDependency,
+) -> ProcessingOrchestrator:
+    """Compose the processing orchestrator for one request."""
+
+    return ProcessingOrchestrator(
+        session=session,
+        storage=storage,
+        hash_service=hash_service,
+        settings=settings,
+    )
+
+
 __all__ = [
     "SessionDependency",
     "get_case_service",
@@ -85,6 +104,7 @@ __all__ = [
     "get_evidence_service",
     "get_file_validation_service",
     "get_hash_service",
+    "get_processing_orchestrator",
     "get_runtime_settings",
     "get_storage_service",
 ]

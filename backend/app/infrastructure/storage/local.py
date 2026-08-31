@@ -6,6 +6,7 @@ from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from pathlib import Path, PurePosixPath
 from typing import BinaryIO
+from uuid import UUID
 
 from backend.app.application.services.storage import storage_root
 from backend.app.core.exceptions import FileTooLargeError, StorageError
@@ -24,6 +25,16 @@ class LocalStorage:
         from uuid import uuid4
 
         return f".tmp/{uuid4().hex}.upload"
+
+    def artifact_key(
+        self,
+        case_id: UUID,
+        evidence_id: UUID,
+        artifact_id: UUID,
+    ) -> str:
+        """Return a stable derived-artifact key below the evidence prefix."""
+
+        return f"evidence/{case_id}/{evidence_id}/artifacts/{artifact_id}.artifact"
 
     async def save_stream(
         self,
@@ -108,6 +119,7 @@ class LocalStorage:
             except FileExistsError as exc:
                 raise StorageError("The storage object already exists.") from exc
             except OSError as exc:
+                self._unlink_if_present(destination_path)
                 raise StorageError("The storage commit failed.") from exc
 
     @staticmethod

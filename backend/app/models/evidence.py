@@ -23,6 +23,7 @@ from backend.app.infrastructure.database.base import Base
 if TYPE_CHECKING:
     from backend.app.models.case import Case
     from backend.app.models.custody import ChainOfCustodyEvent
+    from backend.app.models.processing import Artifact, ProcessingJob
 
 
 class Evidence(Base):
@@ -86,4 +87,16 @@ class Evidence(Base):
         cascade="all, delete-orphan",
         passive_deletes=True,
         order_by="ChainOfCustodyEvent.timestamp",
+    )
+    processing_jobs: Mapped[list["ProcessingJob"]] = relationship(
+        back_populates="evidence",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        order_by="ProcessingJob.created_at",
+    )
+    artifacts: Mapped[list["Artifact"]] = relationship(
+        back_populates="evidence",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        order_by="Artifact.created_at",
     )
