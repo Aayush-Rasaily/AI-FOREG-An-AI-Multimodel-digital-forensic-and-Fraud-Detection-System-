@@ -7,6 +7,7 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
+from backend.app import models as _models  # noqa: F401
 from backend.app.core.config import get_settings
 from backend.app.infrastructure.database.base import Base
 

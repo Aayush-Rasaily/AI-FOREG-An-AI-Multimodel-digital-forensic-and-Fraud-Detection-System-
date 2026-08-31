@@ -1,11 +1,41 @@
 """Application settings loaded from environment variables."""
 
+from copy import deepcopy
 from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
 from pydantic import AliasChoices, Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+DEFAULT_SUPPORTED_EXTENSIONS = {
+    "image": ["jpg", "jpeg", "png", "webp", "tif", "tiff"],
+    "document": ["pdf", "docx"],
+    "video": ["mp4", "mov", "avi", "mkv", "webm"],
+    "audio": ["wav", "mp3", "m4a", "aac", "flac"],
+}
+DEFAULT_SUPPORTED_MIME_TYPES = {
+    "image": ["image/jpeg", "image/png", "image/webp", "image/tiff"],
+    "document": [
+        "application/pdf",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ],
+    "video": [
+        "video/mp4",
+        "video/quicktime",
+        "video/x-msvideo",
+        "video/x-matroska",
+        "video/webm",
+    ],
+    "audio": [
+        "audio/wav",
+        "audio/x-wav",
+        "audio/mpeg",
+        "audio/mp4",
+        "audio/aac",
+        "audio/flac",
+    ],
+}
 
 
 class Settings(BaseSettings):
@@ -39,6 +69,17 @@ class Settings(BaseSettings):
     db_pool_timeout: int = Field(default=30, ge=1)
     db_health_timeout_seconds: float = Field(default=2.0, gt=0)
 
+    storage_root: Path = Path("data")
+    storage_backend: Literal["local", "s3", "minio"] = "local"
+    max_upload_size_mb: int = Field(default=50, ge=1, le=10240)
+    upload_chunk_size_bytes: int = Field(default=1024 * 1024, ge=4096)
+    supported_extensions: dict[str, list[str]] = Field(
+        default_factory=lambda: deepcopy(DEFAULT_SUPPORTED_EXTENSIONS)
+    )
+    supported_mime_types: dict[str, list[str]] = Field(
+        default_factory=lambda: deepcopy(DEFAULT_SUPPORTED_MIME_TYPES)
+    )
+
     redis_url: str = "redis://localhost:6379/0"
     redis_max_connections: int = Field(default=50, ge=1)
     celery_broker_url: str = "amqp://localhost:5672//"
@@ -47,8 +88,6 @@ class Settings(BaseSettings):
     cors_origins: list[str] = Field(default_factory=list)
     jwt_secret: SecretStr | None = None
     jwt_algorithm: str = "HS256"
-    max_upload_size_mb: int = Field(default=50, ge=1, le=10240)
-    storage_backend: Literal["local", "s3", "azure_blob"] = "local"
 
     @property
     def environment(self) -> str:

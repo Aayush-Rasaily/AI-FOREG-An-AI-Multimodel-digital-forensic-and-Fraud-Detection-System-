@@ -7,6 +7,12 @@ RabbitMQ. The API exposes `GET /api/v1/health` with database status and
 `GET /api/v1/health/live` as a dependency-free process liveness probe.
 Health degradation is reported in-band so startup never depends on PostgreSQL.
 
+Phase 3 stores development evidence originals under the configured
+`STORAGE_ROOT` (default `data/`). Docker Compose mounts this location as the
+`evidence-data` volume. This local adapter is not an evidentiary compliance
+boundary; production should use immutable/WORM-capable object storage,
+encryption, retention, and access controls.
+
 ## Production requirements
 
 - Build from a pinned, vulnerability-scanned image and run as a non-root user.

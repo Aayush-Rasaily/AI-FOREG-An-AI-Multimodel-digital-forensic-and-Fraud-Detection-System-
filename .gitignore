@@ -36,3 +36,9 @@ dist/
 postgres-data/
 redis-data/
 rabbitmq-data/
+data/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/coverage/

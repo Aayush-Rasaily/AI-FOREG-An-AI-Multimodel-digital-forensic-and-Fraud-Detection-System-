@@ -5,9 +5,9 @@ fraud intelligence platform. It is intended for banks, insurers, forensic
 laboratories, law enforcement, cybersecurity teams, and other regulated
 organizations.
 
-This repository currently contains architecture and runtime boilerplate only.
-It deliberately does not contain AI models, OCR, forensic workflows, fraud
-rules, or business-domain implementations.
+This repository currently contains the platform foundation and the Phase 3
+case/evidence preservation data path. It deliberately does not contain AI
+models, OCR, forensic workflows, fraud rules, or analysis implementations.
 
 ## Architecture
 
@@ -20,6 +20,7 @@ backend/
 │   ├── application/    # Use-case and service boundaries
 │   ├── core/           # Cross-cutting configuration and platform concerns
 │   ├── domain/         # Framework-independent contracts and ports
+│   ├── models/         # Persistence models for cases, evidence, and custody
 │   ├── ai_engines/     # Future engine modules; intentionally empty
 │   └── infrastructure/ # Database, cache, messaging, storage, and audit seams
 └── alembic/             # Database migration environment
@@ -33,6 +34,22 @@ than changing existing use cases.
 
 See [`docs/architecture.md`](docs/architecture.md) for boundaries and
 scalability guidance.
+
+## Frontend workspace
+
+Phase 2/3 adds a separate Vite/React investigation workspace under
+[`frontend/`](frontend/). It contains route-level UI architecture and
+backend-health integration plus real case/evidence registration; it does not
+process evidence for analysis or produce forensic results.
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+See [`frontend/README.md`](frontend/README.md) for frontend configuration and
+quality commands.
 
 ## Local development
 
@@ -53,6 +70,14 @@ Start the local dependency stack and API:
 
 ```bash
 docker compose up --build
+```
+
+The Compose `migrate` service applies Alembic migrations before the API starts.
+For a non-Docker local API, run:
+
+```bash
+uv run alembic -c backend/alembic.ini upgrade head
+uv run uvicorn backend.app.main:app --reload
 ```
 
 The API is available at `http://localhost:8000`. The health endpoint is
@@ -81,9 +106,11 @@ The API is stateless and can scale horizontally behind a load balancer.
 Long-running work belongs in Celery workers, with RabbitMQ as the broker and
 Redis as the result backend/cache. PostgreSQL connections are pooled per
 process, so pool limits must be sized against the database connection budget
-when replicas or workers are added. Object storage, durable case artifacts,
-outbox/idempotency patterns, observability, and authentication are intentionally
-reserved for later architecture increments.
+when replicas or workers are added. Phase 3 uses local storage under
+`data/evidence/` for development. Durable object storage, outbox/idempotency
+patterns, observability, and authentication remain later architecture
+increments. See [`docs/case-evidence.md`](docs/case-evidence.md) for the
+preservation and custody contract.
 
 See [`docs/operations.md`](docs/operations.md) and
 [`deployment/README.md`](deployment/README.md) before creating a production

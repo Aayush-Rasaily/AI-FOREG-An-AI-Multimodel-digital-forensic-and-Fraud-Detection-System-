@@ -29,6 +29,8 @@ services:
       timeout: 5s
       retries: 10
     depends_on:
+      migrate:
+        condition: service_completed_successfully
       postgres:
         condition: service_healthy
       redis:
@@ -37,6 +39,30 @@ services:
         condition: service_healthy
     init: true
     restart: unless-stopped
+    volumes:
+      - evidence-data:/app/data
+    networks:
+      - ai-forge
+
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    command:
+      - uv
+      - run
+      - --no-dev
+      - alembic
+      - -c
+      - backend/alembic.ini
+      - upgrade
+      - head
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
     networks:
       - ai-forge
 
@@ -124,6 +150,7 @@ volumes:
   postgres-data:
   redis-data:
   rabbitmq-data:
+  evidence-data:
 
 networks:
   ai-forge:

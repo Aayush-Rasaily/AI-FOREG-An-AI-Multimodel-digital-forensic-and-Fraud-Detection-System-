@@ -22,9 +22,9 @@ Infrastructure ────┘
   domain `AIEngine` protocol and be selected through explicit registration or
   dependency injection. Existing use cases must not import concrete engines.
 - The domain also owns ports for streamed artifact storage, idempotency,
-  reliable event publication, and immutable audit logging. Their adapters are
-  intentionally absent until storage, retention, and compliance decisions are
-  approved.
+  reliable event publication, and immutable audit logging. Phase 3 adds a
+  local storage adapter and database-backed custody records for application
+  preservation; durable/compliance-grade adapters remain deployment decisions.
 
 ## Scalability guardrails
 
@@ -35,7 +35,7 @@ is the broker; Redis is reserved for cache and task results.
 
 At million-analysis scale, the foundation must be extended with:
 
-1. Implement the artifact-storage port with durable object storage for evidence
+1. Replace local evidence storage with durable object storage for evidence
    artifacts instead of database blobs.
 2. Implement idempotency keys and an outbox/inbox strategy for reliable event
    delivery.

@@ -48,6 +48,41 @@ class ExternalServiceError(ApplicationError):
     code = "EXTERNAL_SERVICE_ERROR"
 
 
+class ConflictError(ApplicationError):
+    """Raised when a request conflicts with an existing resource."""
+
+    status_code = status.HTTP_409_CONFLICT
+    code = "CONFLICT"
+
+
+class InvalidFileError(ApplicationError):
+    """Raised when an uploaded file fails safety or type validation."""
+
+    status_code = status.HTTP_400_BAD_REQUEST
+    code = "INVALID_FILE"
+
+
+class UnsupportedFileError(ApplicationError):
+    """Raised when an uploaded file type is not configured for ingestion."""
+
+    status_code = status.HTTP_415_UNSUPPORTED_MEDIA_TYPE
+    code = "UNSUPPORTED_FILE_TYPE"
+
+
+class FileTooLargeError(ApplicationError):
+    """Raised when an uploaded file exceeds the configured size limit."""
+
+    status_code = status.HTTP_413_CONTENT_TOO_LARGE
+    code = "FILE_TOO_LARGE"
+
+
+class StorageError(ApplicationError):
+    """Raised when safe evidence storage cannot complete an operation."""
+
+    status_code = status.HTTP_503_SERVICE_UNAVAILABLE
+    code = "STORAGE_UNAVAILABLE"
+
+
 def _error_payload(
     *,
     code: str,
