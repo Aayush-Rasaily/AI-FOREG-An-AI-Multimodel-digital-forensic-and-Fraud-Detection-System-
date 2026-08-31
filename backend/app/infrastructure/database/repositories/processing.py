@@ -1,5 +1,6 @@
 """Repositories for processing jobs and derived artifacts."""
 
+from collections.abc import Sequence
 from uuid import UUID
 
 from sqlalchemy import func, select
@@ -69,6 +70,23 @@ class ProcessingJobRepository:
         )
         return list(result), int(total or 0)
 
+    async def latest_for_evidence(
+        self,
+        evidence_id: UUID,
+        job_type: ProcessingJobType,
+    ) -> ProcessingJob | None:
+        """Return the newest job for an evidence/type pair."""
+
+        return await self.session.scalar(
+            select(ProcessingJob)
+            .where(
+                ProcessingJob.evidence_id == evidence_id,
+                ProcessingJob.job_type == job_type,
+            )
+            .order_by(ProcessingJob.created_at.desc())
+            .limit(1)
+        )
+
     async def add(self, job: ProcessingJob) -> ProcessingJob:
         """Stage and flush a processing job."""
 
@@ -88,6 +106,7 @@ class ArtifactRepository:
         evidence_id: UUID,
         *,
         artifact_type: ArtifactType | None = None,
+        artifact_types: Sequence[ArtifactType] | None = None,
         limit: int,
         offset: int,
     ) -> tuple[list[Artifact], int]:
@@ -96,6 +115,8 @@ class ArtifactRepository:
         filters = [Artifact.evidence_id == evidence_id]
         if artifact_type is not None:
             filters.append(Artifact.artifact_type == artifact_type)
+        if artifact_types is not None:
+            filters.append(Artifact.artifact_type.in_(artifact_types))
         total = await self.session.scalar(
             select(func.count()).select_from(Artifact).where(*filters)
         )

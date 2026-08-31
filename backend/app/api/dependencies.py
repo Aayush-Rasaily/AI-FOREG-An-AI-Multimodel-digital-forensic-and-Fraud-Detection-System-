@@ -15,6 +15,7 @@ from backend.app.application.services.processing_service import (
 from backend.app.application.services.storage import StorageService
 from backend.app.core.config import Settings
 from backend.app.core.exceptions import StorageError
+from backend.app.extraction.service import ExtractionService
 from backend.app.infrastructure.database.session import get_db_session
 from backend.app.infrastructure.storage.local import LocalStorage
 
@@ -97,11 +98,28 @@ def get_processing_orchestrator(
     )
 
 
+def get_extraction_service(
+    session: SessionDependency,
+    storage: Annotated[StorageService, Depends(get_storage_service)],
+    hash_service: Annotated[HashService, Depends(get_hash_service)],
+    settings: RuntimeSettingsDependency,
+) -> ExtractionService:
+    """Compose the extraction service for one request."""
+
+    return ExtractionService(
+        session=session,
+        storage=storage,
+        hash_service=hash_service,
+        settings=settings,
+    )
+
+
 __all__ = [
     "SessionDependency",
     "get_case_service",
     "get_db_session",
     "get_evidence_service",
+    "get_extraction_service",
     "get_file_validation_service",
     "get_hash_service",
     "get_processing_orchestrator",

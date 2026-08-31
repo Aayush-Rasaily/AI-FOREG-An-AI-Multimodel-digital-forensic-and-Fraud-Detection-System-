@@ -51,6 +51,27 @@ beforeEach(() => {
       if (url.includes(`/cases/${caseRecord.id}/evidence`)) {
         return response({ items: [evidenceRecord], total: 1 });
       }
+      if (url.includes(`/evidence/${evidenceRecord.id}/extractions`)) {
+        return response({
+          status: "UNAVAILABLE",
+          error_code: "EXTRACTION_NOT_RUN",
+          items: [],
+          total: 0,
+        });
+      }
+      if (url.includes(`/evidence/${evidenceRecord.id}/regions`)) {
+        return response({
+          status: "UNAVAILABLE",
+          error_code: "EXTRACTION_NOT_RUN",
+          items: [],
+          total: 0,
+        });
+      }
+      if (
+        url.includes(`/evidence/${evidenceRecord.id}/extraction-artifacts`)
+      ) {
+        return response({ items: [], total: 0 });
+      }
       if (url.includes(`/evidence/${evidenceRecord.id}/processing`)) {
         return response({
           items: processed

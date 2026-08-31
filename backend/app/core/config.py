@@ -79,6 +79,19 @@ class Settings(BaseSettings):
     supported_mime_types: dict[str, list[str]] = Field(
         default_factory=lambda: deepcopy(DEFAULT_SUPPORTED_MIME_TYPES)
     )
+    ocr_enabled: bool = False
+    ocr_command: str = "tesseract"
+    ffprobe_command: str = "ffprobe"
+    ffmpeg_command: str = "ffmpeg"
+    extraction_max_pages: int = Field(default=1000, ge=1, le=10000)
+    extraction_max_text_chars: int = Field(
+        default=1_000_000,
+        ge=1_000,
+        le=10_000_000,
+    )
+    extraction_max_items: int = Field(default=10_000, ge=100, le=100_000)
+    media_sample_interval_seconds: float = Field(default=5.0, gt=0)
+    media_max_frames: int = Field(default=120, ge=1, le=10000)
 
     redis_url: str = "redis://localhost:6379/0"
     redis_max_connections: int = Field(default=50, ge=1)

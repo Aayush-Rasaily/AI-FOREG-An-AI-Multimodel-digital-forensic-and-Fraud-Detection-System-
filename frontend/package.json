@@ -7,7 +7,7 @@
     "dev": "node ./node_modules/vite/bin/vite.js",
     "build": "node ./scripts/build.mjs",
     "preview": "node ./node_modules/vite/bin/vite.js preview",
-    "test": "npm exec -- vitest run --pool=forks --maxWorkers=1",
+    "test": "npm exec -- vitest run --pool=forks --maxWorkers=1 --no-file-parallelism",
     "test:watch": "node ./node_modules/vitest/vitest.mjs",
     "lint": "node ./node_modules/typescript/bin/tsc -b --pretty false"
   },

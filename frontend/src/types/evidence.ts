@@ -101,3 +101,64 @@ export interface ArtifactListData {
   limit: number;
   offset: number;
 }
+
+export type ExtractionStatus =
+  | "SUCCEEDED"
+  | "PARTIAL"
+  | "UNAVAILABLE"
+  | "FAILED";
+
+export type ExtractionType =
+  | "TEXT"
+  | "WORD"
+  | "LINE"
+  | "IMAGE_REGION"
+  | "FACE_REGION"
+  | "SIGNATURE_REGION"
+  | "LOGO_REGION"
+  | "STAMP_REGION"
+  | "NUMBER"
+  | "DATE"
+  | "QR_CODE"
+  | "BARCODE"
+  | "TABLE"
+  | "PAGE"
+  | "FRAME"
+  | "AUDIO_STREAM"
+  | "METADATA";
+
+export interface BoundingBox {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+export interface ExtractionRecord {
+  id: string;
+  evidence_id: string;
+  artifact_id: string | null;
+  extraction_type: ExtractionType;
+  source_type: "ORIGINAL" | "ARTIFACT";
+  source_identifier: string;
+  page_number: number | null;
+  frame_number: number | null;
+  timestamp_ms: number | null;
+  content: string | null;
+  confidence: number | null;
+  location: BoundingBox | null;
+  normalized_location: BoundingBox | null;
+  method: string;
+  version: string;
+  metadata: Record<string, unknown>;
+  created_at: string;
+}
+
+export interface ExtractionListData {
+  status: ExtractionStatus;
+  error_code: string | null;
+  items: ExtractionRecord[];
+  total: number;
+  limit: number;
+  offset: number;
+}

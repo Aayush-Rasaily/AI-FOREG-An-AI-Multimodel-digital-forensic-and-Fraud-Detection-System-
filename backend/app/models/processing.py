@@ -17,6 +17,7 @@ from backend.app.infrastructure.database.base import Base
 
 if TYPE_CHECKING:
     from backend.app.models.evidence import Evidence
+    from backend.app.models.extraction import ExtractionRecord
 
 
 class ProcessingJob(Base):
@@ -138,4 +139,7 @@ class Artifact(Base):
 
     evidence: Mapped["Evidence"] = relationship(
         back_populates="artifacts",
+    )
+    extraction_records: Mapped[list["ExtractionRecord"]] = relationship(
+        back_populates="artifact",
     )

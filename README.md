@@ -6,9 +6,10 @@ laboratories, law enforcement, cybersecurity teams, and other regulated
 organizations.
 
 This repository currently contains the platform foundation, Phase 3
-case/evidence preservation, and the Phase 4 evidence processing pipeline. It
-deliberately does not contain AI models, OCR, forensic workflows, fraud rules,
-or analysis implementations.
+case/evidence preservation, the Phase 4 evidence processing pipeline, and the
+Phase 5A extraction/localization foundation. It deliberately does not contain
+forensic detectors, fraud rules, authenticity decisions, or analysis
+implementations.
 
 ## Architecture
 
@@ -21,7 +22,8 @@ backend/
 │   ├── application/    # Use-case and service boundaries
 │   ├── core/           # Cross-cutting configuration and platform concerns
 │   ├── domain/         # Framework-independent contracts and ports
-│   ├── models/         # Persistence models for cases, evidence, jobs, artifacts
+│   ├── models/         # Persistence models for cases, evidence, jobs, artifacts, extractions
+│   ├── extraction/     # Versioned multimodal extraction and localization
 │   ├── ai_engines/     # Future engine modules; intentionally empty
 │   └── infrastructure/ # Database, cache, messaging, storage, and audit seams
 └── alembic/             # Database migration environment
@@ -112,9 +114,15 @@ and local storage under `data/evidence/` for development. The runner hashes
 read-only originals, classifies files, extracts basic metadata, and stores
 independently hashed preview manifests, metadata, and classification artifacts.
 A real worker queue can call the same orchestrator later without changing
-processors. See [`docs/case-evidence.md`](docs/case-evidence.md) and
-[`docs/processing-pipeline.md`](docs/processing-pipeline.md) for the
-preservation, custody, and processing contracts.
+processors. Phase 5A adds native PDF/image/WAV extraction, optional
+Tesseract OCR, provenance-preserving extraction records, normalized
+coordinates, and extraction artifacts. It reports unavailable media
+capabilities explicitly and never invents regions or coordinates. Extraction
+is intentionally separate from forensic analysis. See
+[`docs/case-evidence.md`](docs/case-evidence.md),
+[`docs/processing-pipeline.md`](docs/processing-pipeline.md), and
+[`docs/extraction-and-localization.md`](docs/extraction-and-localization.md)
+for the preservation, custody, processing, and extraction contracts.
 
 See [`docs/operations.md`](docs/operations.md) and
 [`deployment/README.md`](deployment/README.md) before creating a production

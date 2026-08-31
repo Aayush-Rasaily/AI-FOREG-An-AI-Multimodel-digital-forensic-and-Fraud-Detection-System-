@@ -23,6 +23,7 @@ from backend.app.infrastructure.database.base import Base
 if TYPE_CHECKING:
     from backend.app.models.case import Case
     from backend.app.models.custody import ChainOfCustodyEvent
+    from backend.app.models.extraction import ExtractionRecord
     from backend.app.models.processing import Artifact, ProcessingJob
 
 
@@ -99,4 +100,10 @@ class Evidence(Base):
         cascade="all, delete-orphan",
         passive_deletes=True,
         order_by="Artifact.created_at",
+    )
+    extraction_records: Mapped[list["ExtractionRecord"]] = relationship(
+        back_populates="evidence",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        order_by="ExtractionRecord.created_at",
     )

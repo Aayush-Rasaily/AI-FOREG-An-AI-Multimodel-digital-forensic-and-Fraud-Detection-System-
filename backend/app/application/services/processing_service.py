@@ -141,7 +141,11 @@ class ProcessingOrchestrator:
         """Run the local deterministic pipeline for a queued job."""
 
         job = await self.job_repository.get(job_id)
-        if job is None or job.status != ProcessingJobStatus.QUEUED:
+        if (
+            job is None
+            or job.status != ProcessingJobStatus.QUEUED
+            or job.job_type != ProcessingJobType.PREPROCESSING
+        ):
             return
         evidence = await self.session.get(Evidence, job.evidence_id)
         if evidence is None:

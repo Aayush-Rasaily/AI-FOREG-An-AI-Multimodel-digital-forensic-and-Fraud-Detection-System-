@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { evidenceService } from "../services/api/evidence";
 import { processingService } from "../services/api/processing";
+import { extractionService } from "../services/api/extraction";
 
 export function useCaseEvidenceQuery(caseId: string | undefined) {
   return useQuery({
@@ -60,6 +61,55 @@ export function useProcessEvidenceMutation(evidenceId: string) {
       });
       void queryClient.invalidateQueries({
         queryKey: ["cases"],
+      });
+    },
+  });
+}
+
+export function useEvidenceExtractionsQuery(evidenceId: string) {
+  return useQuery({
+    queryKey: ["evidence", evidenceId, "extractions"],
+    queryFn: () => extractionService.list(evidenceId),
+    refetchInterval: (query) => {
+      return query.state.data?.data.error_code === "EXTRACTION_IN_PROGRESS"
+        ? 1000
+        : false;
+    },
+  });
+}
+
+export function useEvidenceExtractionArtifactsQuery(evidenceId: string) {
+  return useQuery({
+    queryKey: ["evidence", evidenceId, "extraction-artifacts"],
+    queryFn: () => extractionService.artifacts(evidenceId),
+    staleTime: 15_000,
+  });
+}
+
+export function useEvidenceRegionsQuery(evidenceId: string) {
+  return useQuery({
+    queryKey: ["evidence", evidenceId, "regions"],
+    queryFn: () => extractionService.regions(evidenceId),
+    staleTime: 15_000,
+  });
+}
+
+export function useExtractEvidenceMutation(evidenceId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => extractionService.extract(evidenceId),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: ["evidence", evidenceId, "extractions"],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["evidence", evidenceId, "extraction-artifacts"],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["evidence", evidenceId, "regions"],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["evidence", evidenceId, "processing"],
       });
     },
   });
