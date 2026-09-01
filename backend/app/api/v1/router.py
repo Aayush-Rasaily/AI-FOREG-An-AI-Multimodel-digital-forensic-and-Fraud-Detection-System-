@@ -10,6 +10,7 @@ from backend.app.api.v1.endpoints.document_ai import router as document_ai_route
 from backend.app.api.v1.endpoints.evidence import router as evidence_router
 from backend.app.api.v1.endpoints.extraction import router as extraction_router
 from backend.app.api.v1.endpoints.forensics import router as forensics_router
+from backend.app.api.v1.endpoints.fusion import router as fusion_router
 from backend.app.api.v1.endpoints.health import router as health_router
 from backend.app.api.v1.endpoints.image_ai import router as image_ai_router
 from backend.app.api.v1.endpoints.processing import router as processing_router
@@ -30,5 +31,6 @@ router.include_router(document_ai_router)
 router.include_router(signature_ai_router)
 router.include_router(video_ai_router)
 router.include_router(audio_ai_router)
+router.include_router(fusion_router)
 router.include_router(processing_router)
 router.include_router(system_router)

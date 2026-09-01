@@ -167,7 +167,7 @@ export function InvestigationWorkspacePage() {
               </Panel>
               <MetadataPanel />
             </div>
-            <AiJuryPanel />
+            <AiJuryPanel evidence={primaryEvidence} />
           </div>
         )}
         {activeTab === "evidence" && (
@@ -185,7 +185,7 @@ export function InvestigationWorkspacePage() {
             <EvidenceUploadForm caseId={caseId} />
           </div>
         )}
-        {activeTab === "jury" && <AiJuryPanel />}
+        {activeTab === "jury" && <AiJuryPanel evidence={primaryEvidence} />}
         {activeTab === "findings" && <FindingsPanel evidence={primaryEvidence} />}
         {activeTab === "metadata" && <MetadataPanel />}
         {activeTab === "comparison" && (

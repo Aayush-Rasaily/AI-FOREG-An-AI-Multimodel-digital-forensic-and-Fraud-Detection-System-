@@ -30,6 +30,7 @@ if TYPE_CHECKING:
     from backend.app.ai.document.signature.service import SignatureVerificationService
     from backend.app.ai.image.service import ImageAnalysisService
     from backend.app.ai.video.service import VideoAnalysisService
+    from backend.app.fusion.service import FusionService
 
 SessionDependency = Annotated[AsyncSession, Depends(get_db_session)]
 
@@ -279,6 +280,24 @@ def get_audio_analysis_service(
     )
 
 
+def get_fusion_service(
+    session: SessionDependency,
+    storage: Annotated[StorageService, Depends(get_storage_service)],
+    hash_service: Annotated[HashService, Depends(get_hash_service)],
+    settings: RuntimeSettingsDependency,
+) -> FusionService:
+    """Compose the multimodal fusion service for one request."""
+
+    from backend.app.fusion.service import FusionService
+
+    return FusionService(
+        session=session,
+        storage=storage,
+        hash_service=hash_service,
+        settings=settings,
+    )
+
+
 __all__ = [
     "SessionDependency",
     "get_ai_service",
@@ -298,4 +317,5 @@ __all__ = [
     "get_storage_service",
     "get_video_analysis_service",
     "get_audio_analysis_service",
+    "get_fusion_service",
 ]

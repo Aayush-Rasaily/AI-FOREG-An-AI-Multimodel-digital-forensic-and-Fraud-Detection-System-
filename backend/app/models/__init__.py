@@ -22,6 +22,11 @@ from backend.app.models.document_ai import (
 from backend.app.models.evidence import Evidence
 from backend.app.models.extraction import ExtractionRecord
 from backend.app.models.forensics import AnalysisRun, Finding, FindingRegion
+from backend.app.models.fusion import (
+    FusionAnalysisRun,
+    FusionConflictRecord,
+    JuryAssessmentRecord,
+)
 from backend.app.models.image_ai import (
     ImageAIFinding,
     ImageAIFindingRegion,
@@ -51,6 +56,9 @@ __all__ = [
     "ExtractionRecord",
     "Finding",
     "FindingRegion",
+    "FusionAnalysisRun",
+    "FusionConflictRecord",
+    "JuryAssessmentRecord",
     "ImageAIFinding",
     "ImageAIFindingRegion",
     "ImageAnalysisRun",

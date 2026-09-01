@@ -32,6 +32,7 @@ if TYPE_CHECKING:
     from backend.app.models.document_ai import DocumentAIFinding, DocumentAnalysisRun
     from backend.app.models.extraction import ExtractionRecord
     from backend.app.models.forensics import AnalysisRun, Finding
+    from backend.app.models.fusion import FusionAnalysisRun
     from backend.app.models.image_ai import ImageAIFinding, ImageAnalysisRun
     from backend.app.models.processing import Artifact, ProcessingJob
     from backend.app.models.signature_ai import SignatureVerificationRun
@@ -211,4 +212,10 @@ class Evidence(Base):
         cascade="all, delete-orphan",
         passive_deletes=True,
         order_by="Difference.created_at",
+    )
+    fusion_analysis_runs: Mapped[list["FusionAnalysisRun"]] = relationship(
+        back_populates="evidence",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        order_by="FusionAnalysisRun.created_at",
     )

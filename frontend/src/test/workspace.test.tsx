@@ -65,8 +65,7 @@ describe("investigation workspace", () => {
 
     await user.click(await screen.findByRole("tab", { name: "AI Jury" }));
 
-    expect(screen.getByText("Forensic Evidence Analyst")).toBeInTheDocument();
-    expect(screen.getAllByText("Not connected")).toHaveLength(6);
+    expect(screen.getByText("No evidence selected")).toBeInTheDocument();
   });
 });
 
