@@ -4,11 +4,12 @@ import {
   ArrowLeft,
   Clock3,
   FileBarChart,
-  FolderSearch,
   Shield,
 } from "lucide-react";
 
 import { AiJuryPanel } from "../components/investigation/AiJuryPanel";
+import { CaseTimelinePanel } from "../components/investigation/CaseTimelinePanel";
+import { ForensicReportPanel } from "../components/investigation/ForensicReportPanel";
 import { AnalysisPanel } from "../components/investigation/AnalysisPanel";
 import { ComparisonPanel } from "../components/investigation/ComparisonPanel";
 import { DocumentAnalysisPanel } from "../components/investigation/DocumentAnalysisPanel";
@@ -24,7 +25,6 @@ import { AudioAnalysisPanel } from "../components/investigation/AudioAnalysisPan
 import { PageHeader } from "../components/layout/PageHeader";
 import { Badge } from "../components/ui/Badge";
 import { Button } from "../components/ui/Button";
-import { EmptyState } from "../components/ui/EmptyState";
 import { ErrorState } from "../components/ui/ErrorState";
 import { LoadingState } from "../components/ui/LoadingState";
 import { NotFoundState } from "../components/ui/NotFoundState";
@@ -47,30 +47,6 @@ const tabs: TabOption<InvestigationTab>[] = [
   { value: "metadata", label: "Metadata" },
   { value: "report", label: "Report" },
 ];
-
-function WorkspacePlaceholder({ tab }: { tab: InvestigationTab }) {
-  const labels: Record<InvestigationTab, string> = {
-    overview: "Overview",
-    evidence: "Evidence",
-    forensics: "Forensics",
-    comparison: "Comparison",
-    findings: "Findings",
-    timeline: "Timeline",
-    jury: "AI Jury",
-    metadata: "Metadata",
-    report: "Report",
-  };
-
-  return (
-    <Panel>
-      <EmptyState
-        description={`${labels[tab]} data will appear here when the corresponding backend capability is connected. No placeholder analysis is displayed.`}
-        icon={<FolderSearch aria-hidden="true" size={20} />}
-        title={`${labels[tab]} is not connected`}
-      />
-    </Panel>
-  );
-}
 
 export function InvestigationWorkspacePage() {
   const { caseId } = useParams<{ caseId: string }>();
@@ -158,16 +134,8 @@ export function InvestigationWorkspacePage() {
             </div>
             <EvidenceUploadForm caseId={caseId} />
             <div className="grid gap-4 xl:grid-cols-2">
-              <Panel title="Investigation timeline">
-                <EmptyState
-                  description="Audit events and custody transitions will appear here after the timeline service is connected."
-                  icon={<Clock3 aria-hidden="true" size={19} />}
-                  title="No timeline events"
-                />
-              </Panel>
               <MetadataPanel />
             </div>
-            <AiJuryPanel evidence={primaryEvidence} />
           </div>
         )}
         {activeTab === "evidence" && (
@@ -211,10 +179,8 @@ export function InvestigationWorkspacePage() {
             <FindingsPanel evidence={primaryEvidence} />
           </div>
         )}
-        {activeTab === "timeline" && <WorkspacePlaceholder tab="timeline" />}
-        {activeTab === "report" && (
-          <WorkspacePlaceholder tab="report" />
-        )}
+        {activeTab === "timeline" && <CaseTimelinePanel caseId={caseId} />}
+        {activeTab === "report" && <ForensicReportPanel caseId={caseId} />}
       </div>
 
       <div className="mt-5 flex items-center gap-2 text-[11px] text-slate-600">

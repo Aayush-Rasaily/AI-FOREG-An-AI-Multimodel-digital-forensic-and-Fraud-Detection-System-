@@ -7,6 +7,13 @@ from backend.app.models.audio_ai import (
     AudioAnalysisRun,
 )
 from backend.app.models.case import Case
+from backend.app.models.case_intelligence import (
+    CaseConflictRecord,
+    CaseEvidenceParticipationRecord,
+    CaseIntelligenceRun,
+    CaseRelationshipRecord,
+    CaseTimelineEventRecord,
+)
 from backend.app.models.comparison import (
     ComparisonRun,
     Difference,
@@ -21,6 +28,7 @@ from backend.app.models.document_ai import (
 )
 from backend.app.models.evidence import Evidence
 from backend.app.models.extraction import ExtractionRecord
+from backend.app.models.forensic_report import ForensicReport
 from backend.app.models.forensics import AnalysisRun, Finding, FindingRegion
 from backend.app.models.fusion import (
     FusionAnalysisRun,
@@ -45,6 +53,11 @@ __all__ = [
     "AnalysisRun",
     "Artifact",
     "Case",
+    "CaseConflictRecord",
+    "CaseEvidenceParticipationRecord",
+    "CaseIntelligenceRun",
+    "CaseRelationshipRecord",
+    "CaseTimelineEventRecord",
     "ChainOfCustodyEvent",
     "ComparisonRun",
     "Difference",
@@ -56,6 +69,7 @@ __all__ = [
     "ExtractionRecord",
     "Finding",
     "FindingRegion",
+    "ForensicReport",
     "FusionAnalysisRun",
     "FusionConflictRecord",
     "JuryAssessmentRecord",

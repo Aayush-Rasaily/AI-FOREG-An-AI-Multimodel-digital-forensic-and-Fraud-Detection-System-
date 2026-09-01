@@ -12,8 +12,10 @@ from backend.app.domain.case import CasePriority, CaseStatus
 from backend.app.infrastructure.database.base import Base
 
 if TYPE_CHECKING:
+    from backend.app.models.case_intelligence import CaseIntelligenceRun
     from backend.app.models.comparison import ReferenceEvidence
     from backend.app.models.evidence import Evidence
+    from backend.app.models.forensic_report import ForensicReport
 
 
 class Case(Base):
@@ -71,4 +73,16 @@ class Case(Base):
         back_populates="case",
         cascade="all, delete-orphan",
         passive_deletes=True,
+    )
+    case_intelligence_runs: Mapped[list["CaseIntelligenceRun"]] = relationship(
+        back_populates="case",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        order_by="CaseIntelligenceRun.created_at",
+    )
+    forensic_reports: Mapped[list["ForensicReport"]] = relationship(
+        back_populates="case",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        order_by="ForensicReport.created_at",
     )

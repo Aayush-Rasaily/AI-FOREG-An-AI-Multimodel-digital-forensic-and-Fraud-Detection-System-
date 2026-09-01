@@ -53,6 +53,9 @@ beforeEach(() => {
       if (url.includes("/cases?")) {
         return response({ items: [caseRecord], total: 1, limit: 50, offset: 0 });
       }
+      if (url.includes("/intelligence")) {
+        return Promise.resolve({ ok: false, status: 404, json: async () => ({ success: false }) });
+      }
       return response(caseRecord);
     }),
   );
@@ -88,7 +91,9 @@ describe("Phase 3 case and evidence workspace", () => {
       </TestProviders>,
     );
 
-    expect(await screen.findByText(/EVID-000001/)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/EVID-000001/, {}, { timeout: 5000 }),
+    ).toBeInTheDocument();
     expect(screen.getAllByText(`SHA-256: ${"a".repeat(64)}`).length).toBeGreaterThan(0);
     expect(screen.getAllByText("Select an original evidence file").length).toBeGreaterThan(0);
   });

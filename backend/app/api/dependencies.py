@@ -30,7 +30,9 @@ if TYPE_CHECKING:
     from backend.app.ai.document.signature.service import SignatureVerificationService
     from backend.app.ai.image.service import ImageAnalysisService
     from backend.app.ai.video.service import VideoAnalysisService
+    from backend.app.case_intelligence.service import CaseIntelligenceService
     from backend.app.fusion.service import FusionService
+    from backend.app.reporting.service import ReportService
 
 SessionDependency = Annotated[AsyncSession, Depends(get_db_session)]
 
@@ -298,6 +300,42 @@ def get_fusion_service(
     )
 
 
+def get_case_intelligence_service(
+    session: SessionDependency,
+    storage: Annotated[StorageService, Depends(get_storage_service)],
+    hash_service: Annotated[HashService, Depends(get_hash_service)],
+    settings: RuntimeSettingsDependency,
+) -> CaseIntelligenceService:
+    """Compose the case intelligence service for one request."""
+
+    from backend.app.case_intelligence.service import CaseIntelligenceService
+
+    return CaseIntelligenceService(
+        session=session,
+        storage=storage,
+        hash_service=hash_service,
+        settings=settings,
+    )
+
+
+def get_report_service(
+    session: SessionDependency,
+    storage: Annotated[StorageService, Depends(get_storage_service)],
+    hash_service: Annotated[HashService, Depends(get_hash_service)],
+    settings: RuntimeSettingsDependency,
+) -> ReportService:
+    """Compose the forensic report service for one request."""
+
+    from backend.app.reporting.service import ReportService
+
+    return ReportService(
+        session=session,
+        storage=storage,
+        hash_service=hash_service,
+        settings=settings,
+    )
+
+
 __all__ = [
     "SessionDependency",
     "get_ai_service",
@@ -318,4 +356,6 @@ __all__ = [
     "get_video_analysis_service",
     "get_audio_analysis_service",
     "get_fusion_service",
+    "get_case_intelligence_service",
+    "get_report_service",
 ]

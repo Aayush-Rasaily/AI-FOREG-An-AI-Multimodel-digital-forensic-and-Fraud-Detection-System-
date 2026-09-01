@@ -129,6 +129,9 @@ export function AiJuryPanel({ evidence }: AiJuryPanelProps) {
     latestQuery.error instanceof ApiClientError && latestQuery.error.status === 404;
   const assessment = latestQuery.data?.data;
   const conflicts = conflictsQuery.data?.data ?? assessment?.conflicts ?? [];
+  const isFusionAssessment = Boolean(
+    assessment && "engine_version" in assessment && assessment.engine_version,
+  );
 
   return (
     <Panel
@@ -141,7 +144,7 @@ export function AiJuryPanel({ evidence }: AiJuryPanelProps) {
             <p className="text-xs text-slate-400">
               Evidence: {evidence.evidence_number ?? evidence.original_filename}
             </p>
-            {assessment && (
+            {isFusionAssessment && assessment && (
               <div className="flex flex-wrap items-center gap-2">
                 <Badge tone={verdictTone[assessment.verdict ?? "inconclusive"]}>
                   {formatVerdict(assessment.verdict)}
@@ -181,14 +184,14 @@ export function AiJuryPanel({ evidence }: AiJuryPanelProps) {
           />
         )}
 
-        {!isLoading && (isNotFound || !assessment) && (
+        {!isLoading && (isNotFound || !isFusionAssessment) && (
           <EmptyState
             description="Run fusion to aggregate modality findings into a multimodal assessment."
             title="No multimodal fusion analysis yet"
           />
         )}
 
-        {assessment && (
+        {isFusionAssessment && assessment && (
           <>
             {assessment.explanation && (
               <p className="rounded-lg border border-slate-800 bg-slate-950/40 p-3 text-xs text-slate-400">
@@ -226,13 +229,13 @@ export function AiJuryPanel({ evidence }: AiJuryPanelProps) {
               </div>
             )}
 
-            {assessment.modality_status.length > 0 && (
+            {(assessment.modality_status?.length ?? 0) > 0 && (
               <div className="space-y-2">
                 <h3 className="text-xs font-medium uppercase tracking-wide text-slate-500">
                   Modality Status
                 </h3>
                 <div className="flex flex-wrap gap-2">
-                  {assessment.modality_status.map((status) => (
+                  {assessment.modality_status?.map((status) => (
                     <Badge
                       key={status.modality}
                       tone={availabilityTone[status.availability]}
@@ -247,13 +250,13 @@ export function AiJuryPanel({ evidence }: AiJuryPanelProps) {
               </div>
             )}
 
-            {assessment.jury_assessments.length > 0 && (
+            {(assessment.jury_assessments?.length ?? 0) > 0 && (
               <div className="space-y-2">
                 <h3 className="text-xs font-medium uppercase tracking-wide text-slate-500">
                   Jury Members
                 </h3>
                 <div className="grid gap-2 sm:grid-cols-2">
-                  {assessment.jury_assessments.map((member) => (
+                  {assessment.jury_assessments?.map((member) => (
                     <JuryMemberCard
                       assessment={member}
                       key={member.role}
