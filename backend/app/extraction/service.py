@@ -559,17 +559,10 @@ class ExtractionService:
             *,
             normalized: bool = False,
         ) -> BoundingBoxResponse | NormalizedBoundingBoxResponse | None:
-            if (
-                x is None
-                or y is None
-                or width is None
-                or height is None
-            ):
+            if x is None or y is None or width is None or height is None:
                 return None
             box_type = (
-                NormalizedBoundingBoxResponse
-                if normalized
-                else BoundingBoxResponse
+                NormalizedBoundingBoxResponse if normalized else BoundingBoxResponse
             )
             return box_type(
                 x=x,

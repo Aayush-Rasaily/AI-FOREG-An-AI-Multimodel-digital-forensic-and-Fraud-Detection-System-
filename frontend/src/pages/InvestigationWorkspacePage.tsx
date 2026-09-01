@@ -10,10 +10,17 @@ import {
 
 import { AiJuryPanel } from "../components/investigation/AiJuryPanel";
 import { AnalysisPanel } from "../components/investigation/AnalysisPanel";
+import { ComparisonPanel } from "../components/investigation/ComparisonPanel";
+import { DocumentAnalysisPanel } from "../components/investigation/DocumentAnalysisPanel";
+import { DifferencesPanel } from "../components/investigation/DifferencesPanel";
 import { EvidenceList } from "../components/evidence/EvidenceList";
 import { EvidenceUploadForm } from "../components/evidence/EvidenceUploadForm";
 import { FindingsPanel } from "../components/investigation/FindingsPanel";
+import { ImageAnalysisPanel } from "../components/investigation/ImageAnalysisPanel";
 import { MetadataPanel } from "../components/investigation/MetadataPanel";
+import { SignatureVerificationPanel } from "../components/investigation/SignatureVerificationPanel";
+import { VideoAnalysisPanel } from "../components/investigation/VideoAnalysisPanel";
+import { AudioAnalysisPanel } from "../components/investigation/AudioAnalysisPanel";
 import { PageHeader } from "../components/layout/PageHeader";
 import { Badge } from "../components/ui/Badge";
 import { Button } from "../components/ui/Button";
@@ -33,6 +40,7 @@ const tabs: TabOption<InvestigationTab>[] = [
   { value: "overview", label: "Overview" },
   { value: "evidence", label: "Evidence" },
   { value: "forensics", label: "Forensics" },
+  { value: "comparison", label: "Comparison" },
   { value: "findings", label: "Findings" },
   { value: "timeline", label: "Timeline" },
   { value: "jury", label: "AI Jury" },
@@ -45,6 +53,7 @@ function WorkspacePlaceholder({ tab }: { tab: InvestigationTab }) {
     overview: "Overview",
     evidence: "Evidence",
     forensics: "Forensics",
+    comparison: "Comparison",
     findings: "Findings",
     timeline: "Timeline",
     jury: "AI Jury",
@@ -90,6 +99,7 @@ export function InvestigationWorkspacePage() {
     return <NotFoundState />;
   }
   const evidence = evidenceQuery.data?.data.items ?? [];
+  const primaryEvidence = evidence[0];
 
   return (
     <div>
@@ -141,8 +151,9 @@ export function InvestigationWorkspacePage() {
               </Panel>
               <EvidenceViewer />
               <div className="space-y-4">
-                <AnalysisPanel />
-                <FindingsPanel />
+                <AnalysisPanel evidence={primaryEvidence} />
+                <ComparisonPanel evidence={primaryEvidence} />
+                <FindingsPanel evidence={primaryEvidence} />
               </div>
             </div>
             <EvidenceUploadForm caseId={caseId} />
@@ -175,9 +186,31 @@ export function InvestigationWorkspacePage() {
           </div>
         )}
         {activeTab === "jury" && <AiJuryPanel />}
-        {activeTab === "findings" && <FindingsPanel />}
+        {activeTab === "findings" && <FindingsPanel evidence={primaryEvidence} />}
         {activeTab === "metadata" && <MetadataPanel />}
-        {activeTab === "forensics" && <WorkspacePlaceholder tab="forensics" />}
+        {activeTab === "comparison" && (
+          <div className="grid gap-4 xl:grid-cols-2">
+            <ComparisonPanel evidence={primaryEvidence} />
+            <DifferencesPanel evidence={primaryEvidence} />
+          </div>
+        )}
+        {activeTab === "forensics" && (
+          <div className="grid gap-4 xl:grid-cols-2">
+            <AnalysisPanel evidence={primaryEvidence} />
+            <ImageAnalysisPanel evidence={primaryEvidence} />
+            <DocumentAnalysisPanel evidence={primaryEvidence} />
+            <SignatureVerificationPanel
+              evidence={primaryEvidence}
+              referenceOptions={evidence}
+            />
+            <VideoAnalysisPanel evidence={primaryEvidence} />
+            <AudioAnalysisPanel
+              evidence={primaryEvidence}
+              referenceOptions={evidence}
+            />
+            <FindingsPanel evidence={primaryEvidence} />
+          </div>
+        )}
         {activeTab === "timeline" && <WorkspacePlaceholder tab="timeline" />}
         {activeTab === "report" && (
           <WorkspacePlaceholder tab="report" />

@@ -11,6 +11,7 @@ import {
   Shield,
   X,
   Cpu,
+  BrainCircuit,
 } from "lucide-react";
 
 import { cn } from "../../lib/utils";
@@ -36,6 +37,7 @@ const workspaceItems: NavigationItem[] = [
 ];
 
 const systemItems: NavigationItem[] = [
+  { label: "AI Models", to: "/ai-models", icon: BrainCircuit },
   { label: "System", to: "/system", icon: Cpu },
   { label: "Settings", to: "/settings", icon: Settings },
 ];

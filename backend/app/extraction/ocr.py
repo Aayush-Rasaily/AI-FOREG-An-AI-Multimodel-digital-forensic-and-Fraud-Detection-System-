@@ -97,9 +97,7 @@ class TesseractOCRProvider:
                 }
             else:
                 current["text"] = f"{current['text']} {value}"
-                current["confidence"] = (
-                    float(current["confidence"]) + confidence
-                ) / 2
+                current["confidence"] = (float(current["confidence"]) + confidence) / 2
                 current["x"] = min(float(current["x"]), x)
                 current["y"] = min(float(current["y"]), y)
                 current["right"] = max(float(current["right"]), right)

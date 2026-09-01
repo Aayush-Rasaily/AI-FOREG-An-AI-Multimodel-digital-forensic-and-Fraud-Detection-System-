@@ -52,10 +52,7 @@ def structured_value_items(
             },
         )
     for match in NUMBER_PATTERN.finditer(text):
-        if any(
-            start <= match.start() < end
-            for start, end in date_spans
-        ):
+        if any(start <= match.start() < end for start, end in date_spans):
             continue
         raw_value = match.group(0)
         if len(re.sub(r"\D", "", raw_value)) < 3:

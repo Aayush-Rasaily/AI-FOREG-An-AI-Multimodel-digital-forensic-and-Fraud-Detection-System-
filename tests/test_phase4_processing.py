@@ -144,9 +144,7 @@ async def test_processing_creates_artifacts_and_preserves_original(
         stored_artifacts = list(
             (
                 await session.scalars(
-                    select(Artifact).where(
-                        Artifact.evidence_id == stored.id
-                    )
+                    select(Artifact).where(Artifact.evidence_id == stored.id)
                 )
             ).all()
         )
@@ -407,9 +405,7 @@ async def test_pdf_text_extraction_preserves_page_provenance(
     assert any(
         item["artifact_type"] == "DOCUMENT_STRUCTURE"
         for item in (
-            await client.get(
-                f"/api/v1/evidence/{evidence['id']}/extraction-artifacts"
-            )
+            await client.get(f"/api/v1/evidence/{evidence['id']}/extraction-artifacts")
         ).json()["data"]["items"]
     )
 

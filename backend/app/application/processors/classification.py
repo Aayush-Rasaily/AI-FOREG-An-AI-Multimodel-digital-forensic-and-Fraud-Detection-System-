@@ -46,9 +46,7 @@ class FileClassificationProcessor:
             ),
             None,
         )
-        category = (
-            configured_category if configured_category == mime_category else None
-        )
+        category = configured_category if configured_category == mime_category else None
         classification = {
             "image": EvidenceClassification.IMAGE,
             "document": EvidenceClassification.DOCUMENT,

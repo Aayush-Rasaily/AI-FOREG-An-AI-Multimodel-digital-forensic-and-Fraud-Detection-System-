@@ -33,6 +33,5 @@ def bounded_frame_numbers(
     """Pair requested timestamps with stable one-based frame numbers."""
 
     return tuple(
-        (start + index + 1, timestamp)
-        for index, timestamp in enumerate(timestamps_ms)
+        (start + index + 1, timestamp) for index, timestamp in enumerate(timestamps_ms)
     )

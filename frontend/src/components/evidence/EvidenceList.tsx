@@ -3,7 +3,9 @@ import { FileArchive } from "lucide-react";
 import type { EvidenceRecord } from "../../types/evidence";
 import { EvidenceCard } from "./EvidenceCard";
 import { EmptyState } from "../ui/EmptyState";
+import { EvidenceComparisonPanel } from "./EvidenceComparisonPanel";
 import { EvidenceExtractionPanel } from "./EvidenceExtractionPanel";
+import { EvidenceForensicsPanel } from "./EvidenceForensicsPanel";
 import { EvidenceProcessingPanel } from "./EvidenceProcessingPanel";
 
 interface EvidenceListProps {
@@ -49,6 +51,8 @@ export function EvidenceList({ items }: EvidenceListProps) {
           </p>
           <EvidenceProcessingPanel evidence={item} />
           <EvidenceExtractionPanel evidence={item} />
+          <EvidenceForensicsPanel evidence={item} />
+          <EvidenceComparisonPanel evidence={item} />
         </div>
       ))}
     </div>

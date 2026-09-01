@@ -138,14 +138,14 @@ class VideoExtractor:
 
 def _number(value: object) -> float | None:
     try:
-            return float(str(value)) if value is not None else None
+        return float(str(value)) if value is not None else None
     except (TypeError, ValueError):
         return None
 
 
 def _integer(value: object) -> int | None:
     try:
-            return int(str(value)) if value is not None else None
+        return int(str(value)) if value is not None else None
     except (TypeError, ValueError):
         return None
 

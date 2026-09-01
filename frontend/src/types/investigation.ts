@@ -2,6 +2,7 @@ export type InvestigationTab =
   | "overview"
   | "evidence"
   | "forensics"
+  | "comparison"
   | "findings"
   | "timeline"
   | "jury"

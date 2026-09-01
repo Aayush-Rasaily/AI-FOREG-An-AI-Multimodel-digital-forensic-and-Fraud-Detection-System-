@@ -18,6 +18,9 @@ const NotFoundPage = lazy(() => import("../pages/NotFoundPage").then((module) =>
 const ReportsPage = lazy(() => import("../pages/ReportsPage").then((module) => ({ default: module.ReportsPage })));
 const SettingsPage = lazy(() => import("../pages/SettingsPage").then((module) => ({ default: module.SettingsPage })));
 const SystemPage = lazy(() => import("../pages/SystemPage").then((module) => ({ default: module.SystemPage })));
+const AIModelsPage = lazy(() =>
+  import("../pages/AIModelsPage").then((module) => ({ default: module.AIModelsPage })),
+);
 
 function ShellRoute() {
   return (
@@ -40,6 +43,7 @@ export function AppRoutes() {
           <Route element={<ReportsPage />} path="/reports" />
           <Route element={<SettingsPage />} path="/settings" />
           <Route element={<SystemPage />} path="/system" />
+          <Route element={<AIModelsPage />} path="/ai-models" />
           <Route element={<NotFoundPage />} path="*" />
         </Route>
       </Routes>

@@ -113,10 +113,7 @@ class ImageExtractor:
                         else:
                             try:
                                 words = await context.ocr_provider.extract_words(image)
-                                if (
-                                    len(words)
-                                    > context.settings.extraction_max_items
-                                ):
+                                if len(words) > context.settings.extraction_max_items:
                                     words = words[
                                         : context.settings.extraction_max_items
                                     ]

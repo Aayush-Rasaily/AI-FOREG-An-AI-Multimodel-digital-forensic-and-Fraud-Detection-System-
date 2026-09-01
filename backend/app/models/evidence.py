@@ -21,10 +21,21 @@ from backend.app.domain.evidence import EvidenceStatus
 from backend.app.infrastructure.database.base import Base
 
 if TYPE_CHECKING:
+    from backend.app.models.audio_ai import AudioAIFinding, AudioAnalysisRun
     from backend.app.models.case import Case
+    from backend.app.models.comparison import (
+        ComparisonRun,
+        Difference,
+        ReferenceEvidence,
+    )
     from backend.app.models.custody import ChainOfCustodyEvent
+    from backend.app.models.document_ai import DocumentAIFinding, DocumentAnalysisRun
     from backend.app.models.extraction import ExtractionRecord
+    from backend.app.models.forensics import AnalysisRun, Finding
+    from backend.app.models.image_ai import ImageAIFinding, ImageAnalysisRun
     from backend.app.models.processing import Artifact, ProcessingJob
+    from backend.app.models.signature_ai import SignatureVerificationRun
+    from backend.app.models.video_ai import VideoAIFinding, VideoAnalysisRun
 
 
 class Evidence(Base):
@@ -106,4 +117,98 @@ class Evidence(Base):
         cascade="all, delete-orphan",
         passive_deletes=True,
         order_by="ExtractionRecord.created_at",
+    )
+    analysis_runs: Mapped[list["AnalysisRun"]] = relationship(
+        back_populates="evidence",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        order_by="AnalysisRun.created_at",
+    )
+    findings: Mapped[list["Finding"]] = relationship(
+        back_populates="evidence",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        order_by="Finding.created_at",
+    )
+    image_analysis_runs: Mapped[list["ImageAnalysisRun"]] = relationship(
+        back_populates="evidence",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        order_by="ImageAnalysisRun.created_at",
+    )
+    image_ai_findings: Mapped[list["ImageAIFinding"]] = relationship(
+        back_populates="evidence",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        order_by="ImageAIFinding.created_at",
+    )
+    document_analysis_runs: Mapped[list["DocumentAnalysisRun"]] = relationship(
+        back_populates="evidence",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        order_by="DocumentAnalysisRun.created_at",
+    )
+    document_ai_findings: Mapped[list["DocumentAIFinding"]] = relationship(
+        back_populates="evidence",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        order_by="DocumentAIFinding.created_at",
+    )
+    signature_reference_runs: Mapped[list["SignatureVerificationRun"]] = relationship(
+        back_populates="reference_evidence",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        foreign_keys="SignatureVerificationRun.reference_evidence_id",
+        order_by="SignatureVerificationRun.created_at",
+    )
+    signature_questioned_runs: Mapped[list["SignatureVerificationRun"]] = relationship(
+        back_populates="questioned_evidence",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        foreign_keys="SignatureVerificationRun.questioned_evidence_id",
+        order_by="SignatureVerificationRun.created_at",
+    )
+    video_analysis_runs: Mapped[list["VideoAnalysisRun"]] = relationship(
+        back_populates="evidence",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        order_by="VideoAnalysisRun.created_at",
+    )
+    video_ai_findings: Mapped[list["VideoAIFinding"]] = relationship(
+        back_populates="evidence",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        order_by="VideoAIFinding.created_at",
+    )
+    audio_analysis_runs: Mapped[list["AudioAnalysisRun"]] = relationship(
+        back_populates="evidence",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        foreign_keys="AudioAnalysisRun.evidence_id",
+        order_by="AudioAnalysisRun.created_at",
+    )
+    audio_ai_findings: Mapped[list["AudioAIFinding"]] = relationship(
+        back_populates="evidence",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        order_by="AudioAIFinding.created_at",
+    )
+    reference_records: Mapped[list["ReferenceEvidence"]] = relationship(
+        back_populates="evidence",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        foreign_keys="ReferenceEvidence.evidence_id",
+    )
+    comparison_runs: Mapped[list["ComparisonRun"]] = relationship(
+        back_populates="evidence",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        foreign_keys="ComparisonRun.evidence_id",
+        order_by="ComparisonRun.created_at",
+    )
+    differences: Mapped[list["Difference"]] = relationship(
+        back_populates="evidence",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        order_by="Difference.created_at",
     )

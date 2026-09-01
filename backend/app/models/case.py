@@ -12,6 +12,7 @@ from backend.app.domain.case import CasePriority, CaseStatus
 from backend.app.infrastructure.database.base import Base
 
 if TYPE_CHECKING:
+    from backend.app.models.comparison import ReferenceEvidence
     from backend.app.models.evidence import Evidence
 
 
@@ -62,6 +63,11 @@ class Case(Base):
     )
 
     evidence: Mapped[list["Evidence"]] = relationship(
+        back_populates="case",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+    )
+    reference_evidence: Mapped[list["ReferenceEvidence"]] = relationship(
         back_populates="case",
         cascade="all, delete-orphan",
         passive_deletes=True,

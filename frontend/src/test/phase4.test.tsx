@@ -129,6 +129,54 @@ beforeEach(() => {
           status: "QUEUED",
         });
       }
+      if (url.includes(`/cases/${caseRecord.id}/references`)) {
+        return response({ items: [], total: 0, limit: 50, offset: 0 });
+      }
+      if (url.includes(`/evidence/${evidenceRecord.id}/comparison-summary`)) {
+        return response({
+          status: "UNAVAILABLE",
+          error_code: "COMPARISON_NOT_RUN",
+          comparison_run_id: null,
+          differences_count: 0,
+          type_counts: {},
+        });
+      }
+      if (url.includes(`/evidence/${evidenceRecord.id}/comparisons`)) {
+        return response({ items: [], total: 0, limit: 50, offset: 0 });
+      }
+      if (url.includes(`/evidence/${evidenceRecord.id}/differences`)) {
+        return response({ items: [], total: 0, limit: 100, offset: 0 });
+      }
+      if (url.includes(`/evidence/${evidenceRecord.id}/analysis-summary`)) {
+        return response({
+          status: "UNAVAILABLE",
+          error_code: "ANALYSIS_NOT_RUN",
+          analysis_run_id: null,
+          findings_count: 0,
+          severity_counts: {},
+        });
+      }
+      if (url.includes(`/evidence/${evidenceRecord.id}/analysis`)) {
+        return response({ items: [], total: 0, limit: 50, offset: 0 });
+      }
+      if (url.includes(`/evidence/${evidenceRecord.id}/findings`)) {
+        return response({ items: [], total: 0, limit: 100, offset: 0 });
+      }
+      if (url.includes(`/evidence/${evidenceRecord.id}/heatmaps`)) {
+        return response({ items: [], total: 0, limit: 50, offset: 0 });
+      }
+      if (url.includes("/image-analysis") || url.includes("/image-findings")) {
+        return response({ items: [], total: 0, limit: 50, offset: 0 });
+      }
+      if (
+        url.includes("/document-analysis") ||
+        url.includes("/document-findings")
+      ) {
+        return response({ items: [], total: 0, limit: 50, offset: 0 });
+      }
+      if (url.includes("/signature-analysis")) {
+        return response({ items: [], total: 0, limit: 50, offset: 0 });
+      }
       return response({ items: [], total: 0 });
     }),
   );

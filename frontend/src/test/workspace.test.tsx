@@ -51,7 +51,7 @@ describe("investigation workspace", () => {
 
     expect(await screen.findByText("Case ID: CASE-PENDING")).toBeInTheDocument();
     expect(screen.getAllByText("No evidence registered").length).toBeGreaterThan(0);
-    expect(screen.getByText("Analysis engine not connected")).toBeInTheDocument();
+    expect(screen.getAllByText("No evidence selected").length).toBeGreaterThan(0);
   });
 
   it("switches to the future jury tab", async () => {

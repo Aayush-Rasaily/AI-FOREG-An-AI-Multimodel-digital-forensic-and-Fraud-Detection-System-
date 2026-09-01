@@ -71,10 +71,7 @@ def normalize_bbox(
         )
     ):
         raise ValueError("Normalized coordinates must be between 0 and 1.")
-    if (
-        normalized.x + normalized.width > 1
-        or normalized.y + normalized.height > 1
-    ):
+    if normalized.x + normalized.width > 1 or normalized.y + normalized.height > 1:
         raise ValueError("Normalized boxes must remain inside the source.")
     return normalized
 
