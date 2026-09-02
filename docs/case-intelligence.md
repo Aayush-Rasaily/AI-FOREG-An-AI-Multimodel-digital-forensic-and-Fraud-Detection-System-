@@ -49,7 +49,7 @@ Package: `backend/app/case_intelligence/`
 | GET | `/api/v1/case-intelligence/{analysis_id}` | One run |
 | GET | `/api/v1/cases/{case_id}/relationships` | Relationships |
 | GET | `/api/v1/cases/{case_id}/conflicts` | Conflicts |
-| GET | `/api/v1/cases/{case_id}/timeline` | Timeline |
+| GET | `/api/v1/cases/{case_id}/intelligence/timeline` | Timeline |
 
 ## Database
 

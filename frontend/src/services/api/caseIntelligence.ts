@@ -34,5 +34,7 @@ export const caseIntelligenceService = {
   listConflicts: (caseId: string) =>
     apiClient.get<ApiResponse<CaseConflict[]>>(`/cases/${caseId}/conflicts`),
   listTimeline: (caseId: string) =>
-    apiClient.get<ApiResponse<TimelineEvent[]>>(`/cases/${caseId}/timeline`),
+    apiClient.get<ApiResponse<TimelineEvent[]>>(
+      `/cases/${caseId}/intelligence/timeline`,
+    ),
 };

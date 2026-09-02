@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 
 import { AiJuryPanel } from "../components/investigation/AiJuryPanel";
-import { CaseTimelinePanel } from "../components/investigation/CaseTimelinePanel";
+import { TimelinePanel } from "../components/investigation/TimelinePanel";
 import { ForensicReportPanel } from "../components/investigation/ForensicReportPanel";
 import { AnalysisPanel } from "../components/investigation/AnalysisPanel";
 import { ComparisonPanel } from "../components/investigation/ComparisonPanel";
@@ -179,7 +179,7 @@ export function InvestigationWorkspacePage() {
             <FindingsPanel evidence={primaryEvidence} />
           </div>
         )}
-        {activeTab === "timeline" && <CaseTimelinePanel caseId={caseId} />}
+        {activeTab === "timeline" && <TimelinePanel caseId={caseId} />}
         {activeTab === "report" && <ForensicReportPanel caseId={caseId} />}
       </div>
 

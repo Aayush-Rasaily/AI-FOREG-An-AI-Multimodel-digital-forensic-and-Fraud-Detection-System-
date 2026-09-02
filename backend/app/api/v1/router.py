@@ -20,6 +20,7 @@ from backend.app.api.v1.endpoints.processing import router as processing_router
 from backend.app.api.v1.endpoints.reports import router as reports_router
 from backend.app.api.v1.endpoints.signature_ai import router as signature_ai_router
 from backend.app.api.v1.endpoints.system import router as system_router
+from backend.app.api.v1.endpoints.timeline import router as timeline_router
 from backend.app.api.v1.endpoints.video_ai import router as video_ai_router
 
 router = APIRouter()
@@ -27,6 +28,7 @@ router.include_router(health_router)
 router.include_router(cases_router)
 router.include_router(case_intelligence_router)
 router.include_router(reports_router)
+router.include_router(timeline_router)
 router.include_router(evidence_router)
 router.include_router(extraction_router)
 router.include_router(forensics_router)

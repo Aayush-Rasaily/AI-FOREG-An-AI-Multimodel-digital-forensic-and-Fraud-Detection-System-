@@ -131,9 +131,9 @@ async def list_case_conflicts(
 
 
 @router.get(
-    "/cases/{case_id}/timeline",
+    "/cases/{case_id}/intelligence/timeline",
     response_model=ApiResponse[list[TimelineEventResponse]],
-    summary="List case timeline for latest run",
+    summary="List case intelligence timeline for latest run",
 )
 async def list_case_timeline(
     case_id: UUID,

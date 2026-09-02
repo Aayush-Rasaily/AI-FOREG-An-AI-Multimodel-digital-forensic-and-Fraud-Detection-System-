@@ -258,7 +258,7 @@ async def test_api_timeline_endpoint(phase6g_client) -> None:
         latest = await client.get(f"/api/v1/cases/{case['id']}/intelligence/latest")
         if latest.status_code == 200:
             break
-    timeline = await client.get(f"/api/v1/cases/{case['id']}/timeline")
+    timeline = await client.get(f"/api/v1/cases/{case['id']}/intelligence/timeline")
     assert timeline.status_code == 200
     assert isinstance(timeline.json()["data"], list)
 

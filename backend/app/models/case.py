@@ -16,6 +16,7 @@ if TYPE_CHECKING:
     from backend.app.models.comparison import ReferenceEvidence
     from backend.app.models.evidence import Evidence
     from backend.app.models.forensic_report import ForensicReport
+    from backend.app.models.timeline import InvestigationTimeline
 
 
 class Case(Base):
@@ -85,4 +86,10 @@ class Case(Base):
         cascade="all, delete-orphan",
         passive_deletes=True,
         order_by="ForensicReport.created_at",
+    )
+    investigation_timelines: Mapped[list["InvestigationTimeline"]] = relationship(
+        back_populates="case",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        order_by="InvestigationTimeline.created_at",
     )

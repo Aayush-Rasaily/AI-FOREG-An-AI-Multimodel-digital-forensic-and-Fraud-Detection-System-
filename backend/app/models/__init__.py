@@ -42,6 +42,11 @@ from backend.app.models.image_ai import (
 )
 from backend.app.models.processing import Artifact, ProcessingJob
 from backend.app.models.signature_ai import SignatureVerificationRun
+from backend.app.models.timeline import (
+    InvestigationTimeline,
+    TimelineConflictRecord,
+    TimelineEventRecord,
+)
 from backend.app.models.video_ai import (
     VideoAIFinding,
     VideoAIFindingRegion,
@@ -78,9 +83,12 @@ __all__ = [
     "ImageAnalysisRun",
     "InferenceJob",
     "InferenceLog",
+    "InvestigationTimeline",
     "ProcessingJob",
     "ReferenceEvidence",
     "SignatureVerificationRun",
+    "TimelineConflictRecord",
+    "TimelineEventRecord",
     "VideoAIFinding",
     "VideoAIFindingRegion",
     "VideoAnalysisRun",

@@ -33,6 +33,7 @@ if TYPE_CHECKING:
     from backend.app.case_intelligence.service import CaseIntelligenceService
     from backend.app.fusion.service import FusionService
     from backend.app.reporting.service import ReportService
+    from backend.app.timeline.service import TimelineService
 
 SessionDependency = Annotated[AsyncSession, Depends(get_db_session)]
 
@@ -336,6 +337,24 @@ def get_report_service(
     )
 
 
+def get_timeline_service(
+    session: SessionDependency,
+    storage: Annotated[StorageService, Depends(get_storage_service)],
+    hash_service: Annotated[HashService, Depends(get_hash_service)],
+    settings: RuntimeSettingsDependency,
+) -> TimelineService:
+    """Compose the investigation timeline service for one request."""
+
+    from backend.app.timeline.service import TimelineService
+
+    return TimelineService(
+        session=session,
+        storage=storage,
+        hash_service=hash_service,
+        settings=settings,
+    )
+
+
 __all__ = [
     "SessionDependency",
     "get_ai_service",
@@ -358,4 +377,5 @@ __all__ = [
     "get_fusion_service",
     "get_case_intelligence_service",
     "get_report_service",
+    "get_timeline_service",
 ]
