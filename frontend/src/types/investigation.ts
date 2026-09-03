@@ -5,9 +5,12 @@ export type InvestigationTab =
   | "comparison"
   | "findings"
   | "timeline"
+  | "correlations"
+  | "entities"
   | "jury"
   | "metadata"
-  | "report";
+  | "report"
+  | "audit";
 
 export type FindingState =
   | "confirmed"

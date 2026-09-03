@@ -26,11 +26,15 @@ from backend.app.infrastructure.storage.local import LocalStorage
 
 if TYPE_CHECKING:
     from backend.app.ai.audio.service import AudioAnalysisService
+    from backend.app.audit.service import AuditService
+    from backend.app.system.service import SystemService
     from backend.app.ai.document.service import DocumentAnalysisService
     from backend.app.ai.document.signature.service import SignatureVerificationService
     from backend.app.ai.image.service import ImageAnalysisService
     from backend.app.ai.video.service import VideoAnalysisService
     from backend.app.case_intelligence.service import CaseIntelligenceService
+    from backend.app.correlation.service import CorrelationService
+    from backend.app.entities.service import EntityService
     from backend.app.fusion.service import FusionService
     from backend.app.reporting.service import ReportService
     from backend.app.timeline.service import TimelineService
@@ -355,9 +359,67 @@ def get_timeline_service(
     )
 
 
+def get_correlation_service(
+    session: SessionDependency,
+    storage: Annotated[StorageService, Depends(get_storage_service)],
+    hash_service: Annotated[HashService, Depends(get_hash_service)],
+    settings: RuntimeSettingsDependency,
+) -> CorrelationService:
+    """Compose the cross-evidence correlation service for one request."""
+
+    from backend.app.correlation.service import CorrelationService
+
+    return CorrelationService(
+        session=session,
+        storage=storage,
+        hash_service=hash_service,
+        settings=settings,
+    )
+
+
+def get_entity_service(
+    session: SessionDependency,
+    storage: Annotated[StorageService, Depends(get_storage_service)],
+    hash_service: Annotated[HashService, Depends(get_hash_service)],
+    settings: RuntimeSettingsDependency,
+) -> EntityService:
+    """Compose the entity-resolution service for one request."""
+
+    from backend.app.entities.service import EntityService
+
+    return EntityService(
+        session=session,
+        storage=storage,
+        hash_service=hash_service,
+        settings=settings,
+    )
+
+
+def get_audit_service(
+    session: SessionDependency,
+) -> AuditService:
+    """Compose the audit service for one request."""
+
+    from backend.app.audit.service import AuditService
+
+    return AuditService(session=session)
+
+
+def get_system_service(
+    session: SessionDependency,
+    settings: RuntimeSettingsDependency,
+) -> SystemService:
+    """Compose the system administration service for one request."""
+
+    from backend.app.system.service import SystemService
+
+    return SystemService(session=session, settings=settings)
+
+
 __all__ = [
     "SessionDependency",
     "get_ai_service",
+    "get_audit_service",
     "get_case_service",
     "get_comparison_service",
     "get_db_session",
@@ -372,10 +434,13 @@ __all__ = [
     "get_runtime_settings",
     "get_signature_verification_service",
     "get_storage_service",
+    "get_system_service",
     "get_video_analysis_service",
     "get_audio_analysis_service",
     "get_fusion_service",
     "get_case_intelligence_service",
     "get_report_service",
     "get_timeline_service",
+    "get_correlation_service",
+    "get_entity_service",
 ]

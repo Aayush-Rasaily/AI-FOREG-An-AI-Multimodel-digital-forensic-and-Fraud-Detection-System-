@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   ArrowLeft,
@@ -9,7 +9,9 @@ import {
 
 import { AiJuryPanel } from "../components/investigation/AiJuryPanel";
 import { TimelinePanel } from "../components/investigation/TimelinePanel";
-import { ForensicReportPanel } from "../components/investigation/ForensicReportPanel";
+import { EvidenceCorrelationPanel } from "../components/investigation/EvidenceCorrelationPanel";
+import { AuditTrailPanel } from "../components/investigation/AuditTrailPanel";
+import { ReportPanel } from "../components/investigation/ReportPanel";
 import { AnalysisPanel } from "../components/investigation/AnalysisPanel";
 import { ComparisonPanel } from "../components/investigation/ComparisonPanel";
 import { DocumentAnalysisPanel } from "../components/investigation/DocumentAnalysisPanel";
@@ -36,6 +38,12 @@ import { ApiClientError } from "../services/api/client";
 import type { InvestigationTab } from "../types/investigation";
 import { EvidenceViewer } from "../components/evidence/EvidenceViewer";
 
+const EntityGraphPanel = lazy(() =>
+  import("../components/investigation/EntityGraphPanel").then((module) => ({
+    default: module.EntityGraphPanel,
+  })),
+);
+
 const tabs: TabOption<InvestigationTab>[] = [
   { value: "overview", label: "Overview" },
   { value: "evidence", label: "Evidence" },
@@ -43,9 +51,12 @@ const tabs: TabOption<InvestigationTab>[] = [
   { value: "comparison", label: "Comparison" },
   { value: "findings", label: "Findings" },
   { value: "timeline", label: "Timeline" },
+  { value: "correlations", label: "Correlations" },
+  { value: "entities", label: "Entity Graph" },
   { value: "jury", label: "AI Jury" },
   { value: "metadata", label: "Metadata" },
   { value: "report", label: "Report" },
+  { value: "audit", label: "Audit Trail" },
 ];
 
 export function InvestigationWorkspacePage() {
@@ -180,7 +191,16 @@ export function InvestigationWorkspacePage() {
           </div>
         )}
         {activeTab === "timeline" && <TimelinePanel caseId={caseId} />}
-        {activeTab === "report" && <ForensicReportPanel caseId={caseId} />}
+        {activeTab === "correlations" && (
+          <EvidenceCorrelationPanel caseId={caseId} />
+        )}
+        {activeTab === "entities" && (
+          <Suspense fallback={<LoadingState label="Loading entity graph…" />}>
+            <EntityGraphPanel caseId={caseId} />
+          </Suspense>
+        )}
+        {activeTab === "report" && <ReportPanel caseId={caseId} />}
+        {activeTab === "audit" && <AuditTrailPanel caseId={caseId} />}
       </div>
 
       <div className="mt-5 flex items-center gap-2 text-[11px] text-slate-600">

@@ -14,6 +14,8 @@ from backend.app.infrastructure.database.base import Base
 if TYPE_CHECKING:
     from backend.app.models.case_intelligence import CaseIntelligenceRun
     from backend.app.models.comparison import ReferenceEvidence
+    from backend.app.models.correlation import CorrelationAnalysisRun
+    from backend.app.models.entity import EntityResolutionRun
     from backend.app.models.evidence import Evidence
     from backend.app.models.forensic_report import ForensicReport
     from backend.app.models.timeline import InvestigationTimeline
@@ -92,4 +94,16 @@ class Case(Base):
         cascade="all, delete-orphan",
         passive_deletes=True,
         order_by="InvestigationTimeline.created_at",
+    )
+    correlation_analysis_runs: Mapped[list["CorrelationAnalysisRun"]] = relationship(
+        back_populates="case",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        order_by="CorrelationAnalysisRun.created_at",
+    )
+    entity_resolution_runs: Mapped[list["EntityResolutionRun"]] = relationship(
+        back_populates="case",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        order_by="EntityResolutionRun.created_at",
     )

@@ -62,8 +62,13 @@ def _flatten_content(content: dict[str, Any]) -> list[str]:
         lines.append(f"Not analyzed: {summary.get('not_analyzed_evidence', 0)}")
         lines.append("")
 
-    inventory = sections.get("evidence_inventory", [])
-    if inventory:
+    inv_raw = sections.get("evidence_inventory", {})
+    inventory = (
+        inv_raw.get("items", inv_raw)
+        if isinstance(inv_raw, dict)
+        else inv_raw
+    )
+    if inventory and isinstance(inventory, list):
         lines.append("EVIDENCE INVENTORY")
         for item in inventory:
             lines.append(

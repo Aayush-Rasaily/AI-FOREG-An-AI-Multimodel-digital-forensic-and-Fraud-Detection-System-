@@ -6,6 +6,7 @@ import hashlib
 import io
 import logging
 from datetime import UTC, datetime
+from typing import Any
 from uuid import UUID, uuid4
 
 from sqlalchemy.exc import IntegrityError
@@ -119,11 +120,19 @@ class ReportService:
                 max_bytes=self.settings.max_upload_size_mb * 1024 * 1024,
                 chunk_size=self.settings.upload_chunk_size_bytes,
             )
-            intelligence_run_id = result.provenance.get("case_intelligence_run_id")
+            intelligence_run_id = result.provenance.get(
+                "case_intelligence_run_id",
+            )
             report.status = ReportStatus.COMPLETED
             report.content_json = result.content
             report.evidence_hashes_json = list(
                 result.provenance.get("evidence_hashes", [])
+            )
+            report.report_checksum = result.content.get(
+                "report_checksum",
+            )
+            report.included_analysis_run_ids_json = (
+                result.metadata.get("included_analysis_run_ids")
             )
             report.pdf_storage_key = storage_key
             report.pdf_sha256 = pdf_sha256
@@ -217,11 +226,34 @@ class ReportService:
     async def get_pdf_storage_key(self, report_id: UUID) -> tuple[str, str]:
         report = await self.repository.get_report(report_id)
         if report is None:
-            raise ResourceNotFoundError("The requested forensic report was not found.")
-        if report.status != ReportStatus.COMPLETED or not report.pdf_storage_key:
-            raise ResourceNotFoundError("The report PDF is not available.")
+            raise ResourceNotFoundError(
+                "The requested forensic report was not found.",
+            )
+        if (
+            report.status != ReportStatus.COMPLETED
+            or not report.pdf_storage_key
+        ):
+            raise ResourceNotFoundError(
+                "The report PDF is not available.",
+            )
         filename = f"forensic-report-{report.id}.pdf"
         return report.pdf_storage_key, filename
+
+    async def get_report_content(
+        self,
+        report_id: UUID,
+    ) -> dict[str, Any]:
+        """Return the completed report content dict."""
+        report = await self.repository.get_report(report_id)
+        if report is None:
+            raise ResourceNotFoundError(
+                "The requested forensic report was not found.",
+            )
+        if report.status != ReportStatus.COMPLETED:
+            raise ResourceNotFoundError(
+                "The report is not yet completed.",
+            )
+        return dict(report.content_json or {})
 
     async def _fail_report(
         self,
@@ -238,7 +270,9 @@ class ReportService:
         await self.session.commit()
 
     @staticmethod
-    def _report_response(report: ForensicReport) -> ForensicReportResponse:
+    def _report_response(
+        report: ForensicReport,
+    ) -> ForensicReportResponse:
         return ForensicReportResponse(
             id=report.id,
             case_id=report.case_id,
@@ -246,12 +280,20 @@ class ReportService:
             report_version=report.report_version,
             engine_version=report.engine_version,
             fusion_policy_version=report.fusion_policy_version,
-            case_intelligence_policy_version=report.case_intelligence_policy_version,
-            case_intelligence_run_id=report.case_intelligence_run_id,
+            case_intelligence_policy_version=(
+                report.case_intelligence_policy_version
+            ),
+            case_intelligence_run_id=(
+                report.case_intelligence_run_id
+            ),
             evidence_count=len(report.evidence_hashes_json),
             evidence_hashes=list(report.evidence_hashes_json),
             pdf_sha256=report.pdf_sha256,
             has_pdf=bool(report.pdf_storage_key),
+            report_checksum=report.report_checksum,
+            included_analysis_run_ids=(
+                report.included_analysis_run_ids_json or {}
+            ),
             created_at=report.created_at,
             started_at=report.started_at,
             completed_at=report.completed_at,
@@ -261,14 +303,21 @@ class ReportService:
             provenance=report.provenance_json,
         )
 
-    def _detail_response(self, report: ForensicReport) -> ForensicReportDetailResponse:
+    def _detail_response(
+        self,
+        report: ForensicReport,
+    ) -> ForensicReportDetailResponse:
         base = self._report_response(report)
-        sections = (
-            report.content_json.get("sections", {}) if report.content_json else {}
-        )
+        content = report.content_json or {}
+        sections = content.get("sections", {})
         return ForensicReportDetailResponse(
             **base.model_dump(),
-            content=report.content_json,
-            executive_summary=sections.get("executive_summary", {}),
+            content=content,
+            executive_summary=sections.get(
+                "executive_summary", {},
+            ),
             explainability=sections.get("explainability", {}),
+            section_order=list(
+                content.get("section_order", []),
+            ),
         )

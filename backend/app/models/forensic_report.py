@@ -102,4 +102,11 @@ class ForensicReport(Base):
         nullable=True,
     )
 
+    report_checksum: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    included_analysis_run_ids_json: Mapped[dict[str, Any] | None] = mapped_column(
+        "included_analysis_run_ids",
+        JSON,
+        nullable=True,
+    )
+
     case: Mapped["Case"] = relationship(back_populates="forensic_reports")

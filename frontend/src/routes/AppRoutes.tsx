@@ -17,7 +17,11 @@ const InvestigationsPage = lazy(() =>
 const NotFoundPage = lazy(() => import("../pages/NotFoundPage").then((module) => ({ default: module.NotFoundPage })));
 const ReportsPage = lazy(() => import("../pages/ReportsPage").then((module) => ({ default: module.ReportsPage })));
 const SettingsPage = lazy(() => import("../pages/SettingsPage").then((module) => ({ default: module.SettingsPage })));
-const SystemPage = lazy(() => import("../pages/SystemPage").then((module) => ({ default: module.SystemPage })));
+const SystemDashboardPage = lazy(() =>
+  import("../pages/SystemDashboardPage").then((module) => ({
+    default: module.SystemDashboardPage,
+  })),
+);
 const AIModelsPage = lazy(() =>
   import("../pages/AIModelsPage").then((module) => ({ default: module.AIModelsPage })),
 );
@@ -42,7 +46,7 @@ export function AppRoutes() {
           <Route element={<EvidencePage />} path="/evidence" />
           <Route element={<ReportsPage />} path="/reports" />
           <Route element={<SettingsPage />} path="/settings" />
-          <Route element={<SystemPage />} path="/system" />
+          <Route element={<SystemDashboardPage />} path="/system" />
           <Route element={<AIModelsPage />} path="/ai-models" />
           <Route element={<NotFoundPage />} path="*" />
         </Route>

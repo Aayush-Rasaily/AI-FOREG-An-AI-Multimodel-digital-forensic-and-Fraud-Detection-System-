@@ -1,6 +1,7 @@
 """SQLAlchemy persistence models."""
 
 from backend.app.models.ai import AIModelRecord, InferenceJob, InferenceLog
+from backend.app.models.audit import AuditEvent
 from backend.app.models.audio_ai import (
     AudioAIFinding,
     AudioAIFindingRegion,
@@ -20,11 +21,22 @@ from backend.app.models.comparison import (
     DifferenceRegion,
     ReferenceEvidence,
 )
+from backend.app.models.correlation import (
+    CorrelationAnalysisRun,
+    CorrelationSupportRecord,
+    EvidenceCorrelationRecord,
+)
 from backend.app.models.custody import ChainOfCustodyEvent
 from backend.app.models.document_ai import (
     DocumentAIFinding,
     DocumentAIFindingRegion,
     DocumentAnalysisRun,
+)
+from backend.app.models.entity import (
+    EntityRelationshipRecord,
+    EntityResolutionRun,
+    EntitySupportRecord,
+    InvestigationEntityRecord,
 )
 from backend.app.models.evidence import Evidence
 from backend.app.models.extraction import ExtractionRecord
@@ -42,6 +54,7 @@ from backend.app.models.image_ai import (
 )
 from backend.app.models.processing import Artifact, ProcessingJob
 from backend.app.models.signature_ai import SignatureVerificationRun
+from backend.app.models.system import SystemDiagnosticsRun
 from backend.app.models.timeline import (
     InvestigationTimeline,
     TimelineConflictRecord,
@@ -56,6 +69,7 @@ from backend.app.models.video_ai import (
 __all__ = [
     "AIModelRecord",
     "AnalysisRun",
+    "AuditEvent",
     "Artifact",
     "Case",
     "CaseConflictRecord",
@@ -65,12 +79,18 @@ __all__ = [
     "CaseTimelineEventRecord",
     "ChainOfCustodyEvent",
     "ComparisonRun",
+    "CorrelationAnalysisRun",
+    "CorrelationSupportRecord",
     "Difference",
     "DifferenceRegion",
     "DocumentAIFinding",
     "DocumentAIFindingRegion",
     "DocumentAnalysisRun",
+    "EntityRelationshipRecord",
+    "EntityResolutionRun",
+    "EntitySupportRecord",
     "Evidence",
+    "EvidenceCorrelationRecord",
     "ExtractionRecord",
     "Finding",
     "FindingRegion",
@@ -83,10 +103,12 @@ __all__ = [
     "ImageAnalysisRun",
     "InferenceJob",
     "InferenceLog",
+    "InvestigationEntityRecord",
     "InvestigationTimeline",
     "ProcessingJob",
     "ReferenceEvidence",
     "SignatureVerificationRun",
+    "SystemDiagnosticsRun",
     "TimelineConflictRecord",
     "TimelineEventRecord",
     "VideoAIFinding",

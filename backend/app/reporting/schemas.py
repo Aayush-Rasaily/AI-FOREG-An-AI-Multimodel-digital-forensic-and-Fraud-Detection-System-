@@ -22,6 +22,10 @@ class ForensicReportResponse(BaseModel):
     evidence_hashes: list[str]
     pdf_sha256: str | None
     has_pdf: bool
+    report_checksum: str | None = None
+    included_analysis_run_ids: dict[str, Any] = Field(
+        default_factory=dict,
+    )
     created_at: datetime
     started_at: datetime | None
     completed_at: datetime | None
@@ -42,6 +46,7 @@ class ForensicReportDetailResponse(ForensicReportResponse):
     content: dict[str, Any] = Field(default_factory=dict)
     executive_summary: dict[str, Any] = Field(default_factory=dict)
     explainability: dict[str, Any] = Field(default_factory=dict)
+    section_order: list[str] = Field(default_factory=list)
 
 
 class ForensicReportStatusResponse(BaseModel):

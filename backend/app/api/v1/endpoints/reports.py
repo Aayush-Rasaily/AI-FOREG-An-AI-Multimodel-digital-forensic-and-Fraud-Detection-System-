@@ -5,7 +5,7 @@ from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, BackgroundTasks, Depends, Query
-from fastapi.responses import StreamingResponse
+from fastapi.responses import Response, StreamingResponse
 
 from backend.app.api.dependencies import get_report_service, get_storage_service
 from backend.app.application.services.storage import StorageService
@@ -114,16 +114,36 @@ async def get_forensic_report_status(
 
 @router.get(
     "/reports/{report_id}/download",
-    summary="Download forensic report PDF",
+    summary="Download forensic report",
 )
 async def download_forensic_report(
     report_id: UUID,
     service: ReportServiceDependency,
     storage: StorageServiceDependency,
-) -> StreamingResponse:
-    """Stream the generated report PDF."""
+    fmt: Annotated[
+        str | None, Query(alias="format")
+    ] = None,
+) -> Response:
+    """Download a report in JSON, Markdown, HTML, or PDF."""
 
-    storage_key, filename = await service.get_pdf_storage_key(report_id)
+    if fmt in ("json", "md", "html"):
+        from backend.app.reporting.renderer import render_report
+
+        content = await service.get_report_content(report_id)
+        payload, media_type, suffix = render_report(content, fmt)  # type: ignore[arg-type]
+        return Response(
+            content=payload,
+            media_type=media_type,
+            headers={
+                "Content-Disposition": (
+                    f'attachment; filename="{suffix}"'
+                ),
+            },
+        )
+
+    storage_key, filename = await service.get_pdf_storage_key(
+        report_id,
+    )
 
     async def stream() -> AsyncIterator[bytes]:
         async with storage.open(storage_key) as handle:
@@ -133,5 +153,9 @@ async def download_forensic_report(
     return StreamingResponse(
         stream(),
         media_type="application/pdf",
-        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+        headers={
+            "Content-Disposition": (
+                f'attachment; filename="{filename}"'
+            ),
+        },
     )

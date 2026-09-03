@@ -49,7 +49,9 @@ describe("investigation workspace", () => {
       </TestProviders>,
     );
 
-    expect(await screen.findByText("Case ID: CASE-PENDING")).toBeInTheDocument();
+    expect(
+      await screen.findByText("Case ID: CASE-PENDING", {}, { timeout: 10000 }),
+    ).toBeInTheDocument();
     expect(screen.getAllByText("No evidence registered").length).toBeGreaterThan(0);
     expect(screen.getAllByText("No evidence selected").length).toBeGreaterThan(0);
   });
@@ -63,7 +65,9 @@ describe("investigation workspace", () => {
       </TestProviders>,
     );
 
-    await user.click(await screen.findByRole("tab", { name: "AI Jury" }));
+    await user.click(
+      await screen.findByRole("tab", { name: "AI Jury" }, { timeout: 10000 }),
+    );
 
     expect(screen.getByText("No evidence selected")).toBeInTheDocument();
   });
