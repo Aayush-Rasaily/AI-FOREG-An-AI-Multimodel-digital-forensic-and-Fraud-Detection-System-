@@ -101,6 +101,11 @@ class Settings(BaseSettings):
     cors_origins: list[str] = Field(default_factory=list)
     jwt_secret: SecretStr | None = None
     jwt_algorithm: str = "HS256"
+    auth_access_token_minutes: int = Field(default=15, ge=1, le=1440)
+    auth_refresh_token_days: int = Field(default=7, ge=1, le=90)
+    auth_remember_me_days: int = Field(default=30, ge=1, le=180)
+    auth_bootstrap_username: str = "admin"
+    auth_bootstrap_password: SecretStr | None = None
 
     @property
     def environment(self) -> str:
@@ -113,6 +118,12 @@ class Settings(BaseSettings):
         """Return the version-one API prefix for existing integrations."""
 
         return self.api_prefix
+
+    @property
+    def auth_required(self) -> bool:
+        """Return True when JWT authentication is configured."""
+
+        return self.jwt_secret is not None
 
 
 @lru_cache

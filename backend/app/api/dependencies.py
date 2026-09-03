@@ -27,6 +27,8 @@ from backend.app.infrastructure.storage.local import LocalStorage
 if TYPE_CHECKING:
     from backend.app.ai.audio.service import AudioAnalysisService
     from backend.app.audit.service import AuditService
+    from backend.app.collaboration.service import CollaborationService
+    from backend.app.intelligence.service import InvestigationIntelligenceService
     from backend.app.system.service import SystemService
     from backend.app.ai.document.service import DocumentAnalysisService
     from backend.app.ai.document.signature.service import SignatureVerificationService
@@ -416,11 +418,35 @@ def get_system_service(
     return SystemService(session=session, settings=settings)
 
 
+def get_collaboration_service(
+    session: SessionDependency,
+) -> CollaborationService:
+    """Compose the collaboration service for one request."""
+
+    from backend.app.collaboration.service import CollaborationService
+
+    return CollaborationService(session=session)
+
+
+def get_intelligence_service(
+    session: SessionDependency,
+) -> InvestigationIntelligenceService:
+    """Compose the investigation intelligence service for one request."""
+
+    from backend.app.intelligence.service import (
+        InvestigationIntelligenceService,
+    )
+
+    return InvestigationIntelligenceService(session=session)
+
+
 __all__ = [
     "SessionDependency",
     "get_ai_service",
     "get_audit_service",
     "get_case_service",
+    "get_collaboration_service",
+    "get_intelligence_service",
     "get_comparison_service",
     "get_db_session",
     "get_document_analysis_service",

@@ -9,11 +9,14 @@ import {
   Search,
   Settings,
   Shield,
+  Users,
   X,
   Cpu,
   BrainCircuit,
+  UserRound,
 } from "lucide-react";
 
+import { useOptionalAuth } from "../../context/AuthContext";
 import { cn } from "../../lib/utils";
 
 interface SidebarProps {
@@ -27,6 +30,7 @@ interface NavigationItem {
   label: string;
   to: string;
   icon: ComponentType<{ size?: number; strokeWidth?: number }>;
+  permission?: string;
 }
 
 const workspaceItems: NavigationItem[] = [
@@ -38,7 +42,14 @@ const workspaceItems: NavigationItem[] = [
 
 const systemItems: NavigationItem[] = [
   { label: "AI Models", to: "/ai-models", icon: BrainCircuit },
-  { label: "System", to: "/system", icon: Cpu },
+  { label: "System", to: "/system", icon: Cpu, permission: "system.monitor" },
+  {
+    label: "Users",
+    to: "/users",
+    icon: Users,
+    permission: "admin.manage_users",
+  },
+  { label: "Profile", to: "/profile", icon: UserRound },
   { label: "Settings", to: "/settings", icon: Settings },
 ];
 
@@ -84,6 +95,20 @@ export function Sidebar({
   onClose,
   onToggle,
 }: SidebarProps) {
+  const auth = useOptionalAuth();
+  const visibleSystemItems = systemItems.filter((item) => {
+    if (!item.permission) {
+      return true;
+    }
+    if (!auth) {
+      return true;
+    }
+    if (!auth.user) {
+      return false;
+    }
+    return auth.hasPermission(item.permission);
+  });
+
   return (
     <>
       {mobileOpen && (
@@ -149,7 +174,7 @@ export function Sidebar({
             )}
             <NavigationGroup
               collapsed={collapsed}
-              items={systemItems}
+              items={visibleSystemItems}
               onNavigate={onClose}
             />
           </div>
@@ -176,4 +201,3 @@ export function Sidebar({
     </>
   );
 }
-

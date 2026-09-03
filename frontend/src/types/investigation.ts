@@ -10,7 +10,9 @@ export type InvestigationTab =
   | "jury"
   | "metadata"
   | "report"
-  | "audit";
+  | "summary"
+  | "audit"
+  | "collaboration";
 
 export type FindingState =
   | "confirmed"

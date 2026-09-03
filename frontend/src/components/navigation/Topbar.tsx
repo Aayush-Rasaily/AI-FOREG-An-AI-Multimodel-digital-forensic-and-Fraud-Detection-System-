@@ -1,7 +1,9 @@
 import { Menu, Bell, Command, CircleHelp } from "lucide-react";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
+import { UserAvatar } from "../auth/UserAvatar";
 import { appConfig } from "../../config/env";
+import { useOptionalAuth } from "../../context/AuthContext";
 import { StatusIndicator } from "../ui/StatusIndicator";
 import { Tooltip } from "../ui/Tooltip";
 
@@ -16,10 +18,13 @@ const pageTitles: Record<string, string> = {
   "/reports": "Reports",
   "/settings": "Settings",
   "/system": "System",
+  "/profile": "Profile",
+  "/users": "Users",
 };
 
 export function Topbar({ onOpenMenu }: TopbarProps) {
   const location = useLocation();
+  const auth = useOptionalAuth();
   const title = pageTitles[location.pathname] || "Investigation workspace";
 
   return (
@@ -41,7 +46,11 @@ export function Topbar({ onOpenMenu }: TopbarProps) {
         </div>
       </div>
       <div className="flex items-center gap-1 sm:gap-3">
-        <StatusIndicator className="hidden sm:inline-flex" label="API status pending" tone="pending" />
+        <StatusIndicator
+          className="hidden sm:inline-flex"
+          label="API status pending"
+          tone="pending"
+        />
         <Tooltip label="Command palette">
           <button
             aria-label="Open command palette"
@@ -69,11 +78,20 @@ export function Topbar({ onOpenMenu }: TopbarProps) {
             <Bell aria-hidden="true" size={17} />
           </button>
         </Tooltip>
-        <div className="ml-1 hidden h-7 w-7 items-center justify-center rounded-full border border-slate-700 bg-slate-800 text-[10px] font-semibold text-slate-300 sm:flex">
-          IN
-        </div>
+        {auth?.user ? (
+          <Link
+            aria-label="Open profile"
+            className="ml-1 hidden sm:block"
+            to="/profile"
+          >
+            <UserAvatar name={auth.user.display_name} />
+          </Link>
+        ) : (
+          <div className="ml-1 hidden h-7 w-7 items-center justify-center rounded-full border border-slate-700 bg-slate-800 text-[10px] font-semibold text-slate-300 sm:flex">
+            IN
+          </div>
+        )}
       </div>
     </header>
   );
 }
-

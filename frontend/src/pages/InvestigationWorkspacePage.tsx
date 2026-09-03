@@ -11,7 +11,16 @@ import { AiJuryPanel } from "../components/investigation/AiJuryPanel";
 import { TimelinePanel } from "../components/investigation/TimelinePanel";
 import { EvidenceCorrelationPanel } from "../components/investigation/EvidenceCorrelationPanel";
 import { AuditTrailPanel } from "../components/investigation/AuditTrailPanel";
+import { ActivityPanel } from "../components/collaboration/ActivityPanel";
+import { AssignmentsPanel } from "../components/collaboration/AssignmentsPanel";
+import { CaseMembersPanel } from "../components/collaboration/CaseMembersPanel";
+import { CommentsPanel } from "../components/collaboration/CommentsPanel";
+import { NotificationPanel } from "../components/collaboration/NotificationPanel";
+import { ReviewPanel } from "../components/collaboration/ReviewPanel";
+import { TaskBoard } from "../components/collaboration/TaskBoard";
+import { WorkflowPanel } from "../components/collaboration/WorkflowPanel";
 import { ReportPanel } from "../components/investigation/ReportPanel";
+import { InvestigationSummaryPanel } from "../components/investigation/InvestigationSummaryPanel";
 import { AnalysisPanel } from "../components/investigation/AnalysisPanel";
 import { ComparisonPanel } from "../components/investigation/ComparisonPanel";
 import { DocumentAnalysisPanel } from "../components/investigation/DocumentAnalysisPanel";
@@ -56,6 +65,8 @@ const tabs: TabOption<InvestigationTab>[] = [
   { value: "jury", label: "AI Jury" },
   { value: "metadata", label: "Metadata" },
   { value: "report", label: "Report" },
+  { value: "summary", label: "Summary" },
+  { value: "collaboration", label: "Collaboration" },
   { value: "audit", label: "Audit Trail" },
 ];
 
@@ -200,6 +211,27 @@ export function InvestigationWorkspacePage() {
           </Suspense>
         )}
         {activeTab === "report" && <ReportPanel caseId={caseId} />}
+        {activeTab === "summary" && (
+          <InvestigationSummaryPanel caseId={caseId} />
+        )}
+        {activeTab === "collaboration" && (
+          <div className="space-y-4">
+            <WorkflowPanel caseId={caseId} />
+            <div className="grid gap-4 xl:grid-cols-2">
+              <CaseMembersPanel caseId={caseId} />
+              <NotificationPanel />
+            </div>
+            <div className="grid gap-4 xl:grid-cols-2">
+              <TaskBoard caseId={caseId} />
+              <AssignmentsPanel caseId={caseId} />
+            </div>
+            <div className="grid gap-4 xl:grid-cols-2">
+              <CommentsPanel caseId={caseId} />
+              <ReviewPanel caseId={caseId} />
+            </div>
+            <ActivityPanel caseId={caseId} />
+          </div>
+        )}
         {activeTab === "audit" && <AuditTrailPanel caseId={caseId} />}
       </div>
 

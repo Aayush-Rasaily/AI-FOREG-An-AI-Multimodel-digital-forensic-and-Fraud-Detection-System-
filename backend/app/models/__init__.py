@@ -1,12 +1,12 @@
 """SQLAlchemy persistence models."""
 
 from backend.app.models.ai import AIModelRecord, InferenceJob, InferenceLog
-from backend.app.models.audit import AuditEvent
 from backend.app.models.audio_ai import (
     AudioAIFinding,
     AudioAIFindingRegion,
     AudioAnalysisRun,
 )
+from backend.app.models.audit import AuditEvent
 from backend.app.models.case import Case
 from backend.app.models.case_intelligence import (
     CaseConflictRecord,
@@ -14,6 +14,17 @@ from backend.app.models.case_intelligence import (
     CaseIntelligenceRun,
     CaseRelationshipRecord,
     CaseTimelineEventRecord,
+)
+from backend.app.models.collaboration import (
+    ActivityLog,
+    CaseMember,
+    CaseWorkflowState,
+    EvidenceAssignment,
+    InvestigationComment,
+    InvestigationMention,
+    InvestigationReview,
+    InvestigationTask,
+    Notification,
 )
 from backend.app.models.comparison import (
     ComparisonRun,
@@ -52,7 +63,11 @@ from backend.app.models.image_ai import (
     ImageAIFindingRegion,
     ImageAnalysisRun,
 )
+from backend.app.models.investigation_summary import InvestigationSummary
+from backend.app.models.permission import Permission
 from backend.app.models.processing import Artifact, ProcessingJob
+from backend.app.models.role import Role
+from backend.app.models.session import RefreshToken, UserSession
 from backend.app.models.signature_ai import SignatureVerificationRun
 from backend.app.models.system import SystemDiagnosticsRun
 from backend.app.models.timeline import (
@@ -60,6 +75,7 @@ from backend.app.models.timeline import (
     TimelineConflictRecord,
     TimelineEventRecord,
 )
+from backend.app.models.user import User
 from backend.app.models.video_ai import (
     VideoAIFinding,
     VideoAIFindingRegion,
@@ -75,9 +91,12 @@ __all__ = [
     "CaseConflictRecord",
     "CaseEvidenceParticipationRecord",
     "CaseIntelligenceRun",
+    "CaseMember",
     "CaseRelationshipRecord",
     "CaseTimelineEventRecord",
+    "CaseWorkflowState",
     "ChainOfCustodyEvent",
+    "ActivityLog",
     "ComparisonRun",
     "CorrelationAnalysisRun",
     "CorrelationSupportRecord",
@@ -90,6 +109,7 @@ __all__ = [
     "EntityResolutionRun",
     "EntitySupportRecord",
     "Evidence",
+    "EvidenceAssignment",
     "EvidenceCorrelationRecord",
     "ExtractionRecord",
     "Finding",
@@ -103,14 +123,25 @@ __all__ = [
     "ImageAnalysisRun",
     "InferenceJob",
     "InferenceLog",
+    "InvestigationComment",
     "InvestigationEntityRecord",
+    "InvestigationMention",
+    "InvestigationReview",
+    "InvestigationSummary",
+    "InvestigationTask",
     "InvestigationTimeline",
+    "Notification",
+    "Permission",
     "ProcessingJob",
     "ReferenceEvidence",
+    "RefreshToken",
+    "Role",
     "SignatureVerificationRun",
     "SystemDiagnosticsRun",
     "TimelineConflictRecord",
     "TimelineEventRecord",
+    "User",
+    "UserSession",
     "VideoAIFinding",
     "VideoAIFindingRegion",
     "VideoAnalysisRun",
