@@ -15,6 +15,7 @@ import {
   BrainCircuit,
   Activity,
   Rocket,
+  ArrowLeftRight,
   UserRound,
 } from "lucide-react";
 
@@ -68,6 +69,12 @@ const systemItems: NavigationItem[] = [
     to: "/security",
     icon: Shield,
     permission: "security.view",
+  },
+  {
+    label: "Exchange",
+    to: "/interoperability",
+    icon: ArrowLeftRight,
+    permission: "interop.export",
   },
   { label: "Profile", to: "/profile", icon: UserRound },
   { label: "Settings", to: "/settings", icon: Settings },

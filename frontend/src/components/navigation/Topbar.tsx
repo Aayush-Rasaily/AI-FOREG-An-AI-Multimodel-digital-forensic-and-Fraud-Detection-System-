@@ -23,6 +23,7 @@ const pageTitles: Record<string, string> = {
   "/profile": "Profile",
   "/users": "Users",
   "/security": "Security",
+  "/interoperability": "Exchange",
 };
 
 export function Topbar({ onOpenMenu }: TopbarProps) {

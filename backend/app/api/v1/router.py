@@ -31,6 +31,15 @@ from backend.app.api.v1.endpoints.image_ai import router as image_ai_router
 from backend.app.api.v1.endpoints.intelligence import (
     router as intelligence_router,
 )
+from backend.app.api.v1.endpoints.interoperability import (
+    router as interoperability_router,
+)
+from backend.app.api.v1.endpoints.investigation_intelligence import (
+    router as investigation_intelligence_router,
+)
+from backend.app.api.v1.endpoints.knowledge_graph import (
+    router as knowledge_graph_router,
+)
 from backend.app.api.v1.endpoints.monitoring import (
     router as monitoring_router,
 )
@@ -62,6 +71,9 @@ router.include_router(users_router)
 router.include_router(roles_router)
 router.include_router(permissions_router)
 router.include_router(sessions_router)
+router.include_router(interoperability_router)
+router.include_router(knowledge_graph_router)
+router.include_router(investigation_intelligence_router)
 router.include_router(cases_router)
 router.include_router(collaboration_router)
 router.include_router(case_intelligence_router)

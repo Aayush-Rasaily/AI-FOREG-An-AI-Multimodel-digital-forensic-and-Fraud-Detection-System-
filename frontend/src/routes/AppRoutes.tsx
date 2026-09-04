@@ -57,6 +57,11 @@ const SecurityGovernancePage = lazy(() =>
     default: module.SecurityGovernancePage,
   })),
 );
+const InteroperabilityPage = lazy(() =>
+  import("../pages/InteroperabilityPage").then((module) => ({
+    default: module.InteroperabilityPage,
+  })),
+);
 const UnauthorizedPage = lazy(() =>
   import("../pages/UnauthorizedPage").then((module) => ({
     default: module.UnauthorizedPage,
@@ -137,6 +142,14 @@ export function AppRoutes() {
               </RoleGuard>
             }
             path="/security"
+          />
+          <Route
+            element={
+              <RoleGuard permission="interop.export">
+                <InteroperabilityPage />
+              </RoleGuard>
+            }
+            path="/interoperability"
           />
           <Route element={<AIModelsPage />} path="/ai-models" />
           <Route element={<UnauthorizedPage />} path="/unauthorized" />

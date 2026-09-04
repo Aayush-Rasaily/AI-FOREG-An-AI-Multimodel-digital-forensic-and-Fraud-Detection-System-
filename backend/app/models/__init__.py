@@ -101,6 +101,24 @@ from backend.app.models.security import (
     SecurityPermission,
     SecurityRole,
 )
+from backend.app.models.interoperability import (
+    ExportJob,
+    ImportJob,
+    PackageManifestRecord,
+)
+from backend.app.models.knowledge_graph import (
+    GraphEntity,
+    GraphEntityAlias,
+    GraphProvenance,
+    GraphRelationship,
+    KnowledgeGraphRun,
+)
+from backend.app.models.investigation_intelligence import (
+    EvidenceGapRecordRow,
+    InvestigationHypothesis,
+    InvestigationIntelligenceRun,
+    InvestigationRecommendation,
+)
 
 __all__ = [
     "AIModelRecord",
@@ -182,4 +200,16 @@ __all__ = [
     "PolicyViolation",
     "SecurityPermission",
     "SecurityRole",
+    "ExportJob",
+    "ImportJob",
+    "PackageManifestRecord",
+    "KnowledgeGraphRun",
+    "GraphEntity",
+    "GraphRelationship",
+    "GraphEntityAlias",
+    "GraphProvenance",
+    "InvestigationIntelligenceRun",
+    "InvestigationHypothesis",
+    "EvidenceGapRecordRow",
+    "InvestigationRecommendation",
 ]

@@ -28,6 +28,9 @@ import { WorkflowPanel as InvestigationWorkflowPanel } from "../components/workf
 import { CaseAccessPanel } from "../components/security/CaseAccessPanel";
 import { CompliancePanel } from "../components/security/CompliancePanel";
 import { PolicyViolationsPanel } from "../components/security/PolicyViolationsPanel";
+import { CaseInteropSection } from "./InteroperabilityPage";
+import { KnowledgeGraphPanel } from "../components/knowledge-graph/KnowledgeGraphPanel";
+import { InvestigationIntelligencePanel } from "../components/investigation-intelligence/InvestigationIntelligencePanel";
 import { ReportPanel } from "../components/investigation/ReportPanel";
 import { InvestigationSummaryPanel } from "../components/investigation/InvestigationSummaryPanel";
 import { AnalysisPanel } from "../components/investigation/AnalysisPanel";
@@ -71,6 +74,8 @@ const tabs: TabOption<InvestigationTab>[] = [
   { value: "timeline", label: "Timeline" },
   { value: "correlations", label: "Correlations" },
   { value: "entities", label: "Entity Graph" },
+  { value: "knowledge-graph", label: "Knowledge Graph" },
+  { value: "case-intelligence", label: "Case Intelligence" },
   { value: "jury", label: "AI Jury" },
   { value: "metadata", label: "Metadata" },
   { value: "report", label: "Report" },
@@ -78,6 +83,7 @@ const tabs: TabOption<InvestigationTab>[] = [
   { value: "collaboration", label: "Collaboration" },
   { value: "workflow", label: "Workflow" },
   { value: "security", label: "Security" },
+  { value: "exchange", label: "Exchange" },
   { value: "audit", label: "Audit Trail" },
 ];
 
@@ -221,6 +227,12 @@ export function InvestigationWorkspacePage() {
             <EntityGraphPanel caseId={caseId} />
           </Suspense>
         )}
+        {activeTab === "knowledge-graph" && (
+          <KnowledgeGraphPanel caseId={caseId} />
+        )}
+        {activeTab === "case-intelligence" && (
+          <InvestigationIntelligencePanel caseId={caseId} />
+        )}
         {activeTab === "report" && <ReportPanel caseId={caseId} />}
         {activeTab === "summary" && (
           <InvestigationSummaryPanel caseId={caseId} />
@@ -266,6 +278,7 @@ export function InvestigationWorkspacePage() {
             <PolicyViolationsPanel caseId={caseId} />
           </div>
         )}
+        {activeTab === "exchange" && <CaseInteropSection caseId={caseId} />}
         {activeTab === "audit" && <AuditTrailPanel caseId={caseId} />}
       </div>
 

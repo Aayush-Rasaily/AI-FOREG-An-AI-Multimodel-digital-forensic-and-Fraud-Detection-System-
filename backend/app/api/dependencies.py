@@ -37,6 +37,11 @@ if TYPE_CHECKING:
     from backend.app.entities.service import EntityService
     from backend.app.fusion.service import FusionService
     from backend.app.intelligence.service import InvestigationIntelligenceService
+    from backend.app.interoperability.service import InteroperabilityService
+    from backend.app.knowledge_graph.service import KnowledgeGraphService
+    from backend.app.investigation_intelligence.service import (
+        InvestigationIntelligenceEngineService,
+    )
     from backend.app.monitoring.service import MonitoringService
     from backend.app.reporting.service import ReportService
     from backend.app.security.service import SecurityService
@@ -473,6 +478,42 @@ def get_security_service(
     return SecurityService(session=session)
 
 
+def get_interoperability_service(
+    session: SessionDependency,
+    settings: RuntimeSettingsDependency,
+    storage: Annotated[StorageService, Depends(get_storage_service)],
+) -> InteroperabilityService:
+    """Compose the digital evidence exchange service for one request."""
+
+    from backend.app.interoperability.service import InteroperabilityService
+
+    return InteroperabilityService(
+        session=session, settings=settings, storage=storage,
+    )
+
+
+def get_knowledge_graph_service(
+    session: SessionDependency,
+) -> KnowledgeGraphService:
+    """Compose the knowledge graph service for one request."""
+
+    from backend.app.knowledge_graph.service import KnowledgeGraphService
+
+    return KnowledgeGraphService(session=session)
+
+
+def get_investigation_intelligence_service(
+    session: SessionDependency,
+) -> InvestigationIntelligenceEngineService:
+    """Compose the Phase 9C investigation intelligence service."""
+
+    from backend.app.investigation_intelligence.service import (
+        InvestigationIntelligenceEngineService,
+    )
+
+    return InvestigationIntelligenceEngineService(session=session)
+
+
 __all__ = [
     "SessionDependency",
     "get_ai_service",
@@ -483,6 +524,9 @@ __all__ = [
     "get_monitoring_service",
     "get_workflow_service",
     "get_security_service",
+    "get_interoperability_service",
+    "get_knowledge_graph_service",
+    "get_investigation_intelligence_service",
     "get_comparison_service",
     "get_db_session",
     "get_document_analysis_service",
@@ -503,6 +547,6 @@ __all__ = [
     "get_case_intelligence_service",
     "get_report_service",
     "get_timeline_service",
-    "get_correlation_service",
     "get_entity_service",
+    "get_correlation_service",
 ]

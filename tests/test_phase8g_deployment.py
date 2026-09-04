@@ -174,6 +174,7 @@ class TestSystemReleaseApi:
         assert release.status_code == 200, release.text
         body = release.json()["data"]
         assert body["migration_version"] == EXPECTED_MIGRATION_HEAD
+        assert EXPECTED_MIGRATION_HEAD == "20260909_0028"
         assert "policy_versions" in body
         assert "ai" in body["ai_engine_versions"]
 

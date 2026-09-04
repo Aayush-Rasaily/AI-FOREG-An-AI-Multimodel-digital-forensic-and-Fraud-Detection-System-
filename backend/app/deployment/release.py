@@ -11,7 +11,7 @@ DEPLOYMENT_ENGINE_VERSION = "8g.1.0"
 DEPLOYMENT_POLICY_VERSION = "1.0"
 
 # Canonical schema / migration head expected for this release train.
-EXPECTED_MIGRATION_HEAD = "20260906_0025"
+EXPECTED_MIGRATION_HEAD = "20260909_0028"
 
 
 def _git_commit(repo_root: Path | None = None) -> str | None:
@@ -64,6 +64,26 @@ def collect_policy_versions() -> dict[str, str]:
         from backend.app.audit.policy import POLICY_VERSION as AUD_POL
 
         versions["audit_policy"] = AUD_POL
+    except Exception:  # noqa: BLE001
+        pass
+    try:
+        from backend.app.interoperability.policy import (
+            INTEROP_ENGINE_VERSION,
+            INTEROP_POLICY_VERSION,
+        )
+
+        versions["interop_policy"] = INTEROP_POLICY_VERSION
+        versions["interop_engine"] = INTEROP_ENGINE_VERSION
+    except Exception:  # noqa: BLE001
+        pass
+    try:
+        from backend.app.knowledge_graph.policy import (
+            KG_ENGINE_VERSION,
+            KG_POLICY_VERSION,
+        )
+
+        versions["knowledge_graph_policy"] = KG_POLICY_VERSION
+        versions["knowledge_graph_engine"] = KG_ENGINE_VERSION
     except Exception:  # noqa: BLE001
         pass
     return versions

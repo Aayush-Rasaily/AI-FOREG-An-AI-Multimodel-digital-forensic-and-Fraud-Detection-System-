@@ -59,6 +59,12 @@ export function SettingsPage() {
             >
               Open deployment status
             </Link>
+            <Link
+              className="mt-3 inline-flex h-8 items-center rounded-lg border border-slate-700 bg-slate-900 px-3 text-xs font-medium text-slate-100 hover:bg-slate-800"
+              to="/interoperability"
+            >
+              Open interoperability
+            </Link>
           </CardContent>
         </Card>
       </div>

@@ -14,7 +14,10 @@ export type InvestigationTab =
   | "audit"
   | "collaboration"
   | "workflow"
-  | "security";
+  | "security"
+  | "exchange"
+  | "knowledge-graph"
+  | "case-intelligence";
 
 export type FindingState =
   | "confirmed"

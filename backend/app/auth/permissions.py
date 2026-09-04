@@ -41,6 +41,12 @@ class PermissionCode(StrEnum):
     WORKFLOW_TRANSITION = "workflow.transition"
     SECURITY_VIEW = "security.view"
     SECURITY_MANAGE = "security.manage"
+    INTEROP_EXPORT = "interop.export"
+    INTEROP_IMPORT = "interop.import"
+    KNOWLEDGE_GRAPH_RUN = "knowledge_graph.run"
+    KNOWLEDGE_GRAPH_VIEW = "knowledge_graph.view"
+    INVESTIGATION_INTELLIGENCE_RUN = "investigation_intelligence.run"
+    INVESTIGATION_INTELLIGENCE_VIEW = "investigation_intelligence.view"
 
 
 PERMISSION_DESCRIPTIONS: dict[str, str] = {
@@ -77,6 +83,16 @@ PERMISSION_DESCRIPTIONS: dict[str, str] = {
     PermissionCode.WORKFLOW_TRANSITION: "Advance case workflow stages.",
     PermissionCode.SECURITY_VIEW: "View security governance and compliance.",
     PermissionCode.SECURITY_MANAGE: "Manage case access and security policy.",
+    PermissionCode.INTEROP_EXPORT: "Export investigation packages.",
+    PermissionCode.INTEROP_IMPORT: "Import and validate investigation packages.",
+    PermissionCode.KNOWLEDGE_GRAPH_RUN: "Build investigation knowledge graphs.",
+    PermissionCode.KNOWLEDGE_GRAPH_VIEW: "View knowledge graph entities and edges.",
+    PermissionCode.INVESTIGATION_INTELLIGENCE_RUN: (
+        "Run investigation intelligence hypothesis analysis."
+    ),
+    PermissionCode.INVESTIGATION_INTELLIGENCE_VIEW: (
+        "View investigation hypotheses, gaps, and recommendations."
+    ),
 }
 
 PUBLIC_PATHS: frozenset[tuple[str, str]] = frozenset(
@@ -193,6 +209,32 @@ def required_permission(method: str, path: str) -> str | None:
         return PermissionCode.COLLAB_ASSIGN
     if "activity" in parts:
         return PermissionCode.CASE_VIEW
+    if root == "exports" or (root == "cases" and "export" in parts):
+        return PermissionCode.INTEROP_EXPORT
+    if root == "imports" or (
+        root == "cases" and len(parts) >= 2 and parts[1] == "import"
+    ):
+        return PermissionCode.INTEROP_IMPORT
+    if "knowledge-graph" in joined or root == "knowledge-graph":
+        if method == "POST":
+            return PermissionCode.KNOWLEDGE_GRAPH_RUN
+        return PermissionCode.KNOWLEDGE_GRAPH_VIEW
+    if (
+        "investigation-intelligence" in joined
+        or root == "investigation-intelligence"
+        or "investigation-preview" in joined
+        or "investigation-summary" in parts
+        or "hypotheses" in parts
+        or "evidence-gaps" in parts
+        or (
+            "recommendations" in parts
+            and root == "cases"
+            and "investigation-summaries" not in joined
+        )
+    ):
+        if method == "POST":
+            return PermissionCode.INVESTIGATION_INTELLIGENCE_RUN
+        return PermissionCode.INVESTIGATION_INTELLIGENCE_VIEW
     if "workflow" in parts:
         if method == "GET":
             return PermissionCode.CASE_VIEW
