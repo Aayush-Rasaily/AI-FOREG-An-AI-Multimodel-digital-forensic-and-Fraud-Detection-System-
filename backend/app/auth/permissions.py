@@ -39,6 +39,8 @@ class PermissionCode(StrEnum):
     TASK_MANAGE = "task.manage"
     REVIEW_DECIDE = "review.decide"
     WORKFLOW_TRANSITION = "workflow.transition"
+    SECURITY_VIEW = "security.view"
+    SECURITY_MANAGE = "security.manage"
 
 
 PERMISSION_DESCRIPTIONS: dict[str, str] = {
@@ -73,12 +75,16 @@ PERMISSION_DESCRIPTIONS: dict[str, str] = {
     PermissionCode.TASK_MANAGE: "Create and update investigation tasks.",
     PermissionCode.REVIEW_DECIDE: "Submit and decide collaboration reviews.",
     PermissionCode.WORKFLOW_TRANSITION: "Advance case workflow stages.",
+    PermissionCode.SECURITY_VIEW: "View security governance and compliance.",
+    PermissionCode.SECURITY_MANAGE: "Manage case access and security policy.",
 }
 
 PUBLIC_PATHS: frozenset[tuple[str, str]] = frozenset(
     {
         ("GET", "/health"),
         ("GET", "/health/live"),
+        ("GET", "/system/liveness"),
+        ("GET", "/system/readiness"),
         ("POST", "/auth/login"),
         ("POST", "/auth/refresh"),
     }
@@ -123,8 +129,22 @@ def required_permission(method: str, path: str) -> str | None:
         return None
     if root == "audit":
         return PermissionCode.AUDIT_VIEW
+    if root == "monitoring":
+        return PermissionCode.SYSTEM_MONITOR
+    if root == "security":
+        if method == "GET":
+            return PermissionCode.SECURITY_VIEW
+        return PermissionCode.SECURITY_MANAGE
+    if "compliance" in parts:
+        return PermissionCode.SECURITY_VIEW
+    if (parts and parts[-1] == "access") or ("access" in parts):
+        if method == "GET":
+            return PermissionCode.SECURITY_VIEW
+        return PermissionCode.SECURITY_MANAGE
     if root == "system":
         if len(parts) >= 2 and parts[1] == "info":
+            return None
+        if len(parts) >= 2 and parts[1] in {"liveness", "readiness"}:
             return None
         return PermissionCode.SYSTEM_MONITOR
     if root == "models":
@@ -139,6 +159,24 @@ def required_permission(method: str, path: str) -> str | None:
         if method in {"PATCH", "DELETE"}:
             return PermissionCode.COMMENT_CREATE
         return PermissionCode.COMMENT_VIEW
+    if (
+        root.startswith("workflow-")
+        or "investigation-workflow" in parts
+        or any(part.startswith("workflow-") for part in parts)
+    ):
+        if root.startswith("workflow-tasks") or any(
+            part.startswith("workflow-tasks") for part in parts
+        ):
+            if method == "GET":
+                return PermissionCode.CASE_VIEW
+            return PermissionCode.TASK_MANAGE
+        if root.startswith("workflow-reviews") or any(
+            part.startswith("workflow-reviews") for part in parts
+        ):
+            return PermissionCode.REVIEW_DECIDE
+        if method == "GET":
+            return PermissionCode.CASE_VIEW
+        return PermissionCode.WORKFLOW_TRANSITION
     if root == "reviews" or "reviews" in parts:
         return PermissionCode.REVIEW_DECIDE
     if root == "tasks" or "tasks" in parts:

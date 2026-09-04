@@ -1,37 +1,80 @@
-# Operations
+# Operations (Phase 8G)
 
-## Local services
+Day-2 operational validation and probes for AI-Forge.
 
-Docker Compose starts the API, Celery worker, PostgreSQL, Redis, and
-RabbitMQ. The API exposes `GET /api/v1/health` with database status and
-`GET /api/v1/health/live` as a dependency-free process liveness probe.
-Health degradation is reported in-band so startup never depends on PostgreSQL.
+## Probe map
 
-Phase 3 stores development evidence originals under the configured
-`STORAGE_ROOT` (default `data/`). Docker Compose mounts this location as the
-`evidence-data` volume. This local adapter is not an evidentiary compliance
-boundary; production should use immutable/WORM-capable object storage,
-encryption, retention, and access controls.
+| Probe | Path | Use |
+| --- | --- | --- |
+| Liveness | `GET /api/v1/system/liveness` | Orchestrator restart decisions |
+| Readiness | `GET /api/v1/system/readiness` | Traffic admission |
+| Legacy live | `GET /api/v1/health/live` | Existing compose healthchecks |
+| Startup | `GET /api/v1/system/startup-validation` | Post-boot config snapshot |
+| Validate | `POST /api/v1/system/validate` | Full ops check (authenticated) |
 
-## Production requirements
+In **production**, readiness is true only when validation status is `PASSED`.
+In other profiles, `DEGRADED` (warnings only) still counts as ready.
 
-- Build from a pinned, vulnerability-scanned image and run as a non-root user.
-- Inject secrets through a managed secret store; never commit `.env`.
-- Set database pool limits from the total connection budget across API replicas,
-  workers, migrations, and administrative tools.
-- Run migrations as a controlled release step, never concurrently from every
-  API replica.
-- Use separate queues and worker pools for materially different workloads.
-- Configure durable broker policies, retry limits, dead-letter queues, and
-  idempotent task handlers before processing regulated evidence.
-- Export structured logs, metrics, traces, and audit events to the
-  organization-approved observability platform.
-- Add network policy, TLS, identity, authorization, tenant isolation, backup,
-  disaster recovery, and retention controls before production use.
+## Operational validation checks
 
-## Failure behavior
+Deterministic checks (sorted by name):
 
-Unexpected exceptions are logged with a request correlation identifier and
-returned to clients as a generic error. Expected application exceptions must
-use stable machine-readable error codes. No response should expose stack
-traces, credentials, raw evidence, or downstream connection details.
+- `database` — SQL connectivity
+- `redis` — ping when `REDIS_URL` set
+- `storage` — writable `STORAGE_ROOT`
+- `disk` — free space thresholds (5% fail / 15% warn)
+- `required_env_vars` — production env completeness
+- `ai_models` — registered AI stacks
+- `migration_status` — Alembic revision vs expected head
+- configuration integrity (`debug_disabled_in_production`, `auth_required_in_production`, `database_url`, `storage_root`)
+
+## Graceful shutdown
+
+Application lifespan calls `mark_shutdown_requested()` before disposing the
+DB engine and Redis client. Compose production services use a 30s stop grace
+period.
+
+## Backup & recovery (metadata only)
+
+No cloud backup integration ships in Phase 8G. Utilities write JSON markers under:
+
+`{STORAGE_ROOT}/deployment/backups/`
+
+Kinds:
+
+- `database` — logical backup marker (operator runs `pg_dump` externally)
+- `report_archive` — report path presence
+- `configuration_export` — safe config snapshot
+
+Recovery helpers:
+
+- `verify_disaster_recovery` — metadata completeness
+- `validate_restore_readiness` — documented restore prerequisites
+
+`POST /system/release-check` creates a fresh set of markers then verifies DR.
+
+## Configuration verification
+
+`GET /system/configuration` returns profile summary, safe export, and findings.
+Use it after environment changes and before promoting a release.
+
+## Upgrade / rollback
+
+Follow [deployment.md](deployment.md). Always capture release metadata and run
+release-check before and after upgrades.
+
+## Troubleshooting
+
+| Symptom | Action |
+| --- | --- |
+| Readiness `not_ready` in production | Inspect `checks` on readiness/validate; fix FAIL rows |
+| Redis WARN | Confirm `REDIS_URL` and redis health |
+| Migration WARN | Run migrate script / compose migrate service |
+| AI models FAIL | Ensure API process built AI stacks (normal `create_app`) |
+| Auth FAIL in production | Set `JWT_SECRET` |
+
+## Related docs
+
+- [deployment.md](deployment.md)
+- [release.md](release.md)
+- [monitoring.md](monitoring.md) — Phase 8D KPIs (separate from probes)

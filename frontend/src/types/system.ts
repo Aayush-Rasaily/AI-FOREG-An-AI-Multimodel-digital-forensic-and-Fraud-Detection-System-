@@ -83,3 +83,88 @@ export interface DiagnosticsRun extends DiagnosticsResult {
   policy_version: string;
   created_at: string;
 }
+
+/** Phase 8G deployment / release types (additive). */
+
+export interface SystemCheckItem {
+  check: string;
+  status: string;
+  message: string;
+  free_bytes?: string | null;
+  total_bytes?: string | null;
+}
+
+export interface SystemVersionInfo {
+  application_version: string;
+  service: string;
+  environment: string;
+  policy_version: string;
+  engine_version: string;
+}
+
+export interface SystemReleaseInfo {
+  application_version: string;
+  schema_version: string;
+  migration_version: string;
+  environment: string;
+  policy_versions: Record<string, string>;
+  ai_engine_versions: Record<string, string>;
+  build_metadata: Record<string, unknown>;
+  git_commit: string | null;
+}
+
+export interface SystemLiveness {
+  status: string;
+  service: string;
+  version: string;
+  timestamp: string;
+  policy_version: string;
+  engine_version: string;
+}
+
+export interface SystemReadiness {
+  status: string;
+  ready: boolean;
+  validation_status: string;
+  checks: SystemCheckItem[];
+  timestamp: string;
+  policy_version: string;
+  engine_version: string;
+}
+
+export interface SystemStartupValidation {
+  status: string;
+  checks: SystemCheckItem[];
+  fail_count: number;
+  timestamp: string;
+  environment: string;
+  version: string;
+  policy_version: string;
+  engine_version: string;
+  graceful_shutdown_supported: boolean;
+}
+
+export interface SystemConfiguration {
+  profile: Record<string, unknown>;
+  export: Record<string, unknown>;
+  findings: SystemCheckItem[];
+}
+
+export interface SystemValidationResult {
+  status: string;
+  checks: SystemCheckItem[];
+  fail_count: number;
+  warn_count: number;
+  pass_count: number;
+  policy_version: string;
+  engine_version: string;
+}
+
+export interface SystemReleaseCheck {
+  status: string;
+  release: SystemReleaseInfo;
+  validation: SystemValidationResult;
+  disaster_recovery: Record<string, unknown>;
+  restore: Record<string, unknown>;
+  backup_records: Record<string, unknown>[];
+}

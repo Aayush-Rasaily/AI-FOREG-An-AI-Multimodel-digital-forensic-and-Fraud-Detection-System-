@@ -12,7 +12,9 @@ export type InvestigationTab =
   | "report"
   | "summary"
   | "audit"
-  | "collaboration";
+  | "collaboration"
+  | "workflow"
+  | "security";
 
 export type FindingState =
   | "confirmed"

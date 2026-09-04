@@ -13,6 +13,8 @@ import {
   X,
   Cpu,
   BrainCircuit,
+  Activity,
+  Rocket,
   UserRound,
 } from "lucide-react";
 
@@ -44,10 +46,28 @@ const systemItems: NavigationItem[] = [
   { label: "AI Models", to: "/ai-models", icon: BrainCircuit },
   { label: "System", to: "/system", icon: Cpu, permission: "system.monitor" },
   {
+    label: "Deployment",
+    to: "/deployment",
+    icon: Rocket,
+    permission: "system.monitor",
+  },
+  {
+    label: "Monitoring",
+    to: "/monitoring",
+    icon: Activity,
+    permission: "system.monitor",
+  },
+  {
     label: "Users",
     to: "/users",
     icon: Users,
     permission: "admin.manage_users",
+  },
+  {
+    label: "Security",
+    to: "/security",
+    icon: Shield,
+    permission: "security.view",
   },
   { label: "Profile", to: "/profile", icon: UserRound },
   { label: "Settings", to: "/settings", icon: Settings },

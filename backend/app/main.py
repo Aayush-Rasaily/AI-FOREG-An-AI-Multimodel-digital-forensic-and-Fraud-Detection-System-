@@ -29,12 +29,20 @@ from backend.app.infrastructure.database.session import dispose_engine
 
 
 @asynccontextmanager
-async def application_lifespan(_app: FastAPI) -> AsyncIterator[None]:
-    """Provide a lifecycle boundary for future resource initialization."""
+async def application_lifespan(app: FastAPI) -> AsyncIterator[None]:
+    """Provide startup validation and graceful shutdown boundaries."""
 
+    from backend.app.deployment.startup import (
+        mark_shutdown_requested,
+        run_startup_validation,
+    )
+
+    settings: Settings = app.state.settings
+    app.state.startup_validation = run_startup_validation(settings)
     try:
         yield
     finally:
+        mark_shutdown_requested()
         await dispose_engine()
         await close_redis_client()
 

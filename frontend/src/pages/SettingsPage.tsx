@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { LockKeyhole, SlidersHorizontal } from "lucide-react";
 
 import { PageHeader } from "../components/layout/PageHeader";
@@ -43,16 +44,24 @@ export function SettingsPage() {
           </CardHeader>
           <CardContent>
             <p className="text-sm leading-relaxed text-slate-500">
-              Authentication, tenant policy, engine access, and evidence storage
-              settings will be managed through approved platform controls.
+              Enterprise RBAC, governance policies, and compliance controls are
+              managed in Security & Governance.
             </p>
-            <Badge className="mt-4" tone="neutral">
-              Not connected
-            </Badge>
+            <Link
+              className="mt-4 inline-flex h-8 items-center rounded-lg border border-slate-700 bg-slate-900 px-3 text-xs font-medium text-slate-100 hover:bg-slate-800"
+              to="/security"
+            >
+              Open security governance
+            </Link>
+            <Link
+              className="mt-3 inline-flex h-8 items-center rounded-lg border border-slate-700 bg-slate-900 px-3 text-xs font-medium text-slate-100 hover:bg-slate-800"
+              to="/deployment"
+            >
+              Open deployment status
+            </Link>
           </CardContent>
         </Card>
       </div>
     </div>
   );
 }
-

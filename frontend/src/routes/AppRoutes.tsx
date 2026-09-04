@@ -42,6 +42,21 @@ const SystemDashboardPage = lazy(() =>
     default: module.SystemDashboardPage,
   })),
 );
+const SystemStatusPage = lazy(() =>
+  import("../pages/SystemStatusPage").then((module) => ({
+    default: module.SystemStatusPage,
+  })),
+);
+const MonitoringDashboardPage = lazy(() =>
+  import("../pages/MonitoringDashboardPage").then((module) => ({
+    default: module.MonitoringDashboardPage,
+  })),
+);
+const SecurityGovernancePage = lazy(() =>
+  import("../pages/SecurityGovernancePage").then((module) => ({
+    default: module.SecurityGovernancePage,
+  })),
+);
 const UnauthorizedPage = lazy(() =>
   import("../pages/UnauthorizedPage").then((module) => ({
     default: module.UnauthorizedPage,
@@ -93,11 +108,35 @@ export function AppRoutes() {
           />
           <Route
             element={
+              <RoleGuard permission="system.monitor">
+                <SystemStatusPage />
+              </RoleGuard>
+            }
+            path="/deployment"
+          />
+          <Route
+            element={
+              <RoleGuard permission="system.monitor">
+                <MonitoringDashboardPage />
+              </RoleGuard>
+            }
+            path="/monitoring"
+          />
+          <Route
+            element={
               <RoleGuard permission="admin.manage_users">
                 <UserManagementPage />
               </RoleGuard>
             }
             path="/users"
+          />
+          <Route
+            element={
+              <RoleGuard permission="security.view">
+                <SecurityGovernancePage />
+              </RoleGuard>
+            }
+            path="/security"
           />
           <Route element={<AIModelsPage />} path="/ai-models" />
           <Route element={<UnauthorizedPage />} path="/unauthorized" />

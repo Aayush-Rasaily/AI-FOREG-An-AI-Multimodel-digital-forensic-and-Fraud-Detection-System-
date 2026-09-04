@@ -64,6 +64,11 @@ from backend.app.models.image_ai import (
     ImageAnalysisRun,
 )
 from backend.app.models.investigation_summary import InvestigationSummary
+from backend.app.models.monitoring import (
+    AuditStatistics,
+    MonitoringSnapshot,
+    SystemHealthRecord,
+)
 from backend.app.models.permission import Permission
 from backend.app.models.processing import Artifact, ProcessingJob
 from backend.app.models.role import Role
@@ -81,11 +86,27 @@ from backend.app.models.video_ai import (
     VideoAIFindingRegion,
     VideoAnalysisRun,
 )
+from backend.app.models.workflow import (
+    InvestigationWorkflow,
+    WorkflowMilestone,
+    WorkflowNote,
+    WorkflowNotification,
+    WorkflowReview,
+    WorkflowTask,
+)
+from backend.app.models.security import (
+    CaseAccessRecord,
+    ComplianceReport,
+    PolicyViolation,
+    SecurityPermission,
+    SecurityRole,
+)
 
 __all__ = [
     "AIModelRecord",
     "AnalysisRun",
     "AuditEvent",
+    "AuditStatistics",
     "Artifact",
     "Case",
     "CaseConflictRecord",
@@ -118,6 +139,7 @@ __all__ = [
     "FusionAnalysisRun",
     "FusionConflictRecord",
     "JuryAssessmentRecord",
+    "MonitoringSnapshot",
     "ImageAIFinding",
     "ImageAIFindingRegion",
     "ImageAnalysisRun",
@@ -130,6 +152,7 @@ __all__ = [
     "InvestigationSummary",
     "InvestigationTask",
     "InvestigationTimeline",
+    "InvestigationWorkflow",
     "Notification",
     "Permission",
     "ProcessingJob",
@@ -138,6 +161,7 @@ __all__ = [
     "Role",
     "SignatureVerificationRun",
     "SystemDiagnosticsRun",
+    "SystemHealthRecord",
     "TimelineConflictRecord",
     "TimelineEventRecord",
     "User",
@@ -148,4 +172,14 @@ __all__ = [
     "AudioAIFinding",
     "AudioAIFindingRegion",
     "AudioAnalysisRun",
+    "WorkflowMilestone",
+    "WorkflowNote",
+    "WorkflowNotification",
+    "WorkflowReview",
+    "WorkflowTask",
+    "CaseAccessRecord",
+    "ComplianceReport",
+    "PolicyViolation",
+    "SecurityPermission",
+    "SecurityRole",
 ]

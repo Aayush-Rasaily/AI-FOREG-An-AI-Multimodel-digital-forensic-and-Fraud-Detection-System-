@@ -73,6 +73,7 @@ ROLE_PERMISSIONS: dict[str, frozenset[str]] = {
             PermissionCode.TASK_MANAGE.value,
             PermissionCode.REVIEW_DECIDE.value,
             PermissionCode.WORKFLOW_TRANSITION.value,
+            PermissionCode.SECURITY_VIEW.value,
         }
     ),
     ROLE_ANALYST: _READ
@@ -84,6 +85,7 @@ ROLE_PERMISSIONS: dict[str, frozenset[str]] = {
             PermissionCode.COMMENT_VIEW.value,
             PermissionCode.TASK_MANAGE.value,
             PermissionCode.COLLAB_ASSIGN.value,
+            PermissionCode.SECURITY_VIEW.value,
         }
     ),
     ROLE_REVIEWER: _READ
@@ -94,6 +96,7 @@ ROLE_PERMISSIONS: dict[str, frozenset[str]] = {
             PermissionCode.AUDIT_VIEW.value,
             PermissionCode.COMMENT_VIEW.value,
             PermissionCode.REVIEW_DECIDE.value,
+            PermissionCode.SECURITY_VIEW.value,
         }
     ),
     ROLE_VIEWER: frozenset(

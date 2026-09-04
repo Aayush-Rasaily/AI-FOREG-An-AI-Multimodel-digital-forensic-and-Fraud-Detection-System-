@@ -18,8 +18,11 @@ const pageTitles: Record<string, string> = {
   "/reports": "Reports",
   "/settings": "Settings",
   "/system": "System",
+  "/deployment": "Deployment",
+  "/monitoring": "Monitoring",
   "/profile": "Profile",
   "/users": "Users",
+  "/security": "Security",
 };
 
 export function Topbar({ onOpenMenu }: TopbarProps) {

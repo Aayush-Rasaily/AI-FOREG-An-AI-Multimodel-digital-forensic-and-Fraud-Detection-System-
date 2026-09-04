@@ -26,20 +26,23 @@ from backend.app.infrastructure.storage.local import LocalStorage
 
 if TYPE_CHECKING:
     from backend.app.ai.audio.service import AudioAnalysisService
-    from backend.app.audit.service import AuditService
-    from backend.app.collaboration.service import CollaborationService
-    from backend.app.intelligence.service import InvestigationIntelligenceService
-    from backend.app.system.service import SystemService
     from backend.app.ai.document.service import DocumentAnalysisService
     from backend.app.ai.document.signature.service import SignatureVerificationService
     from backend.app.ai.image.service import ImageAnalysisService
     from backend.app.ai.video.service import VideoAnalysisService
+    from backend.app.audit.service import AuditService
     from backend.app.case_intelligence.service import CaseIntelligenceService
+    from backend.app.collaboration.service import CollaborationService
     from backend.app.correlation.service import CorrelationService
     from backend.app.entities.service import EntityService
     from backend.app.fusion.service import FusionService
+    from backend.app.intelligence.service import InvestigationIntelligenceService
+    from backend.app.monitoring.service import MonitoringService
     from backend.app.reporting.service import ReportService
+    from backend.app.security.service import SecurityService
+    from backend.app.system.service import SystemService
     from backend.app.timeline.service import TimelineService
+    from backend.app.workflow.service import WorkflowService
 
 SessionDependency = Annotated[AsyncSession, Depends(get_db_session)]
 
@@ -440,6 +443,36 @@ def get_intelligence_service(
     return InvestigationIntelligenceService(session=session)
 
 
+def get_monitoring_service(
+    session: SessionDependency,
+) -> MonitoringService:
+    """Compose the operational monitoring service for one request."""
+
+    from backend.app.monitoring.service import MonitoringService
+
+    return MonitoringService(session=session)
+
+
+def get_workflow_service(
+    session: SessionDependency,
+) -> WorkflowService:
+    """Compose the investigation workflow service for one request."""
+
+    from backend.app.workflow.service import WorkflowService
+
+    return WorkflowService(session=session)
+
+
+def get_security_service(
+    session: SessionDependency,
+) -> SecurityService:
+    """Compose the security governance service for one request."""
+
+    from backend.app.security.service import SecurityService
+
+    return SecurityService(session=session)
+
+
 __all__ = [
     "SessionDependency",
     "get_ai_service",
@@ -447,6 +480,9 @@ __all__ = [
     "get_case_service",
     "get_collaboration_service",
     "get_intelligence_service",
+    "get_monitoring_service",
+    "get_workflow_service",
+    "get_security_service",
     "get_comparison_service",
     "get_db_session",
     "get_document_analysis_service",
