@@ -17,6 +17,8 @@ import {
   Rocket,
   ArrowLeftRight,
   UserRound,
+  ChartColumn,
+  HeartPulse,
 } from "lucide-react";
 
 import { useOptionalAuth } from "../../context/AuthContext";
@@ -41,6 +43,13 @@ const workspaceItems: NavigationItem[] = [
   { label: "Investigations", to: "/investigations", icon: Search },
   { label: "Evidence", to: "/evidence", icon: FileArchive },
   { label: "Reports", to: "/reports", icon: FileBarChart },
+  { label: "Analytics", to: "/analytics", icon: ChartColumn },
+  {
+    label: "Platform Health",
+    to: "/platform-health",
+    icon: HeartPulse,
+    permission: "platform_validation.view",
+  },
 ];
 
 const systemItems: NavigationItem[] = [

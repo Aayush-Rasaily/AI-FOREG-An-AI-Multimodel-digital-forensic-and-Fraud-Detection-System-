@@ -119,6 +119,36 @@ from backend.app.models.investigation_intelligence import (
     InvestigationIntelligenceRun,
     InvestigationRecommendation,
 )
+from backend.app.models.decision_support import (
+    DecisionSupportDecision,
+    DecisionSupportReviewItem,
+    DecisionSupportRun,
+    DecisionSupportTask,
+)
+from backend.app.models.case_review import (
+    CaseReviewApproval,
+    CaseReviewChecklist,
+    CaseReviewChecklistItem,
+    CaseReviewRun,
+    CaseReviewValidationRecord,
+)
+from backend.app.models.integrity import (
+    IntegrityAlert,
+    IntegrityCheck,
+    IntegrityDriftRecord,
+    IntegrityMonitorRun,
+)
+from backend.app.models.analytics import (
+    AnalyticsDashboard,
+    AnalyticsMetric,
+    AnalyticsRun,
+    AnalyticsSnapshot,
+)
+from backend.app.models.platform_validation import (
+    PlatformValidationIssue,
+    PlatformValidationResult,
+    PlatformValidationRun,
+)
 
 __all__ = [
     "AIModelRecord",
@@ -212,4 +242,24 @@ __all__ = [
     "InvestigationHypothesis",
     "EvidenceGapRecordRow",
     "InvestigationRecommendation",
+    "DecisionSupportRun",
+    "DecisionSupportTask",
+    "DecisionSupportReviewItem",
+    "DecisionSupportDecision",
+    "CaseReviewRun",
+    "CaseReviewChecklist",
+    "CaseReviewChecklistItem",
+    "CaseReviewApproval",
+    "CaseReviewValidationRecord",
+    "IntegrityMonitorRun",
+    "IntegrityCheck",
+    "IntegrityAlert",
+    "IntegrityDriftRecord",
+    "AnalyticsRun",
+    "AnalyticsSnapshot",
+    "AnalyticsMetric",
+    "AnalyticsDashboard",
+    "PlatformValidationRun",
+    "PlatformValidationResult",
+    "PlatformValidationIssue",
 ]

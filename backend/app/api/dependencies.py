@@ -42,6 +42,11 @@ if TYPE_CHECKING:
     from backend.app.investigation_intelligence.service import (
         InvestigationIntelligenceEngineService,
     )
+    from backend.app.decision_support.service import DecisionSupportService
+    from backend.app.case_review.service import CaseReviewService
+    from backend.app.integrity.service import IntegrityMonitorService
+    from backend.app.analytics.service import AnalyticsService
+    from backend.app.platform_validation.service import PlatformValidationService
     from backend.app.monitoring.service import MonitoringService
     from backend.app.reporting.service import ReportService
     from backend.app.security.service import SecurityService
@@ -488,7 +493,9 @@ def get_interoperability_service(
     from backend.app.interoperability.service import InteroperabilityService
 
     return InteroperabilityService(
-        session=session, settings=settings, storage=storage,
+        session=session,
+        settings=settings,
+        storage=storage,
     )
 
 
@@ -514,6 +521,63 @@ def get_investigation_intelligence_service(
     return InvestigationIntelligenceEngineService(session=session)
 
 
+def get_decision_support_service(
+    session: SessionDependency,
+) -> DecisionSupportService:
+    """Compose the Phase 9D decision support service."""
+
+    from backend.app.decision_support.service import DecisionSupportService
+
+    return DecisionSupportService(session=session)
+
+
+def get_case_review_service(
+    session: SessionDependency,
+) -> CaseReviewService:
+    """Compose the Phase 9E case review service."""
+
+    from backend.app.case_review.service import CaseReviewService
+
+    return CaseReviewService(session=session)
+
+
+def get_integrity_monitor_service(
+    session: SessionDependency,
+    storage: Annotated[StorageService, Depends(get_storage_service)],
+) -> IntegrityMonitorService:
+    """Compose the Phase 9F integrity monitoring service."""
+
+    from backend.app.integrity.service import IntegrityMonitorService
+
+    return IntegrityMonitorService(session=session, storage=storage)
+
+
+def get_analytics_service(
+    session: SessionDependency,
+) -> AnalyticsService:
+    """Compose the Phase 9G analytics service."""
+
+    from backend.app.analytics.service import AnalyticsService
+
+    return AnalyticsService(session=session)
+
+
+def get_platform_validation_service(
+    session: SessionDependency,
+    settings: RuntimeSettingsDependency,
+    request: Request,
+) -> PlatformValidationService:
+    """Compose the Phase 9H platform validation service."""
+
+    from backend.app.platform_validation.service import PlatformValidationService
+
+    return PlatformValidationService(
+        session=session,
+        settings=settings,
+        app=request.app,
+    )
+
+
 __all__ = [
     "SessionDependency",
     "get_ai_service",
@@ -527,6 +591,11 @@ __all__ = [
     "get_interoperability_service",
     "get_knowledge_graph_service",
     "get_investigation_intelligence_service",
+    "get_decision_support_service",
+    "get_case_review_service",
+    "get_integrity_monitor_service",
+    "get_analytics_service",
+    "get_platform_validation_service",
     "get_comparison_service",
     "get_db_session",
     "get_document_analysis_service",

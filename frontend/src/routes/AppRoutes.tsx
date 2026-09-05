@@ -75,6 +75,16 @@ const UserManagementPage = lazy(() =>
 const AIModelsPage = lazy(() =>
   import("../pages/AIModelsPage").then((module) => ({ default: module.AIModelsPage })),
 );
+const AnalyticsPage = lazy(() =>
+  import("../pages/AnalyticsPage").then((module) => ({
+    default: module.AnalyticsPage,
+  })),
+);
+const PlatformHealthPage = lazy(() =>
+  import("../pages/PlatformHealthPage").then((module) => ({
+    default: module.PlatformHealthPage,
+  })),
+);
 
 function ShellRoute() {
   return (
@@ -101,6 +111,22 @@ export function AppRoutes() {
           />
           <Route element={<EvidencePage />} path="/evidence" />
           <Route element={<ReportsPage />} path="/reports" />
+          <Route
+            element={
+              <RoleGuard permission="analytics.view">
+                <AnalyticsPage />
+              </RoleGuard>
+            }
+            path="/analytics"
+          />
+          <Route
+            element={
+              <RoleGuard permission="platform_validation.view">
+                <PlatformHealthPage />
+              </RoleGuard>
+            }
+            path="/platform-health"
+          />
           <Route element={<SettingsPage />} path="/settings" />
           <Route element={<ProfilePage />} path="/profile" />
           <Route

@@ -31,6 +31,9 @@ import { PolicyViolationsPanel } from "../components/security/PolicyViolationsPa
 import { CaseInteropSection } from "./InteroperabilityPage";
 import { KnowledgeGraphPanel } from "../components/knowledge-graph/KnowledgeGraphPanel";
 import { InvestigationIntelligencePanel } from "../components/investigation-intelligence/InvestigationIntelligencePanel";
+import { WorkflowDashboard } from "../components/decision-support/WorkflowDashboard";
+import { CaseReviewPanel } from "../components/case-review/CaseReviewPanel";
+import { IntegrityDashboard } from "../components/integrity/IntegrityDashboard";
 import { ReportPanel } from "../components/investigation/ReportPanel";
 import { InvestigationSummaryPanel } from "../components/investigation/InvestigationSummaryPanel";
 import { AnalysisPanel } from "../components/investigation/AnalysisPanel";
@@ -76,6 +79,9 @@ const tabs: TabOption<InvestigationTab>[] = [
   { value: "entities", label: "Entity Graph" },
   { value: "knowledge-graph", label: "Knowledge Graph" },
   { value: "case-intelligence", label: "Case Intelligence" },
+  { value: "decision-support", label: "Decision Support" },
+  { value: "case-review", label: "Case Review" },
+  { value: "integrity", label: "Integrity" },
   { value: "jury", label: "AI Jury" },
   { value: "metadata", label: "Metadata" },
   { value: "report", label: "Report" },
@@ -233,6 +239,11 @@ export function InvestigationWorkspacePage() {
         {activeTab === "case-intelligence" && (
           <InvestigationIntelligencePanel caseId={caseId} />
         )}
+        {activeTab === "decision-support" && (
+          <WorkflowDashboard caseId={caseId} />
+        )}
+        {activeTab === "case-review" && <CaseReviewPanel caseId={caseId} />}
+        {activeTab === "integrity" && <IntegrityDashboard caseId={caseId} />}
         {activeTab === "report" && <ReportPanel caseId={caseId} />}
         {activeTab === "summary" && (
           <InvestigationSummaryPanel caseId={caseId} />

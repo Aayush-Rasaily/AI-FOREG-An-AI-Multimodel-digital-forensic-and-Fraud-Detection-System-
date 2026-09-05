@@ -17,7 +17,10 @@ export type InvestigationTab =
   | "security"
   | "exchange"
   | "knowledge-graph"
-  | "case-intelligence";
+  | "case-intelligence"
+  | "decision-support"
+  | "case-review"
+  | "integrity";
 
 export type FindingState =
   | "confirmed"

@@ -80,6 +80,16 @@ ROLE_PERMISSIONS: dict[str, frozenset[str]] = {
             PermissionCode.KNOWLEDGE_GRAPH_VIEW.value,
             PermissionCode.INVESTIGATION_INTELLIGENCE_RUN.value,
             PermissionCode.INVESTIGATION_INTELLIGENCE_VIEW.value,
+            PermissionCode.DECISION_SUPPORT_RUN.value,
+            PermissionCode.DECISION_SUPPORT_VIEW.value,
+            PermissionCode.CASE_REVIEW_RUN.value,
+            PermissionCode.CASE_REVIEW_VIEW.value,
+            PermissionCode.INTEGRITY_RUN.value,
+            PermissionCode.INTEGRITY_VIEW.value,
+            PermissionCode.ANALYTICS_RUN.value,
+            PermissionCode.ANALYTICS_VIEW.value,
+            PermissionCode.PLATFORM_VALIDATION_RUN.value,
+            PermissionCode.PLATFORM_VALIDATION_VIEW.value,
         }
     ),
     ROLE_ANALYST: _READ
@@ -97,6 +107,14 @@ ROLE_PERMISSIONS: dict[str, frozenset[str]] = {
             PermissionCode.KNOWLEDGE_GRAPH_VIEW.value,
             PermissionCode.INVESTIGATION_INTELLIGENCE_RUN.value,
             PermissionCode.INVESTIGATION_INTELLIGENCE_VIEW.value,
+            PermissionCode.DECISION_SUPPORT_RUN.value,
+            PermissionCode.DECISION_SUPPORT_VIEW.value,
+            PermissionCode.CASE_REVIEW_RUN.value,
+            PermissionCode.CASE_REVIEW_VIEW.value,
+            PermissionCode.INTEGRITY_RUN.value,
+            PermissionCode.INTEGRITY_VIEW.value,
+            PermissionCode.ANALYTICS_VIEW.value,
+            PermissionCode.PLATFORM_VALIDATION_VIEW.value,
         }
     ),
     ROLE_REVIEWER: _READ
@@ -111,6 +129,12 @@ ROLE_PERMISSIONS: dict[str, frozenset[str]] = {
             PermissionCode.INTEROP_EXPORT.value,
             PermissionCode.KNOWLEDGE_GRAPH_VIEW.value,
             PermissionCode.INVESTIGATION_INTELLIGENCE_VIEW.value,
+            PermissionCode.DECISION_SUPPORT_VIEW.value,
+            PermissionCode.CASE_REVIEW_VIEW.value,
+            PermissionCode.CASE_REVIEW_RUN.value,
+            PermissionCode.INTEGRITY_VIEW.value,
+            PermissionCode.ANALYTICS_VIEW.value,
+            PermissionCode.PLATFORM_VALIDATION_VIEW.value,
         }
     ),
     ROLE_VIEWER: frozenset(

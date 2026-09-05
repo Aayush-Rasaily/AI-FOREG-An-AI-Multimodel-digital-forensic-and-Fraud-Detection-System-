@@ -34,6 +34,21 @@ from backend.app.api.v1.endpoints.intelligence import (
 from backend.app.api.v1.endpoints.interoperability import (
     router as interoperability_router,
 )
+from backend.app.api.v1.endpoints.decision_support import (
+    router as decision_support_router,
+)
+from backend.app.api.v1.endpoints.case_review import (
+    router as case_review_router,
+)
+from backend.app.api.v1.endpoints.integrity import (
+    router as integrity_router,
+)
+from backend.app.api.v1.endpoints.analytics import (
+    router as analytics_router,
+)
+from backend.app.api.v1.endpoints.platform_validation import (
+    router as platform_validation_router,
+)
 from backend.app.api.v1.endpoints.investigation_intelligence import (
     router as investigation_intelligence_router,
 )
@@ -74,6 +89,11 @@ router.include_router(sessions_router)
 router.include_router(interoperability_router)
 router.include_router(knowledge_graph_router)
 router.include_router(investigation_intelligence_router)
+router.include_router(decision_support_router)
+router.include_router(case_review_router)
+router.include_router(integrity_router)
+router.include_router(analytics_router)
+router.include_router(platform_validation_router)
 router.include_router(cases_router)
 router.include_router(collaboration_router)
 router.include_router(case_intelligence_router)

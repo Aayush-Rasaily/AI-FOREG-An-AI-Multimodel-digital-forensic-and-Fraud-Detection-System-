@@ -11,7 +11,7 @@ DEPLOYMENT_ENGINE_VERSION = "8g.1.0"
 DEPLOYMENT_POLICY_VERSION = "1.0"
 
 # Canonical schema / migration head expected for this release train.
-EXPECTED_MIGRATION_HEAD = "20260909_0028"
+EXPECTED_MIGRATION_HEAD = "20260914_0033"
 
 
 def _git_commit(repo_root: Path | None = None) -> str | None:

@@ -47,6 +47,16 @@ class PermissionCode(StrEnum):
     KNOWLEDGE_GRAPH_VIEW = "knowledge_graph.view"
     INVESTIGATION_INTELLIGENCE_RUN = "investigation_intelligence.run"
     INVESTIGATION_INTELLIGENCE_VIEW = "investigation_intelligence.view"
+    DECISION_SUPPORT_RUN = "decision_support.run"
+    DECISION_SUPPORT_VIEW = "decision_support.view"
+    CASE_REVIEW_RUN = "case_review.run"
+    CASE_REVIEW_VIEW = "case_review.view"
+    INTEGRITY_RUN = "integrity.run"
+    INTEGRITY_VIEW = "integrity.view"
+    ANALYTICS_RUN = "analytics.run"
+    ANALYTICS_VIEW = "analytics.view"
+    PLATFORM_VALIDATION_RUN = "platform_validation.run"
+    PLATFORM_VALIDATION_VIEW = "platform_validation.view"
 
 
 PERMISSION_DESCRIPTIONS: dict[str, str] = {
@@ -92,6 +102,36 @@ PERMISSION_DESCRIPTIONS: dict[str, str] = {
     ),
     PermissionCode.INVESTIGATION_INTELLIGENCE_VIEW: (
         "View investigation hypotheses, gaps, and recommendations."
+    ),
+    PermissionCode.DECISION_SUPPORT_RUN: (
+        "Generate investigator decision-support workflows."
+    ),
+    PermissionCode.DECISION_SUPPORT_VIEW: (
+        "View decision-support tasks, review queues, and decisions."
+    ),
+    PermissionCode.CASE_REVIEW_RUN: (
+        "Generate case review validations and record approvals."
+    ),
+    PermissionCode.CASE_REVIEW_VIEW: (
+        "View case review checklists, approvals, and metrics."
+    ),
+    PermissionCode.INTEGRITY_RUN: (
+        "Run digital evidence integrity monitoring checks."
+    ),
+    PermissionCode.INTEGRITY_VIEW: (
+        "View integrity alerts, drift, and verification history."
+    ),
+    PermissionCode.ANALYTICS_RUN: (
+        "Refresh investigation analytics snapshots."
+    ),
+    PermissionCode.ANALYTICS_VIEW: (
+        "View investigation analytics dashboards and exports."
+    ),
+    PermissionCode.PLATFORM_VALIDATION_RUN: (
+        "Run platform readiness validation checks."
+    ),
+    PermissionCode.PLATFORM_VALIDATION_VIEW: (
+        "View platform validation results and health reports."
     ),
 }
 
@@ -235,6 +275,30 @@ def required_permission(method: str, path: str) -> str | None:
         if method == "POST":
             return PermissionCode.INVESTIGATION_INTELLIGENCE_RUN
         return PermissionCode.INVESTIGATION_INTELLIGENCE_VIEW
+    if "decision-support" in joined or root == "decision-support":
+        if method == "POST" or method == "PATCH":
+            return PermissionCode.DECISION_SUPPORT_RUN
+        return PermissionCode.DECISION_SUPPORT_VIEW
+    if "case-review" in joined or root == "case-review":
+        if method == "POST" or method == "PATCH":
+            return PermissionCode.CASE_REVIEW_RUN
+        return PermissionCode.CASE_REVIEW_VIEW
+    if root == "analytics" or "analytics" in parts:
+        if method == "POST":
+            return PermissionCode.ANALYTICS_RUN
+        return PermissionCode.ANALYTICS_VIEW
+    if root == "platform" or "platform" in parts:
+        if method == "POST":
+            return PermissionCode.PLATFORM_VALIDATION_RUN
+        return PermissionCode.PLATFORM_VALIDATION_VIEW
+    if (
+        "integrity-check" in joined
+        or root == "integrity"
+        or (root == "cases" and "integrity" in parts)
+    ):
+        if method == "POST":
+            return PermissionCode.INTEGRITY_RUN
+        return PermissionCode.INTEGRITY_VIEW
     if "workflow" in parts:
         if method == "GET":
             return PermissionCode.CASE_VIEW
@@ -250,8 +314,7 @@ def required_permission(method: str, path: str) -> str | None:
             return PermissionCode.REPORT_GENERATE
         return PermissionCode.REPORT_VIEW
     if any(
-        token in joined
-        for token in ("fusion", "case-intelligence", "intelligence")
+        token in joined for token in ("fusion", "case-intelligence", "intelligence")
     ):
         if method == "POST":
             return PermissionCode.FUSION_RUN
