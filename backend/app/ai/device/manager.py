@@ -81,22 +81,37 @@ class DeviceManager:
         return tuple(devices)
 
     def select_device(self, required: str = "any") -> str:
-        """Select the best device for inference."""
+        """Select the best device for inference with GPU→CPU fallback."""
 
         normalized = required.lower()
-        if normalized in {"cuda", "gpu"} and self._cuda_available:
-            return "cuda"
-        if normalized == "mps" and self._mps_available:
-            return "mps"
-        if normalized == "rocm" and self._rocm_available:
-            return "rocm"
+        if normalized in {"cuda", "gpu"}:
+            if self._cuda_available and self._gpu_memory_usable():
+                return "cuda"
+            logger.info("CUDA requested but unavailable or low memory; using CPU")
+            return "cpu"
+        if normalized == "mps":
+            if self._mps_available:
+                return "mps"
+            return "cpu"
+        if normalized == "rocm":
+            if self._rocm_available:
+                return "rocm"
+            return "cpu"
         if normalized == "cpu":
             return "cpu"
-        if self.prefer_gpu and self._cuda_available:
+        if self.prefer_gpu and self._cuda_available and self._gpu_memory_usable():
             return "cuda"
         if self.prefer_gpu and self._mps_available:
             return "mps"
         return "cpu"
+
+    def _gpu_memory_usable(self, *, min_free_mb: float = 256.0) -> bool:
+        """Prefer CPU when CUDA reports critically low free memory."""
+
+        free = self._cuda_free_memory_mb()
+        if free is None:
+            return self._cuda_available
+        return free >= min_free_mb
 
     def gpu_memory_summary(self) -> dict[str, float | None]:
         """Return GPU memory statistics when CUDA is available."""

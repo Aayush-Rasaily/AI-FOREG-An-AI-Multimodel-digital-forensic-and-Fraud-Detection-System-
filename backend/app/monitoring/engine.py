@@ -47,12 +47,8 @@ def assess_health(
     ai_executions = sum(
         int(item.get("executions") or 0) for item in ai.get("modalities", [])
     )
-    ai_failure_rate = (
-        round(ai_failures / ai_executions, 4) if ai_executions else 0.0
-    )
-    backlog = int(processing.get("queued") or 0) + int(
-        processing.get("running") or 0
-    )
+    ai_failure_rate = round(ai_failures / ai_executions, 4) if ai_executions else 0.0
+    backlog = int(processing.get("queued") or 0) + int(processing.get("running") or 0)
     api_error_codes = 0
     for code, count in (api.get("response_codes") or {}).items():
         try:
@@ -61,23 +57,15 @@ def assess_health(
         except (TypeError, ValueError):
             continue
     api_total = int(api.get("request_counts") or 0)
-    api_failure_rate = (
-        round(api_error_codes / api_total, 4) if api_total else 0.0
-    )
+    api_failure_rate = round(api_error_codes / api_total, 4) if api_total else 0.0
 
     status = PlatformHealthStatus.HEALTHY
     peak_rate = max(failure_rate, ai_failure_rate, api_failure_rate)
 
-    if (
-        peak_rate >= CRITICAL_FAILURE_RATE
-        or backlog >= CRITICAL_QUEUE_BACKLOG
-    ):
+    if peak_rate >= CRITICAL_FAILURE_RATE or backlog >= CRITICAL_QUEUE_BACKLOG:
         status = PlatformHealthStatus.CRITICAL
         reasons.append("Critical failure rate or queue backlog detected.")
-    elif (
-        peak_rate >= DEGRADED_FAILURE_RATE
-        or backlog >= DEGRADED_QUEUE_BACKLOG
-    ):
+    elif peak_rate >= DEGRADED_FAILURE_RATE or backlog >= DEGRADED_QUEUE_BACKLOG:
         status = PlatformHealthStatus.DEGRADED
         reasons.append("Elevated failure rate or queue backlog.")
     elif (
@@ -135,9 +123,7 @@ class MonitoringEngine:
             "inactive_investigations": inactive,
             "processing_bottlenecks": processing.get("recent_failures", []),
             "detector_failure_rankings": ai.get("detector_failure_rankings", []),
-            "evidence_processing_distribution": processing.get(
-                "job_type_counts", {}
-            ),
+            "evidence_processing_distribution": processing.get("job_type_counts", {}),
             "report_generation_statistics": {
                 "reports_generated": investigation.get("reports_generated", 0),
                 "status_distribution": investigation.get(
@@ -168,9 +154,7 @@ class MonitoringEngine:
                 "average_generation_ms": investigation.get(
                     "average_report_generation_ms"
                 ),
-                "p95_generation_ms": investigation.get(
-                    "report_generation_p95_ms"
-                ),
+                "p95_generation_ms": investigation.get("report_generation_p95_ms"),
             },
             "api": api,
             "activity": {

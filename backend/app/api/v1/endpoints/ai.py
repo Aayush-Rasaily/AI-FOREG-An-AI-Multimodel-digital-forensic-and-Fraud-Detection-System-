@@ -16,6 +16,13 @@ from backend.app.ai.service import AIService
 from backend.app.api.dependencies import get_ai_service
 from backend.app.core.request_context import get_request_id
 from backend.app.core.responses import ApiResponse
+from backend.app.infrastructure.cache.json_cache import (
+    cache_delete,
+    cache_get_json,
+    cache_key,
+    cache_set_json,
+    default_cache_ttl,
+)
 
 router = APIRouter(tags=["ai"])
 AIServiceDependency = Annotated[AIService, Depends(get_ai_service)]
@@ -33,8 +40,21 @@ async def list_models(
 ) -> ApiResponse[AIModelListResponse]:
     """Return registered models with cache and device state."""
 
+    key = cache_key("ai", "models", str(limit), str(offset))
+    cached = await cache_get_json(key)
+    if isinstance(cached, dict):
+        return ApiResponse(
+            data=AIModelListResponse.model_validate(cached),
+            request_id=get_request_id(),
+        )
+    data = await service.list_models(limit=limit, offset=offset)
+    await cache_set_json(
+        key,
+        data.model_dump(mode="json"),
+        ttl_seconds=default_cache_ttl(),
+    )
     return ApiResponse(
-        data=await service.list_models(limit=limit, offset=offset),
+        data=data,
         request_id=get_request_id(),
     )
 
@@ -67,8 +87,10 @@ async def reload_model(
 ) -> ApiResponse[AIModelResponse]:
     """Reload a model, run warmup inference, and persist job metrics."""
 
+    data = await service.reload_model(payload.model_name)
+    await cache_delete(cache_key("ai", "models", "50", "0"))
     return ApiResponse(
-        data=await service.reload_model(payload.model_name),
+        data=data,
         request_id=get_request_id(),
     )
 

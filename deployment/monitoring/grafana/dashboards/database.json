@@ -1,0 +1,31 @@
+{
+  "title": "AI-Forge Database",
+  "uid": "ai-forge-database",
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "DB query rate",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "expr": "sum(rate(ai_forge_db_queries_total[5m])) by (operation)",
+          "legendFormat": "{{operation}}"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Redis operations",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "targets": [
+        {
+          "expr": "sum(rate(ai_forge_redis_operations_total[5m])) by (command)",
+          "legendFormat": "{{command}}"
+        }
+      ]
+    }
+  ]
+}

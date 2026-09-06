@@ -61,13 +61,15 @@ def summarize_user_activity(events: list[AuditEvent]) -> dict[str, Any]:
     busiest_investigators = [
         {"user": user, "event_count": count}
         for user, count in sorted(
-            by_user.items(), key=lambda item: (-item[1], item[0]),
+            by_user.items(),
+            key=lambda item: (-item[1], item[0]),
         )[:20]
     ]
     busiest_cases = [
         {"case_id": case_id, "event_count": count}
         for case_id, count in sorted(
-            case_activity.items(), key=lambda item: (-item[1], item[0]),
+            case_activity.items(),
+            key=lambda item: (-item[1], item[0]),
         )[:20]
     ]
     return {
@@ -98,7 +100,8 @@ def summarize_api_usage(events: list[AuditEvent]) -> dict[str, Any]:
     endpoints = [
         {"operation": op, "count": count}
         for op, count in sorted(
-            endpoint_counts.items(), key=lambda item: (-item[1], item[0]),
+            endpoint_counts.items(),
+            key=lambda item: (-item[1], item[0]),
         )[:50]
     ]
     return {
@@ -139,7 +142,9 @@ async def find_inactive_cases(session: AsyncSession) -> list[dict[str, Any]]:
 
 
 def recent_activity(
-    events: list[AuditEvent], *, limit: int = 25,
+    events: list[AuditEvent],
+    *,
+    limit: int = 25,
 ) -> list[dict[str, Any]]:
     """Return recent operational audit events (newest first)."""
 

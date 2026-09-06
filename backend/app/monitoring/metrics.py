@@ -1,10 +1,23 @@
-"""Deterministic KPI helpers for monitoring aggregates."""
+"""Deterministic KPI helpers for monitoring aggregates.
+
+Phase 10B also re-exports Prometheus recording helpers so callers can import
+from ``backend.app.monitoring.metrics`` without changing forensic logic.
+"""
 
 from __future__ import annotations
 
 import math
 from collections.abc import Sequence
 from datetime import datetime
+
+from backend.app.monitoring.prometheus import (
+    observe_domain_duration,
+    observe_request,
+    record_db_query,
+    record_model_load,
+    record_redis_op,
+    set_queue_length,
+)
 
 
 def duration_ms(
@@ -54,3 +67,18 @@ def status_value(status: object) -> str:
     if hasattr(status, "value"):
         return str(status.value).lower()
     return str(status).lower()
+
+
+__all__ = [
+    "average",
+    "duration_ms",
+    "observe_domain_duration",
+    "observe_request",
+    "percentile_95",
+    "rate",
+    "record_db_query",
+    "record_model_load",
+    "record_redis_op",
+    "set_queue_length",
+    "status_value",
+]

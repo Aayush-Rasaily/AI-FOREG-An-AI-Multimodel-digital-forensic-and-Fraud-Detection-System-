@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-forge-backend
+  namespace: ai-forge
+  labels:
+    app: ai-forge-backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ai-forge-backend
+  template:
+    metadata:
+      labels:
+        app: ai-forge-backend
+    spec:
+      terminationGracePeriodSeconds: 45
+      containers:
+        - name: api
+          image: ai-forge-api:prod
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+              name: http
+          envFrom:
+            - secretRef:
+                name: ai-forge-secrets
+            - configMapRef:
+                name: ai-forge-config
+          env:
+            - name: APP_ENV
+              value: production
+            - name: DEBUG
+              value: "false"
+          readinessProbe:
+            httpGet:
+              path: /api/v1/system/readiness
+              port: http
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/v1/system/liveness
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 15
+          volumeMounts:
+            - name: evidence
+              mountPath: /app/data
+            - name: models
+              mountPath: /app/models
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "2"
+              memory: 2Gi
+      volumes:
+        - name: evidence
+          persistentVolumeClaim:
+            claimName: ai-forge-evidence
+        - name: models
+          persistentVolumeClaim:
+            claimName: ai-forge-models
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ai-forge-evidence
+  namespace: ai-forge
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 50Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ai-forge-models
+  namespace: ai-forge
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 20Gi

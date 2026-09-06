@@ -45,7 +45,9 @@ def _run_durations(rows: list[Any]) -> list[float]:
     for row in rows:
         started = getattr(row, "started_at", None)
         completed = getattr(row, "completed_at", None) or getattr(
-            row, "finished_at", None,
+            row,
+            "finished_at",
+            None,
         )
         latency = getattr(row, "latency_ms", None)
         if isinstance(latency, (int, float)):
@@ -63,7 +65,8 @@ async def collect_processing_metrics(session: AsyncSession) -> dict[str, Any]:
     jobs = list(
         await session.scalars(
             select(ProcessingJob).order_by(
-                ProcessingJob.created_at.asc(), ProcessingJob.id.asc(),
+                ProcessingJob.created_at.asc(),
+                ProcessingJob.id.asc(),
             )
         )
     )
@@ -80,9 +83,7 @@ async def collect_processing_metrics(session: AsyncSession) -> dict[str, Any]:
         if duration_ms(job.created_at, job.started_at) is not None
     ]
     exec_durations = _job_durations(jobs)
-    typed = Counter(
-        status_value(job.job_type) for job in jobs
-    )
+    typed = Counter(status_value(job.job_type) for job in jobs)
     bottlenecks = [
         {
             "job_id": str(job.id),
@@ -228,13 +229,12 @@ async def collect_investigation_metrics(session: AsyncSession) -> dict[str, Any]
         if evidence_id is not None:
             findings_by_case[str(evidence_id)] += 1
 
-    evidence_by_case: Counter[str] = Counter(
-        str(item.case_id) for item in evidence
-    )
+    evidence_by_case: Counter[str] = Counter(str(item.case_id) for item in evidence)
     top_cases = [
         {"case_id": case_id, "evidence_count": count}
         for case_id, count in sorted(
-            evidence_by_case.items(), key=lambda item: (-item[1], item[0]),
+            evidence_by_case.items(),
+            key=lambda item: (-item[1], item[0]),
         )[:20]
     ]
     report_durations = _run_durations(reports)

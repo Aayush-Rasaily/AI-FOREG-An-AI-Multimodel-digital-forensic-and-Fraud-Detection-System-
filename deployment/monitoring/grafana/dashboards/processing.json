@@ -1,0 +1,44 @@
+{
+  "title": "AI-Forge Processing",
+  "uid": "ai-forge-processing",
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Processing duration",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(ai_forge_processing_duration_seconds_bucket[5m])) by (le, job_type))",
+          "legendFormat": "{{job_type}}"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Queue length",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "targets": [
+        {
+          "expr": "ai_forge_queue_length",
+          "legendFormat": "{{queue}}"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "OCR / Video / Audio / Fusion / Correlation / Report",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 8 },
+      "targets": [
+        { "expr": "rate(ai_forge_ocr_duration_seconds_sum[5m])", "legendFormat": "ocr" },
+        { "expr": "rate(ai_forge_video_analysis_duration_seconds_sum[5m])", "legendFormat": "video" },
+        { "expr": "rate(ai_forge_audio_analysis_duration_seconds_sum[5m])", "legendFormat": "audio" },
+        { "expr": "rate(ai_forge_fusion_duration_seconds_sum[5m])", "legendFormat": "fusion" },
+        { "expr": "rate(ai_forge_correlation_duration_seconds_sum[5m])", "legendFormat": "correlation" },
+        { "expr": "rate(ai_forge_report_generation_duration_seconds_sum[5m])", "legendFormat": "report" }
+      ]
+    }
+  ]
+}

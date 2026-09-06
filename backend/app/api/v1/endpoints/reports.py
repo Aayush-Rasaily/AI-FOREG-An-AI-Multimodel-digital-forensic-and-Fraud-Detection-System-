@@ -11,6 +11,7 @@ from backend.app.api.dependencies import get_report_service, get_storage_service
 from backend.app.application.services.storage import StorageService
 from backend.app.core.request_context import get_request_id
 from backend.app.core.responses import ApiResponse
+from backend.app.infrastructure.concurrency import run_in_thread
 from backend.app.reporting.schemas import (
     ForensicReportDetailResponse,
     ForensicReportListResponse,
@@ -147,7 +148,10 @@ async def download_forensic_report(
 
     async def stream() -> AsyncIterator[bytes]:
         async with storage.open(storage_key) as handle:
-            while chunk := handle.read(1024 * 1024):
+            while True:
+                chunk = await run_in_thread(handle.read, 1024 * 1024)
+                if not chunk:
+                    break
                 yield chunk
 
     return StreamingResponse(

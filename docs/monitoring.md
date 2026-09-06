@@ -1,96 +1,128 @@
-# Monitoring, Audit Analytics & Operational Intelligence (Phase 8D)
+# Observability & Monitoring (Phase 10B)
 
-Phase 8D adds a deterministic operational monitoring layer for AI-Forge.
-It aggregates **persisted** processing, AI, investigation, audit, and
-report data into health assessments, KPIs, and an operational dashboard.
+Production observability for AI-Forge: Prometheus metrics, readiness probes,
+structured JSON logging enrichment, and optional OpenTelemetry instrumentation.
 
-It does **not** modify Phase 7F `/system/*` endpoints or analysis engines.
+**No forensic / AI / investigation logic changes** — instrumentation only.
+
+Phase 8D KPI dashboards under `/api/v1/monitoring/*` remain unchanged.
+Phase 10B adds infrastructure telemetry beside them.
 
 ## Architecture
 
 ```
-MonitoringService
-    └── MonitoringEngine.compute()
-          ├── analytics (processing / AI / investigation KPIs)
-          ├── audit (user activity / API usage proxies)
-          └── health assessment
-    └── refresh() persists:
-          monitoring_snapshots
-          audit_statistics
-          system_health_records
+backend/app/monitoring/
+  metrics.py       KPI helpers + Prom recording re-exports
+  prometheus.py    Registry + /metrics exposition
+  tracing.py       OpenTelemetry setup (optional)
+  health.py        Readiness aggregation for /health/ready
+  logging.py       case/evidence/user/trace context vars
+  telemetry.py     Bootstrap wiring
+
+deployment/compose/docker-compose.monitoring.yml
+  Prometheus · Grafana · Loki · Promtail
+
+deployment/monitoring/grafana/dashboards/
+  api · ai · processing · database · system
 ```
 
-## Health policy
+## Metrics
 
-Status values: `HEALTHY` | `WARNING` | `DEGRADED` | `CRITICAL`
+Expose Prometheus text:
 
-Derived from:
-
-- processing failure rate
-- AI modality failure rate
-- API 5xx rates (when present in audit metadata)
-- queue backlog (queued + running jobs)
-- unavailable AI modalities
-
-Thresholds live in `backend/app/monitoring/policy.py`.
-
-## KPI definitions
-
-| KPI | Source |
+| Path | Auth |
 | --- | --- |
-| Average processing time | `ProcessingJob.started_at` → `completed_at` |
-| Average AI runtime | `InferenceJob.latency_ms` / run timestamps |
-| Average report generation | `ForensicReport` timing |
-| Average fusion / correlation | respective run timestamps |
-| P95 latency | nearest-rank percentile over measured durations |
-| Success / failure / retry rates | processing job status + attempt counts |
+| `GET /metrics` | Public (root scrape) |
+| `GET /api/v1/metrics` | Public |
 
-## Audit metrics
+Tracked series (prefix `ai_forge_`):
 
-Derived from `audit_events` only (no credentials/secrets stored):
+- HTTP requests / latency
+- AI execution, processing, OCR, video, audio, fusion, correlation, report durations
+- Queue length
+- DB query + Redis op counters
+- Process memory / CPU gauges
+- GPU availability
+- Model load counters
 
-- busiest investigators / cases
-- inactive investigations (`updated_at` older than 14 days)
-- operation and category counts
-- API usage proxies via operation names
-- recent activity feed
+Recording helpers:
 
-HTTP request latency is **not** persisted by middleware; API latency is
-`null` unless audit metadata includes status/latency fields.
+```python
+from backend.app.monitoring.metrics import (
+    observe_domain_duration,
+    observe_request,
+    set_queue_length,
+    record_model_load,
+)
+```
 
-## Refresh process
+## Health endpoints
 
-`POST /api/v1/monitoring/refresh` recomputes aggregates and writes one
-snapshot + health record + audit statistics row. Subsequent GETs return
-the latest snapshot when present; otherwise they compute live.
-
-## API endpoints
-
-| Method | Path |
+| Path | Purpose |
 | --- | --- |
-| GET | `/api/v1/monitoring/dashboard` |
-| GET | `/api/v1/monitoring/system-health` |
-| GET | `/api/v1/monitoring/processing` |
-| GET | `/api/v1/monitoring/ai` |
-| GET | `/api/v1/monitoring/api` |
-| GET | `/api/v1/monitoring/activity` |
-| GET | `/api/v1/monitoring/bottlenecks` |
-| GET | `/api/v1/monitoring/audit-summary` |
-| POST | `/api/v1/monitoring/refresh` |
+| `GET /api/v1/health` | App + DB health (existing) |
+| `GET /api/v1/health/live` | Liveness (existing) |
+| `GET /api/v1/health/ready` | **New** readiness: DB, Redis, storage, AI engines, disk, memory |
 
-Permission: `system.monitor`.
+Also retained: `/api/v1/system/liveness` and `/api/v1/system/readiness` (Phase 8G).
 
-## Migration
+## Structured logging
 
-`20260904_0023_add_monitoring.py` (spec’s `20260901_0016` already used
-by entity resolution).
+JSON logs (existing `JsonFormatter`) now include when available:
 
-## Frontend
+- `request_id`
+- `case_id` / `evidence_id` (from URL path)
+- `user_id` (from `request.state.user` when set)
+- `duration_ms` / `status_code` / `method` / `path`
+- `trace_id` (OpenTelemetry, when tracing enabled)
+- `exception` (on errors)
 
-Route `/monitoring` → Monitoring Dashboard (health, processing, AI, cases,
-reports, API usage, audit analytics, activity, bottlenecks, trends).
+## OpenTelemetry
 
-## Determinism
+Disabled by default (no behavioral change / no exporter noise).
 
-Identical persisted inputs produce identical metric values and ordered
-lists. No LLMs and no fabricated metrics.
+Enable with:
+
+```bash
+export AI_FORGE_ENABLE_TRACING=true
+# or configure OTEL_TRACES_EXPORTER
+```
+
+Instruments (when enabled): FastAPI, SQLAlchemy, Redis, HTTPX.
+Background tasks can use `record_background_task(name)` from `telemetry.py`.
+
+## Monitoring stack
+
+```bash
+docker compose \
+  -f deployment/compose/docker-compose.production.yml \
+  -f deployment/compose/docker-compose.monitoring.yml \
+  --profile monitoring \
+  --env-file .env.production up -d
+```
+
+| Service | Port (default bind) |
+| --- | --- |
+| Prometheus | `127.0.0.1:9090` |
+| Grafana | `127.0.0.1:3000` |
+| Loki | `127.0.0.1:3100` |
+
+Prometheus scrapes `http://api:8000/api/v1/metrics` (Prometheus text — not the
+authenticated JSON `/system/metrics` admin endpoint).
+
+Grafana dashboards provisioned automatically under folder **AI-Forge**.
+
+## Distinction from Phase 8D `/system/metrics`
+
+| Endpoint | Format | Auth | Use |
+| --- | --- | --- | --- |
+| `/metrics`, `/api/v1/metrics` | Prometheus text | Public | Scrapers |
+| `/api/v1/system/metrics` | JSON | `system.monitor` | Admin UI |
+| `/api/v1/monitoring/*` | JSON KPIs | `system.monitor` | Ops dashboard |
+
+## Limitations
+
+- Domain duration histograms only increase when callers use recording helpers
+  (middleware always records HTTP metrics).
+- GPU gauge reflects CUDA availability via optional `torch` import.
+- Tracing is opt-in; default production path has zero exporter overhead.

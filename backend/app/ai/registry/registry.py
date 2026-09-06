@@ -19,6 +19,7 @@ class ModelRegistry:
         self._factories: dict[str, ModelFactory] = {}
         self._instances: dict[str, AIModel] = {}
         self._versions: dict[str, str] = {}
+        self._metadata: dict[str, ModelMetadata] = {}
 
     def register(self, factory: ModelFactory) -> None:
         """Register a model factory; each model registers itself."""
@@ -30,6 +31,7 @@ class ModelRegistry:
             raise ValueError(f"Model '{name}' is already registered.")
         self._factories[name] = factory
         self._versions[name] = meta.version
+        self._metadata[name] = meta
         logger.info(
             "Registered AI model",
             extra={"model": name, "version": meta.version},
@@ -45,6 +47,7 @@ class ModelRegistry:
             instance.unload()
         del self._factories[name]
         self._versions.pop(name, None)
+        self._metadata.pop(name, None)
 
     def reload(self, name: str) -> AIModel:
         """Replace the active instance with a freshly constructed model."""
@@ -57,10 +60,11 @@ class ModelRegistry:
         instance = self._factories[name]()
         self._instances[name] = instance
         self._versions[name] = instance.version()
+        self._metadata[name] = instance.metadata()
         return instance
 
     def lookup(self, name: str) -> AIModel:
-        """Return the active model instance, creating one if needed."""
+        """Return the active model instance, creating one if needed (lazy)."""
 
         if name not in self._factories:
             raise KeyError(f"Model '{name}' is not registered.")
@@ -69,25 +73,23 @@ class ModelRegistry:
         return self._instances[name]
 
     def list_metadata(self) -> tuple[ModelMetadata, ...]:
-        """Return metadata for every registered model."""
+        """Return cached metadata for every registered model."""
 
-        return tuple(
-            self._factories[name]().metadata() for name in sorted(self._factories)
-        )
+        return tuple(self._metadata[name] for name in sorted(self._metadata))
 
     def get_metadata(self, name: str) -> ModelMetadata:
-        """Return metadata for one registered model."""
+        """Return cached metadata for one registered model."""
 
-        if name not in self._factories:
+        if name not in self._metadata:
             raise KeyError(f"Model '{name}' is not registered.")
-        return self._factories[name]().metadata()
+        return self._metadata[name]
 
     def discover_capabilities(self) -> dict[str, list[str]]:
         """Return supported tasks keyed by model name."""
 
         return {
-            name: list(self._factories[name]().metadata().supported_tasks)
-            for name in sorted(self._factories)
+            name: list(meta.supported_tasks)
+            for name, meta in sorted(self._metadata.items())
         }
 
     def get_version(self, name: str) -> str:

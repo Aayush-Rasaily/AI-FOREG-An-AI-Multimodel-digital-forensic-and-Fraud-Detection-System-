@@ -1,0 +1,37 @@
+{
+  "title": "AI-Forge AI",
+  "uid": "ai-forge-ai",
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "AI execution duration",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(ai_forge_ai_execution_duration_seconds_bucket[5m])) by (le, modality))",
+          "legendFormat": "{{modality}}"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Model loads",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "targets": [
+        {
+          "expr": "sum(rate(ai_forge_model_loads_total[5m])) by (model, status)",
+          "legendFormat": "{{model}} {{status}}"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "GPU available",
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 8 },
+      "targets": [{ "expr": "ai_forge_gpu_available" }]
+    }
+  ]
+}

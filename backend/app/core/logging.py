@@ -35,9 +35,20 @@ class JsonFormatter(logging.Formatter):
             "message": record.getMessage(),
             "module": record.module,
         }
-        for field_name in ("method", "path", "status_code", "duration_ms"):
+        for field_name in (
+            "method",
+            "path",
+            "status_code",
+            "duration_ms",
+            "case_id",
+            "evidence_id",
+            "user_id",
+            "trace_id",
+        ):
             if hasattr(record, field_name):
-                payload[field_name] = getattr(record, field_name)
+                value = getattr(record, field_name)
+                if value is not None:
+                    payload[field_name] = value
         request_id = get_request_id()
         if request_id is not None:
             payload["request_id"] = str(request_id)

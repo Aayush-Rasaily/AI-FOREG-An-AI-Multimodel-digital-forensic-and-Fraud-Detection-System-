@@ -91,7 +91,7 @@ class TestMigration:
         spec.loader.exec_module(module)
         assert module.revision == "20260914_0033"
         assert module.down_revision == "20260913_0032"
-        assert EXPECTED_MIGRATION_HEAD == "20260914_0033"
+        assert EXPECTED_MIGRATION_HEAD == "20260915_0034"
 
 
 class TestScoring:

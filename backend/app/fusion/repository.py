@@ -52,6 +52,41 @@ class FusionRepository:
         )
         return result.first()
 
+    async def get_latest_for_evidence_ids(
+        self,
+        evidence_ids: list[UUID],
+    ) -> dict[UUID, FusionAnalysisRun]:
+        """Return the latest fusion run per evidence id in one query."""
+
+        if not evidence_ids:
+            return {}
+        ranked = (
+            select(
+                FusionAnalysisRun.id.label("run_id"),
+                func.row_number()
+                .over(
+                    partition_by=FusionAnalysisRun.evidence_id,
+                    order_by=FusionAnalysisRun.created_at.desc(),
+                )
+                .label("rn"),
+            )
+            .where(FusionAnalysisRun.evidence_id.in_(evidence_ids))
+            .subquery()
+        )
+        result = await self.session.scalars(
+            select(FusionAnalysisRun)
+            .where(
+                FusionAnalysisRun.id.in_(
+                    select(ranked.c.run_id).where(ranked.c.rn == 1)
+                )
+            )
+            .options(
+                selectinload(FusionAnalysisRun.jury_assessments),
+                selectinload(FusionAnalysisRun.conflicts),
+            )
+        )
+        return {run.evidence_id: run for run in result}
+
     async def list_runs_for_evidence(
         self,
         evidence_id: UUID,

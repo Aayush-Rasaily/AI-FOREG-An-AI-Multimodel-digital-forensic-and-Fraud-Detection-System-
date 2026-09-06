@@ -21,21 +21,24 @@ class MonitoringRepository:
         self.session = session
 
     async def add_snapshot(
-        self, row: MonitoringSnapshot,
+        self,
+        row: MonitoringSnapshot,
     ) -> MonitoringSnapshot:
         self.session.add(row)
         await self.session.flush()
         return row
 
     async def add_audit_statistics(
-        self, row: AuditStatistics,
+        self,
+        row: AuditStatistics,
     ) -> AuditStatistics:
         self.session.add(row)
         await self.session.flush()
         return row
 
     async def add_health_record(
-        self, row: SystemHealthRecord,
+        self,
+        row: SystemHealthRecord,
     ) -> SystemHealthRecord:
         self.session.add(row)
         await self.session.flush()
@@ -53,6 +56,7 @@ class MonitoringRepository:
         return await self.session.scalar(statement)
 
     async def get_snapshot(
-        self, snapshot_id: UUID,
+        self,
+        snapshot_id: UUID,
     ) -> MonitoringSnapshot | None:
         return await self.session.get(MonitoringSnapshot, snapshot_id)

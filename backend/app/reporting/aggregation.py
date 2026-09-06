@@ -131,22 +131,32 @@ async def aggregate_report_data(
         item.evidence_id: item for item in participations
     }
 
+    evidence_ids = [evidence.id for evidence in evidence_rows]
+    fusion_by_evidence = await fusion_repository.get_latest_for_evidence_ids(
+        evidence_ids
+    )
+    forensic_by_evidence = await forensic_repository.latest_runs_for_evidence_ids(
+        evidence_ids
+    )
+    findings_by_evidence = await forensic_repository.list_findings_for_evidence_ids(
+        list(forensic_by_evidence.keys()),
+        limit_per_evidence=100,
+    )
+
     evidence_items: list[dict[str, Any]] = []
     fusion_snapshots: list[dict[str, Any]] = []
     analysis_summaries: list[dict[str, Any]] = []
 
     for evidence in evidence_rows:
         participation = participation_by_evidence.get(evidence.id)
-        fusion_run = await fusion_repository.get_latest_for_evidence(evidence.id)
-        forensic_run = await forensic_repository.latest_run_for_evidence(evidence.id)
+        fusion_run = fusion_by_evidence.get(evidence.id)
+        forensic_run = forensic_by_evidence.get(evidence.id)
         findings: list[dict[str, Any]] = []
         if forensic_run is not None:
-            forensic_findings, _ = await forensic_repository.list_findings_for_evidence(
-                evidence.id,
-                limit=100,
-                offset=0,
-            )
-            findings = [_serialize_finding(item) for item in forensic_findings]
+            findings = [
+                _serialize_finding(item)
+                for item in findings_by_evidence.get(evidence.id, [])
+            ]
 
         processing = evidence.metadata_json.get("processing", {})
         if not isinstance(processing, dict):

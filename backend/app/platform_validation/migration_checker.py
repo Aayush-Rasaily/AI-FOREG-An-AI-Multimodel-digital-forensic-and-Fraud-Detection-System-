@@ -20,16 +20,18 @@ def _load_migration_module(path: Path) -> Any:
 
 
 def check_migrations(*, repo_root: Path | None = None) -> CheckOutcome:
-    """Verify Phase 9H migration file and revision chain tip."""
+    """Verify Phase 9H migration remains present and release head is current."""
 
     root = repo_root or Path(__file__).resolve().parents[2]
     versions = root / "alembic" / "versions"
-    expected_file = versions / "20260914_0033_add_platform_validation.py"
+    phase9h_file = versions / "20260914_0033_add_platform_validation.py"
+    head_file = versions / "20260915_0034_add_performance_indexes.py"
     details: dict[str, Any] = {
         "expected_head": EXPECTED_MIGRATION_HEAD,
-        "migration_path": expected_file.as_posix(),
+        "phase9h_path": phase9h_file.as_posix(),
+        "head_path": head_file.as_posix(),
     }
-    if not expected_file.is_file():
+    if not phase9h_file.is_file():
         return CheckOutcome(
             key="migrations",
             category="migrations",
@@ -38,31 +40,59 @@ def check_migrations(*, repo_root: Path | None = None) -> CheckOutcome:
             message="Platform validation migration file is missing.",
             details=details,
         )
-    module = _load_migration_module(expected_file)
-    revision = getattr(module, "revision", None)
-    down_revision = getattr(module, "down_revision", None)
-    details.update(
-        {
-            "revision": revision,
-            "down_revision": down_revision,
-        }
-    )
-    if revision != EXPECTED_MIGRATION_HEAD:
+    if not head_file.is_file():
         return CheckOutcome(
             key="migrations",
             category="migrations",
             label="Database migrations",
             status=CheckStatus.FAIL,
-            message=("Migration revision does not match expected release head."),
+            message="Performance index migration file is missing.",
             details=details,
         )
-    if down_revision != "20260913_0032":
+    phase9h = _load_migration_module(phase9h_file)
+    head = _load_migration_module(head_file)
+    details.update(
+        {
+            "phase9h_revision": getattr(phase9h, "revision", None),
+            "phase9h_down_revision": getattr(phase9h, "down_revision", None),
+            "head_revision": getattr(head, "revision", None),
+            "head_down_revision": getattr(head, "down_revision", None),
+        }
+    )
+    if getattr(phase9h, "revision", None) != "20260914_0033":
         return CheckOutcome(
             key="migrations",
             category="migrations",
             label="Database migrations",
             status=CheckStatus.FAIL,
-            message="Migration down_revision chain is incorrect.",
+            message="Platform validation migration revision is incorrect.",
+            details=details,
+        )
+    if getattr(phase9h, "down_revision", None) != "20260913_0032":
+        return CheckOutcome(
+            key="migrations",
+            category="migrations",
+            label="Database migrations",
+            status=CheckStatus.FAIL,
+            message="Platform validation down_revision chain is incorrect.",
+            details=details,
+        )
+    if getattr(head, "revision", None) != EXPECTED_MIGRATION_HEAD:
+        return CheckOutcome(
+            key="migrations",
+            category="migrations",
+            label="Database migrations",
+            status=CheckStatus.FAIL,
+            message="Migration revision does not match expected release head.",
+            details=details,
+        )
+    if getattr(head, "down_revision", None) != "20260914_0033":
+        return CheckOutcome(
+            key="migrations",
+            category="migrations",
+            label="Database migrations",
+            status=CheckStatus.FAIL,
+            message="Performance migration down_revision chain is incorrect.",
             details=details,
         )
     return CheckOutcome(

@@ -26,7 +26,10 @@ from backend.app.api.v1.endpoints.evidence import router as evidence_router
 from backend.app.api.v1.endpoints.extraction import router as extraction_router
 from backend.app.api.v1.endpoints.forensics import router as forensics_router
 from backend.app.api.v1.endpoints.fusion import router as fusion_router
-from backend.app.api.v1.endpoints.health import router as health_router
+from backend.app.api.v1.endpoints.health import (
+    metrics_router,
+    router as health_router,
+)
 from backend.app.api.v1.endpoints.image_ai import router as image_ai_router
 from backend.app.api.v1.endpoints.intelligence import (
     router as intelligence_router,
@@ -81,6 +84,7 @@ from backend.app.auth.middleware import require_request_authorization
 
 router = APIRouter(dependencies=[Depends(require_request_authorization)])
 router.include_router(health_router)
+router.include_router(metrics_router)
 router.include_router(auth_router)
 router.include_router(users_router)
 router.include_router(roles_router)

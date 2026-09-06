@@ -1,0 +1,204 @@
+# Phase 10A production Compose stack.
+# Usage (from repository root):
+#   cp .env.production.example .env.production
+#   docker compose -f deployment/compose/docker-compose.production.yml \
+#     --env-file .env.production up -d --build
+
+services:
+  api:
+    build:
+      context: ../..
+      dockerfile: deployment/docker/backend.Dockerfile
+    image: ai-forge-api:prod
+    env_file:
+      - ../../.env.production
+    environment:
+      APP_ENV: production
+      DEBUG: "false"
+      GIT_COMMIT: ${GIT_COMMIT:-}
+      BUILD_ID: ${BUILD_ID:-}
+    ports:
+      - "${API_HOST_BIND:-127.0.0.1}:${API_PORT:-8000}:8000"
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - >-
+          import urllib.request;
+          urllib.request.urlopen('http://localhost:8000/api/v1/system/liveness')
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 45s
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    init: true
+    restart: unless-stopped
+    volumes:
+      - evidence-data:/app/data
+      - model-data:/app/models
+    networks:
+      - ai-forge-prod
+    stop_grace_period: 45s
+
+  migrate:
+    build:
+      context: ../..
+      dockerfile: deployment/docker/backend.Dockerfile
+    image: ai-forge-api:prod
+    env_file:
+      - ../../.env.production
+    environment:
+      APP_ENV: production
+      DEBUG: "false"
+    command:
+      - uv
+      - run
+      - --no-dev
+      - alembic
+      - -c
+      - backend/alembic.ini
+      - upgrade
+      - head
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+    networks:
+      - ai-forge-prod
+
+  worker:
+    build:
+      context: ../..
+      dockerfile: deployment/docker/backend.Dockerfile
+    image: ai-forge-api:prod
+    env_file:
+      - ../../.env.production
+    environment:
+      APP_ENV: production
+      DEBUG: "false"
+    command:
+      - uv
+      - run
+      - --no-dev
+      - celery
+      - -A
+      - backend.app.infrastructure.messaging.celery_app:celery_app
+      - worker
+      - --loglevel=INFO
+      - --concurrency=${CELERY_CONCURRENCY:-2}
+    depends_on:
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    init: true
+    restart: unless-stopped
+    volumes:
+      - evidence-data:/app/data
+      - model-data:/app/models
+    networks:
+      - ai-forge-prod
+    stop_grace_period: 45s
+
+  frontend:
+    build:
+      context: ../..
+      dockerfile: deployment/docker/frontend.Dockerfile
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-/api/v1}
+    image: ai-forge-frontend:prod
+    ports:
+      - "${FRONTEND_HOST_BIND:-127.0.0.1}:${FRONTEND_PORT:-8080}:80"
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - ai-forge-prod
+
+  nginx:
+    image: nginx:1.27-alpine
+    profiles: ["edge"]
+    ports:
+      - "${EDGE_HOST_BIND:-0.0.0.0}:${EDGE_PORT:-80}:80"
+      - "${EDGE_TLS_BIND:-0.0.0.0}:${EDGE_TLS_PORT:-443}:443"
+    volumes:
+      - ../nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ${TLS_CERT_DIR:-../../certs}:/etc/nginx/certs:ro
+    depends_on:
+      frontend:
+        condition: service_started
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - ai-forge-prod
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-ai_forge}
+      POSTGRES_USER: ${POSTGRES_USER:-ai_forge}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+    networks:
+      - ai-forge-prod
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+    networks:
+      - ai-forge-prod
+
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:-ai_forge}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:?set RABBITMQ_DEFAULT_PASS}
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+    networks:
+      - ai-forge-prod
+
+volumes:
+  postgres-data:
+  redis-data:
+  rabbitmq-data:
+  evidence-data:
+  model-data:
+
+networks:
+  ai-forge-prod:
+    driver: bridge

@@ -1,0 +1,31 @@
+{
+  "title": "AI-Forge System",
+  "uid": "ai-forge-system",
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Process memory",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "targets": [
+        { "expr": "ai_forge_process_memory_bytes", "legendFormat": "rss" }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Process CPU ratio",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "targets": [
+        { "expr": "ai_forge_process_cpu_ratio", "legendFormat": "cpu" }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "GPU available",
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 8 },
+      "targets": [{ "expr": "ai_forge_gpu_available" }]
+    }
+  ]
+}

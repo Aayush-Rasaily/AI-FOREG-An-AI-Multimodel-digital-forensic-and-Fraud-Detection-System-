@@ -1,5 +1,6 @@
 """FastAPI application factory and process entry point."""
 
+import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
@@ -18,6 +19,10 @@ from backend.app.ai.video.bootstrap import build_video_analysis_stack
 from backend.app.ai.video.config import VideoAISettings
 from backend.app.api.v1.router import router as api_v1_router
 from backend.app.core.config import Settings, get_settings
+from backend.app.core.environment import (
+    cleanup_temporary_files,
+    verify_startup_dependencies,
+)
 from backend.app.core.exceptions import register_exception_handlers
 from backend.app.core.logging import configure_logging
 from backend.app.core.middleware import (
@@ -27,24 +32,67 @@ from backend.app.core.middleware import (
 from backend.app.infrastructure.cache.redis_client import close_redis_client
 from backend.app.infrastructure.database.session import dispose_engine
 
+logger = logging.getLogger(__name__)
+
 
 @asynccontextmanager
 async def application_lifespan(app: FastAPI) -> AsyncIterator[None]:
-    """Provide startup validation and graceful shutdown boundaries."""
+    """Provide startup verification and graceful shutdown boundaries."""
 
     from backend.app.deployment.startup import (
         mark_shutdown_requested,
         run_startup_validation,
+        set_dependency_validation,
     )
+    from backend.app.monitoring.telemetry import setup_telemetry
 
     settings: Settings = app.state.settings
+    setup_telemetry(app, service_name=settings.app_name)
+    from backend.app.infrastructure.concurrency import (
+        configure_default_executor,
+        shutdown_thread_pool,
+    )
+
+    configure_default_executor()
     app.state.startup_validation = run_startup_validation(settings)
+    dependency_report = await verify_startup_dependencies(settings)
+    set_dependency_validation(dependency_report)
+    app.state.dependency_validation = dependency_report
+
+    if settings.app_env == "production" and dependency_report.get("status") == "FAILED":
+        raise RuntimeError(
+            "Production startup dependency verification failed: "
+            f"{dependency_report.get('fail_count')} failing check(s)."
+        )
+    if (
+        settings.app_env == "production"
+        and app.state.startup_validation.get("status") == "FAILED"
+    ):
+        raise RuntimeError(
+            "Production startup environment validation failed: "
+            f"{app.state.startup_validation.get('fail_count')} failing check(s)."
+        )
+
     try:
         yield
     finally:
         mark_shutdown_requested()
-        await dispose_engine()
-        await close_redis_client()
+        try:
+            shutdown_thread_pool(wait=False)
+        except Exception:  # noqa: BLE001
+            logger.exception("Thread pool shutdown failed")
+        try:
+            cleanup_temporary_files(settings)
+        except Exception:  # noqa: BLE001 — shutdown must continue
+            logger.exception("Temporary cleanup failed during shutdown")
+        try:
+            await dispose_engine()
+        except Exception:  # noqa: BLE001
+            logger.exception("Database engine disposal failed during shutdown")
+        try:
+            await close_redis_client()
+        except Exception:  # noqa: BLE001
+            logger.exception("Redis close failed during shutdown")
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -126,6 +174,17 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.add_middleware(SecurityHeadersMiddleware)
     register_exception_handlers(app)
     app.include_router(api_v1_router, prefix=runtime_settings.api_v1_prefix)
+
+    # Root-level Prometheus scrape path (also available under /api/v1/metrics).
+    from fastapi.responses import Response as FastAPIResponse
+
+    from backend.app.monitoring.prometheus import render_prometheus_metrics
+
+    @app.get("/metrics", include_in_schema=False)
+    async def root_prometheus_metrics() -> FastAPIResponse:
+        payload, content_type = render_prometheus_metrics()
+        return FastAPIResponse(content=payload, media_type=content_type)
+
     return app
 
 

@@ -55,7 +55,7 @@ class ReadinessResponse(BaseModel):
 
 class StartupValidationResponse(BaseModel):
     status: str
-    checks: list[dict[str, str]] = Field(default_factory=list)
+    checks: list[dict[str, Any]] = Field(default_factory=list)
     fail_count: int
     timestamp: str
     environment: str
@@ -63,6 +63,7 @@ class StartupValidationResponse(BaseModel):
     policy_version: str
     engine_version: str
     graceful_shutdown_supported: bool = True
+    environment_validation: dict[str, Any] | None = None
 
 
 class ConfigurationResponse(BaseModel):

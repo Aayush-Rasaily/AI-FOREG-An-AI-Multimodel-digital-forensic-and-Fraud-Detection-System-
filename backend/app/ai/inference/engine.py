@@ -101,7 +101,20 @@ class AIInferenceEngine:
             return cached
         metrics.cache_miss = True
         load_started = time.perf_counter()
-        model = self.loader.load_model(name, device=device)
+        try:
+            model = self.loader.load_model(name, device=device)
+        except Exception:
+            if device != "cpu":
+                logger.warning(
+                    "Model load failed on %s; falling back to CPU",
+                    device,
+                    exc_info=True,
+                )
+                device = "cpu"
+                metrics.device = device
+                model = self.loader.load_model(name, device=device)
+            else:
+                raise
         metrics.load_time_ms = (time.perf_counter() - load_started) * 1000
         if self.settings.warmup_on_load:
             metrics.warmup_time_ms = model.warmup(batch_size=1) * 1000

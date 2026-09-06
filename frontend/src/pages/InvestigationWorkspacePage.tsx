@@ -7,47 +7,13 @@ import {
   Shield,
 } from "lucide-react";
 
-import { AiJuryPanel } from "../components/investigation/AiJuryPanel";
-import { TimelinePanel } from "../components/investigation/TimelinePanel";
-import { EvidenceCorrelationPanel } from "../components/investigation/EvidenceCorrelationPanel";
-import { AuditTrailPanel } from "../components/investigation/AuditTrailPanel";
-import { ActivityPanel } from "../components/collaboration/ActivityPanel";
-import { AssignmentsPanel } from "../components/collaboration/AssignmentsPanel";
-import { CaseMembersPanel } from "../components/collaboration/CaseMembersPanel";
-import { CommentsPanel } from "../components/collaboration/CommentsPanel";
-import { NotificationPanel } from "../components/collaboration/NotificationPanel";
-import { ReviewPanel } from "../components/collaboration/ReviewPanel";
-import { TaskBoard } from "../components/collaboration/TaskBoard";
-import { WorkflowPanel } from "../components/collaboration/WorkflowPanel";
-import { MilestoneTimeline } from "../components/workflow/MilestoneTimeline";
-import { NotesPanel as InvestigationNotesPanel } from "../components/workflow/NotesPanel";
-import { NotificationsPanel as WorkflowNotificationsPanel } from "../components/workflow/NotificationsPanel";
-import { ReviewPanel as InvestigationReviewPanel } from "../components/workflow/ReviewPanel";
-import { TaskBoard as InvestigationTaskBoard } from "../components/workflow/TaskBoard";
-import { WorkflowPanel as InvestigationWorkflowPanel } from "../components/workflow/WorkflowPanel";
-import { CaseAccessPanel } from "../components/security/CaseAccessPanel";
-import { CompliancePanel } from "../components/security/CompliancePanel";
-import { PolicyViolationsPanel } from "../components/security/PolicyViolationsPanel";
-import { CaseInteropSection } from "./InteroperabilityPage";
-import { KnowledgeGraphPanel } from "../components/knowledge-graph/KnowledgeGraphPanel";
-import { InvestigationIntelligencePanel } from "../components/investigation-intelligence/InvestigationIntelligencePanel";
-import { WorkflowDashboard } from "../components/decision-support/WorkflowDashboard";
-import { CaseReviewPanel } from "../components/case-review/CaseReviewPanel";
-import { IntegrityDashboard } from "../components/integrity/IntegrityDashboard";
-import { ReportPanel } from "../components/investigation/ReportPanel";
-import { InvestigationSummaryPanel } from "../components/investigation/InvestigationSummaryPanel";
-import { AnalysisPanel } from "../components/investigation/AnalysisPanel";
-import { ComparisonPanel } from "../components/investigation/ComparisonPanel";
-import { DocumentAnalysisPanel } from "../components/investigation/DocumentAnalysisPanel";
-import { DifferencesPanel } from "../components/investigation/DifferencesPanel";
 import { EvidenceList } from "../components/evidence/EvidenceList";
 import { EvidenceUploadForm } from "../components/evidence/EvidenceUploadForm";
+import { EvidenceViewer } from "../components/evidence/EvidenceViewer";
+import { AnalysisPanel } from "../components/investigation/AnalysisPanel";
+import { ComparisonPanel } from "../components/investigation/ComparisonPanel";
 import { FindingsPanel } from "../components/investigation/FindingsPanel";
-import { ImageAnalysisPanel } from "../components/investigation/ImageAnalysisPanel";
 import { MetadataPanel } from "../components/investigation/MetadataPanel";
-import { SignatureVerificationPanel } from "../components/investigation/SignatureVerificationPanel";
-import { VideoAnalysisPanel } from "../components/investigation/VideoAnalysisPanel";
-import { AudioAnalysisPanel } from "../components/investigation/AudioAnalysisPanel";
 import { PageHeader } from "../components/layout/PageHeader";
 import { Badge } from "../components/ui/Badge";
 import { Button } from "../components/ui/Button";
@@ -60,11 +26,185 @@ import { useCaseQuery } from "../hooks/useCases";
 import { useCaseEvidenceQuery } from "../hooks/useEvidence";
 import { ApiClientError } from "../services/api/client";
 import type { InvestigationTab } from "../types/investigation";
-import { EvidenceViewer } from "../components/evidence/EvidenceViewer";
 
+const AiJuryPanel = lazy(() =>
+  import("../components/investigation/AiJuryPanel").then((m) => ({
+    default: m.AiJuryPanel,
+  })),
+);
+const TimelinePanel = lazy(() =>
+  import("../components/investigation/TimelinePanel").then((m) => ({
+    default: m.TimelinePanel,
+  })),
+);
+const EvidenceCorrelationPanel = lazy(() =>
+  import("../components/investigation/EvidenceCorrelationPanel").then((m) => ({
+    default: m.EvidenceCorrelationPanel,
+  })),
+);
+const AuditTrailPanel = lazy(() =>
+  import("../components/investigation/AuditTrailPanel").then((m) => ({
+    default: m.AuditTrailPanel,
+  })),
+);
 const EntityGraphPanel = lazy(() =>
-  import("../components/investigation/EntityGraphPanel").then((module) => ({
-    default: module.EntityGraphPanel,
+  import("../components/investigation/EntityGraphPanel").then((m) => ({
+    default: m.EntityGraphPanel,
+  })),
+);
+const DifferencesPanel = lazy(() =>
+  import("../components/investigation/DifferencesPanel").then((m) => ({
+    default: m.DifferencesPanel,
+  })),
+);
+const ImageAnalysisPanel = lazy(() =>
+  import("../components/investigation/ImageAnalysisPanel").then((m) => ({
+    default: m.ImageAnalysisPanel,
+  })),
+);
+const DocumentAnalysisPanel = lazy(() =>
+  import("../components/investigation/DocumentAnalysisPanel").then((m) => ({
+    default: m.DocumentAnalysisPanel,
+  })),
+);
+const SignatureVerificationPanel = lazy(() =>
+  import("../components/investigation/SignatureVerificationPanel").then((m) => ({
+    default: m.SignatureVerificationPanel,
+  })),
+);
+const VideoAnalysisPanel = lazy(() =>
+  import("../components/investigation/VideoAnalysisPanel").then((m) => ({
+    default: m.VideoAnalysisPanel,
+  })),
+);
+const AudioAnalysisPanel = lazy(() =>
+  import("../components/investigation/AudioAnalysisPanel").then((m) => ({
+    default: m.AudioAnalysisPanel,
+  })),
+);
+const ReportPanel = lazy(() =>
+  import("../components/investigation/ReportPanel").then((m) => ({
+    default: m.ReportPanel,
+  })),
+);
+const InvestigationSummaryPanel = lazy(() =>
+  import("../components/investigation/InvestigationSummaryPanel").then((m) => ({
+    default: m.InvestigationSummaryPanel,
+  })),
+);
+const KnowledgeGraphPanel = lazy(() =>
+  import("../components/knowledge-graph/KnowledgeGraphPanel").then((m) => ({
+    default: m.KnowledgeGraphPanel,
+  })),
+);
+const InvestigationIntelligencePanel = lazy(() =>
+  import("../components/investigation-intelligence/InvestigationIntelligencePanel").then(
+    (m) => ({ default: m.InvestigationIntelligencePanel }),
+  ),
+);
+const WorkflowDashboard = lazy(() =>
+  import("../components/decision-support/WorkflowDashboard").then((m) => ({
+    default: m.WorkflowDashboard,
+  })),
+);
+const CaseReviewPanel = lazy(() =>
+  import("../components/case-review/CaseReviewPanel").then((m) => ({
+    default: m.CaseReviewPanel,
+  })),
+);
+const IntegrityDashboard = lazy(() =>
+  import("../components/integrity/IntegrityDashboard").then((m) => ({
+    default: m.IntegrityDashboard,
+  })),
+);
+const ActivityPanel = lazy(() =>
+  import("../components/collaboration/ActivityPanel").then((m) => ({
+    default: m.ActivityPanel,
+  })),
+);
+const AssignmentsPanel = lazy(() =>
+  import("../components/collaboration/AssignmentsPanel").then((m) => ({
+    default: m.AssignmentsPanel,
+  })),
+);
+const CaseMembersPanel = lazy(() =>
+  import("../components/collaboration/CaseMembersPanel").then((m) => ({
+    default: m.CaseMembersPanel,
+  })),
+);
+const CommentsPanel = lazy(() =>
+  import("../components/collaboration/CommentsPanel").then((m) => ({
+    default: m.CommentsPanel,
+  })),
+);
+const NotificationPanel = lazy(() =>
+  import("../components/collaboration/NotificationPanel").then((m) => ({
+    default: m.NotificationPanel,
+  })),
+);
+const ReviewPanel = lazy(() =>
+  import("../components/collaboration/ReviewPanel").then((m) => ({
+    default: m.ReviewPanel,
+  })),
+);
+const TaskBoard = lazy(() =>
+  import("../components/collaboration/TaskBoard").then((m) => ({
+    default: m.TaskBoard,
+  })),
+);
+const WorkflowPanel = lazy(() =>
+  import("../components/collaboration/WorkflowPanel").then((m) => ({
+    default: m.WorkflowPanel,
+  })),
+);
+const MilestoneTimeline = lazy(() =>
+  import("../components/workflow/MilestoneTimeline").then((m) => ({
+    default: m.MilestoneTimeline,
+  })),
+);
+const InvestigationNotesPanel = lazy(() =>
+  import("../components/workflow/NotesPanel").then((m) => ({
+    default: m.NotesPanel,
+  })),
+);
+const WorkflowNotificationsPanel = lazy(() =>
+  import("../components/workflow/NotificationsPanel").then((m) => ({
+    default: m.NotificationsPanel,
+  })),
+);
+const InvestigationReviewPanel = lazy(() =>
+  import("../components/workflow/ReviewPanel").then((m) => ({
+    default: m.ReviewPanel,
+  })),
+);
+const InvestigationTaskBoard = lazy(() =>
+  import("../components/workflow/TaskBoard").then((m) => ({
+    default: m.TaskBoard,
+  })),
+);
+const InvestigationWorkflowPanel = lazy(() =>
+  import("../components/workflow/WorkflowPanel").then((m) => ({
+    default: m.WorkflowPanel,
+  })),
+);
+const CaseAccessPanel = lazy(() =>
+  import("../components/security/CaseAccessPanel").then((m) => ({
+    default: m.CaseAccessPanel,
+  })),
+);
+const CompliancePanel = lazy(() =>
+  import("../components/security/CompliancePanel").then((m) => ({
+    default: m.CompliancePanel,
+  })),
+);
+const PolicyViolationsPanel = lazy(() =>
+  import("../components/security/PolicyViolationsPanel").then((m) => ({
+    default: m.PolicyViolationsPanel,
+  })),
+);
+const CaseInteropSection = lazy(() =>
+  import("./InteroperabilityPage").then((m) => ({
+    default: m.CaseInteropSection,
   })),
 );
 
@@ -92,6 +232,10 @@ const tabs: TabOption<InvestigationTab>[] = [
   { value: "exchange", label: "Exchange" },
   { value: "audit", label: "Audit Trail" },
 ];
+
+function TabFallback({ label }: { label: string }) {
+  return <LoadingState label={label} />;
+}
 
 export function InvestigationWorkspacePage() {
   const { caseId } = useParams<{ caseId: string }>();
@@ -198,99 +342,97 @@ export function InvestigationWorkspacePage() {
             <EvidenceUploadForm caseId={caseId} />
           </div>
         )}
-        {activeTab === "jury" && <AiJuryPanel evidence={primaryEvidence} />}
-        {activeTab === "findings" && <FindingsPanel evidence={primaryEvidence} />}
-        {activeTab === "metadata" && <MetadataPanel />}
-        {activeTab === "comparison" && (
-          <div className="grid gap-4 xl:grid-cols-2">
-            <ComparisonPanel evidence={primaryEvidence} />
-            <DifferencesPanel evidence={primaryEvidence} />
-          </div>
-        )}
-        {activeTab === "forensics" && (
-          <div className="grid gap-4 xl:grid-cols-2">
-            <AnalysisPanel evidence={primaryEvidence} />
-            <ImageAnalysisPanel evidence={primaryEvidence} />
-            <DocumentAnalysisPanel evidence={primaryEvidence} />
-            <SignatureVerificationPanel
-              evidence={primaryEvidence}
-              referenceOptions={evidence}
-            />
-            <VideoAnalysisPanel evidence={primaryEvidence} />
-            <AudioAnalysisPanel
-              evidence={primaryEvidence}
-              referenceOptions={evidence}
-            />
-            <FindingsPanel evidence={primaryEvidence} />
-          </div>
-        )}
-        {activeTab === "timeline" && <TimelinePanel caseId={caseId} />}
-        {activeTab === "correlations" && (
-          <EvidenceCorrelationPanel caseId={caseId} />
-        )}
-        {activeTab === "entities" && (
-          <Suspense fallback={<LoadingState label="Loading entity graph…" />}>
-            <EntityGraphPanel caseId={caseId} />
-          </Suspense>
-        )}
-        {activeTab === "knowledge-graph" && (
-          <KnowledgeGraphPanel caseId={caseId} />
-        )}
-        {activeTab === "case-intelligence" && (
-          <InvestigationIntelligencePanel caseId={caseId} />
-        )}
-        {activeTab === "decision-support" && (
-          <WorkflowDashboard caseId={caseId} />
-        )}
-        {activeTab === "case-review" && <CaseReviewPanel caseId={caseId} />}
-        {activeTab === "integrity" && <IntegrityDashboard caseId={caseId} />}
-        {activeTab === "report" && <ReportPanel caseId={caseId} />}
-        {activeTab === "summary" && (
-          <InvestigationSummaryPanel caseId={caseId} />
-        )}
-        {activeTab === "collaboration" && (
-          <div className="space-y-4">
-            <WorkflowPanel caseId={caseId} />
+        <Suspense fallback={<TabFallback label="Loading panel…" />}>
+          {activeTab === "jury" && <AiJuryPanel evidence={primaryEvidence} />}
+          {activeTab === "findings" && <FindingsPanel evidence={primaryEvidence} />}
+          {activeTab === "metadata" && <MetadataPanel />}
+          {activeTab === "comparison" && (
             <div className="grid gap-4 xl:grid-cols-2">
-              <CaseMembersPanel caseId={caseId} />
-              <NotificationPanel />
+              <ComparisonPanel evidence={primaryEvidence} />
+              <DifferencesPanel evidence={primaryEvidence} />
             </div>
+          )}
+          {activeTab === "forensics" && (
             <div className="grid gap-4 xl:grid-cols-2">
-              <TaskBoard caseId={caseId} />
-              <AssignmentsPanel caseId={caseId} />
+              <AnalysisPanel evidence={primaryEvidence} />
+              <ImageAnalysisPanel evidence={primaryEvidence} />
+              <DocumentAnalysisPanel evidence={primaryEvidence} />
+              <SignatureVerificationPanel
+                evidence={primaryEvidence}
+                referenceOptions={evidence}
+              />
+              <VideoAnalysisPanel evidence={primaryEvidence} />
+              <AudioAnalysisPanel
+                evidence={primaryEvidence}
+                referenceOptions={evidence}
+              />
+              <FindingsPanel evidence={primaryEvidence} />
             </div>
-            <div className="grid gap-4 xl:grid-cols-2">
-              <CommentsPanel caseId={caseId} />
-              <ReviewPanel caseId={caseId} />
+          )}
+          {activeTab === "timeline" && <TimelinePanel caseId={caseId} />}
+          {activeTab === "correlations" && (
+            <EvidenceCorrelationPanel caseId={caseId} />
+          )}
+          {activeTab === "entities" && <EntityGraphPanel caseId={caseId} />}
+          {activeTab === "knowledge-graph" && (
+            <KnowledgeGraphPanel caseId={caseId} />
+          )}
+          {activeTab === "case-intelligence" && (
+            <InvestigationIntelligencePanel caseId={caseId} />
+          )}
+          {activeTab === "decision-support" && (
+            <WorkflowDashboard caseId={caseId} />
+          )}
+          {activeTab === "case-review" && <CaseReviewPanel caseId={caseId} />}
+          {activeTab === "integrity" && <IntegrityDashboard caseId={caseId} />}
+          {activeTab === "report" && <ReportPanel caseId={caseId} />}
+          {activeTab === "summary" && (
+            <InvestigationSummaryPanel caseId={caseId} />
+          )}
+          {activeTab === "collaboration" && (
+            <div className="space-y-4">
+              <WorkflowPanel caseId={caseId} />
+              <div className="grid gap-4 xl:grid-cols-2">
+                <CaseMembersPanel caseId={caseId} />
+                <NotificationPanel />
+              </div>
+              <div className="grid gap-4 xl:grid-cols-2">
+                <TaskBoard caseId={caseId} />
+                <AssignmentsPanel caseId={caseId} />
+              </div>
+              <div className="grid gap-4 xl:grid-cols-2">
+                <CommentsPanel caseId={caseId} />
+                <ReviewPanel caseId={caseId} />
+              </div>
+              <ActivityPanel caseId={caseId} />
             </div>
-            <ActivityPanel caseId={caseId} />
-          </div>
-        )}
-        {activeTab === "workflow" && (
-          <div className="space-y-4">
-            <InvestigationWorkflowPanel caseId={caseId} />
-            <div className="grid gap-4 xl:grid-cols-2">
-              <InvestigationTaskBoard caseId={caseId} />
-              <InvestigationReviewPanel caseId={caseId} />
+          )}
+          {activeTab === "workflow" && (
+            <div className="space-y-4">
+              <InvestigationWorkflowPanel caseId={caseId} />
+              <div className="grid gap-4 xl:grid-cols-2">
+                <InvestigationTaskBoard caseId={caseId} />
+                <InvestigationReviewPanel caseId={caseId} />
+              </div>
+              <div className="grid gap-4 xl:grid-cols-2">
+                <MilestoneTimeline caseId={caseId} />
+                <WorkflowNotificationsPanel caseId={caseId} />
+              </div>
+              <InvestigationNotesPanel caseId={caseId} />
             </div>
-            <div className="grid gap-4 xl:grid-cols-2">
-              <MilestoneTimeline caseId={caseId} />
-              <WorkflowNotificationsPanel caseId={caseId} />
+          )}
+          {activeTab === "security" && (
+            <div className="space-y-4">
+              <div className="grid gap-4 xl:grid-cols-2">
+                <CaseAccessPanel caseId={caseId} />
+                <CompliancePanel caseId={caseId} />
+              </div>
+              <PolicyViolationsPanel caseId={caseId} />
             </div>
-            <InvestigationNotesPanel caseId={caseId} />
-          </div>
-        )}
-        {activeTab === "security" && (
-          <div className="space-y-4">
-            <div className="grid gap-4 xl:grid-cols-2">
-              <CaseAccessPanel caseId={caseId} />
-              <CompliancePanel caseId={caseId} />
-            </div>
-            <PolicyViolationsPanel caseId={caseId} />
-          </div>
-        )}
-        {activeTab === "exchange" && <CaseInteropSection caseId={caseId} />}
-        {activeTab === "audit" && <AuditTrailPanel caseId={caseId} />}
+          )}
+          {activeTab === "exchange" && <CaseInteropSection caseId={caseId} />}
+          {activeTab === "audit" && <AuditTrailPanel caseId={caseId} />}
+        </Suspense>
       </div>
 
       <div className="mt-5 flex items-center gap-2 text-[11px] text-slate-600">
@@ -300,4 +442,3 @@ export function InvestigationWorkspacePage() {
     </div>
   );
 }
-

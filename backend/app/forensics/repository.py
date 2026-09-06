@@ -67,6 +67,57 @@ class ForensicRepository:
         )
         return result.first()
 
+    async def latest_runs_for_evidence_ids(
+        self,
+        evidence_ids: list[UUID],
+    ) -> dict[UUID, AnalysisRun]:
+        """Return the latest forensic run per evidence id in one query."""
+
+        if not evidence_ids:
+            return {}
+        ranked = (
+            select(
+                AnalysisRun.id.label("run_id"),
+                func.row_number()
+                .over(
+                    partition_by=AnalysisRun.evidence_id,
+                    order_by=AnalysisRun.created_at.desc(),
+                )
+                .label("rn"),
+            )
+            .where(AnalysisRun.evidence_id.in_(evidence_ids))
+            .subquery()
+        )
+        result = await self.session.scalars(
+            select(AnalysisRun).where(
+                AnalysisRun.id.in_(select(ranked.c.run_id).where(ranked.c.rn == 1))
+            )
+        )
+        return {run.evidence_id: run for run in result}
+
+    async def list_findings_for_evidence_ids(
+        self,
+        evidence_ids: list[UUID],
+        *,
+        limit_per_evidence: int = 100,
+    ) -> dict[UUID, list[Finding]]:
+        """Return recent findings for many evidence ids without N+1 queries."""
+
+        if not evidence_ids:
+            return {}
+        result = await self.session.scalars(
+            select(Finding)
+            .where(Finding.evidence_id.in_(evidence_ids))
+            .options(selectinload(Finding.regions))
+            .order_by(Finding.created_at.desc())
+        )
+        grouped: dict[UUID, list[Finding]] = {eid: [] for eid in evidence_ids}
+        for finding in result:
+            bucket = grouped.setdefault(finding.evidence_id, [])
+            if len(bucket) < limit_per_evidence:
+                bucket.append(finding)
+        return grouped
+
     async def add_run(self, run: AnalysisRun) -> AnalysisRun:
         """Stage and flush an analysis run."""
 

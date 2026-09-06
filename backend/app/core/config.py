@@ -1,5 +1,6 @@
 """Application settings loaded from environment variables."""
 
+import os
 from copy import deepcopy
 from functools import lru_cache
 from pathlib import Path
@@ -47,6 +48,7 @@ class Settings(BaseSettings):
         case_sensitive=False,
         extra="ignore",
         frozen=True,
+        populate_by_name=True,
     )
 
     app_name: str = "AI_Forge"
@@ -67,9 +69,18 @@ class Settings(BaseSettings):
     db_pool_size: int = Field(default=10, ge=1)
     db_max_overflow: int = Field(default=20, ge=0)
     db_pool_timeout: int = Field(default=30, ge=1)
+    db_pool_recycle: int = Field(default=1800, ge=60)
     db_health_timeout_seconds: float = Field(default=2.0, gt=0)
 
     storage_root: Path = Path("data")
+    temp_storage_path: Path = Field(
+        default=Path("data/tmp"),
+        validation_alias=AliasChoices("TEMP_STORAGE_PATH", "TMP_STORAGE_PATH"),
+    )
+    ai_model_root: Path = Field(
+        default=Path("models"),
+        validation_alias=AliasChoices("AI_MODEL_ROOT", "MODEL_ROOT"),
+    )
     storage_backend: Literal["local", "s3", "minio"] = "local"
     max_upload_size_mb: int = Field(default=50, ge=1, le=10240)
     upload_chunk_size_bytes: int = Field(default=1024 * 1024, ge=4096)
@@ -126,8 +137,94 @@ class Settings(BaseSettings):
         return self.jwt_secret is not None
 
 
+class DevelopmentSettings(Settings):
+    """Defaults tuned for local interactive development."""
+
+    model_config = SettingsConfigDict(
+        env_file=(".env.development", ".env"),
+        env_file_encoding="utf-8",
+        case_sensitive=False,
+        extra="ignore",
+        frozen=True,
+        populate_by_name=True,
+    )
+
+    app_env: Literal["local", "development", "test", "staging", "production"] = (
+        "development"
+    )
+    debug: bool = True
+    log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "DEBUG"
+
+
+class TestingSettings(Settings):
+    """Defaults tuned for automated tests (in-memory friendly)."""
+
+    __test__ = False
+
+    model_config = SettingsConfigDict(
+        env_file=".env.test",
+        env_file_encoding="utf-8",
+        case_sensitive=False,
+        extra="ignore",
+        frozen=True,
+        populate_by_name=True,
+    )
+
+    app_env: Literal["local", "development", "test", "staging", "production"] = "test"
+    debug: bool = True
+    database_url: str = "sqlite+aiosqlite://"
+    redis_url: str = "redis://localhost:6379/15"
+    storage_root: Path = Path("data/test")
+    temp_storage_path: Path = Path("data/test/tmp")
+    ai_model_root: Path = Path("models/test")
+
+
+class ProductionSettings(Settings):
+    """Defaults tuned for hardened production deployments."""
+
+    model_config = SettingsConfigDict(
+        env_file=(".env.production", ".env"),
+        env_file_encoding="utf-8",
+        case_sensitive=False,
+        extra="ignore",
+        frozen=True,
+        populate_by_name=True,
+    )
+
+    app_env: Literal["local", "development", "test", "staging", "production"] = (
+        "production"
+    )
+    debug: bool = False
+    log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "INFO"
+    storage_root: Path = Path("/app/data")
+    temp_storage_path: Path = Path("/app/data/tmp")
+    ai_model_root: Path = Path("/app/models")
+
+
+def settings_class_for_env(
+    app_env: str | None = None,
+) -> type[Settings]:
+    """Return the Settings subclass for an environment profile."""
+
+    resolved = (
+        app_env or os.environ.get("APP_ENV") or os.environ.get("ENVIRONMENT") or "local"
+    ).lower()
+    mapping: dict[str, type[Settings]] = {
+        "development": DevelopmentSettings,
+        "dev": DevelopmentSettings,
+        "test": TestingSettings,
+        "testing": TestingSettings,
+        "production": ProductionSettings,
+        "prod": ProductionSettings,
+        "staging": ProductionSettings,
+        "local": Settings,
+    }
+    return mapping.get(resolved, Settings)
+
+
 @lru_cache
 def get_settings() -> Settings:
     """Return the process-wide immutable-by-convention settings instance."""
 
-    return Settings()
+    cls = settings_class_for_env()
+    return cls()

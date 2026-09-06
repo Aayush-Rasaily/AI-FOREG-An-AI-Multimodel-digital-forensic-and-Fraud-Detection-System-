@@ -15,7 +15,8 @@ import { Select } from "../components/ui/Select";
 import { Card } from "../components/ui/Card";
 import { LoadingState } from "../components/ui/LoadingState";
 import { Badge } from "../components/ui/Badge";
-import type { CasePriority } from "../types/case";
+import { VirtualList } from "../components/ui/VirtualList";
+import type { CasePriority, CaseRecord } from "../types/case";
 
 export function InvestigationsPage() {
   const [createOpen, setCreateOpen] = useState(false);
@@ -141,11 +142,12 @@ export function InvestigationsPage() {
           />
         )}
         {casesQuery.isSuccess && filteredCases.length > 0 && (
-          <div className="divide-y divide-slate-800">
-            {filteredCases.map((item) => (
+          <VirtualList
+            getKey={(item) => item.id}
+            items={filteredCases}
+            renderRow={(item: CaseRecord) => (
               <Link
                 className="grid gap-3 p-4 transition-colors hover:bg-slate-900/70 md:grid-cols-[1.2fr_1fr_0.8fr_0.8fr]"
-                key={item.id}
                 to={`/investigations/${item.id}`}
               >
                 <div className="min-w-0">
@@ -169,8 +171,8 @@ export function InvestigationsPage() {
                   </p>
                 </div>
               </Link>
-            ))}
-          </div>
+            )}
+          />
         )}
       </Card>
 
