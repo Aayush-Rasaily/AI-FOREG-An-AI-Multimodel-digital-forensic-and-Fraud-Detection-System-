@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-forge-worker
+  namespace: ai-forge
+  labels:
+    app: ai-forge-worker
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: ai-forge-worker
+  template:
+    metadata:
+      labels:
+        app: ai-forge-worker
+    spec:
+      terminationGracePeriodSeconds: 90
+      containers:
+        - name: worker
+          image: ai-forge-api:prod
+          imagePullPolicy: IfNotPresent
+          command:
+            - celery
+            - -A
+            - backend.app.infrastructure.messaging.celery_app.celery_app
+            - worker
+            - --loglevel=INFO
+            - -Q
+            - ai-forge.default,ai-forge.extraction,ai-forge.ocr,ai-forge.image-ai,ai-forge.document-ai,ai-forge.signature-ai,ai-forge.video-ai,ai-forge.audio-ai,ai-forge.fusion,ai-forge.correlation,ai-forge.reporting
+            - --concurrency=4
+          envFrom:
+            - secretRef:
+                name: ai-forge-secrets
+            - configMapRef:
+                name: ai-forge-config
+          env:
+            - name: APP_ENV
+              value: production
+            - name: DEBUG
+              value: "false"
+            - name: JOB_QUEUE_MODE
+              value: celery
+          readinessProbe:
+            exec:
+              command:
+                - celery
+                - -A
+                - backend.app.infrastructure.messaging.celery_app.celery_app
+                - inspect
+                - ping
+                - -d
+                - celery@$HOSTNAME
+            initialDelaySeconds: 25
+            periodSeconds: 30
+            timeoutSeconds: 20
+            failureThreshold: 3
+          livenessProbe:
+            exec:
+              command:
+                - celery
+                - -A
+                - backend.app.infrastructure.messaging.celery_app.celery_app
+                - inspect
+                - ping
+                - -d
+                - celery@$HOSTNAME
+            initialDelaySeconds: 40
+            periodSeconds: 45
+            timeoutSeconds: 20
+            failureThreshold: 3
+          volumeMounts:
+            - name: evidence
+              mountPath: /app/data
+            - name: models
+              mountPath: /app/models
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "2"
+              memory: 4Gi
+      volumes:
+        - name: evidence
+          persistentVolumeClaim:
+            claimName: ai-forge-evidence
+        - name: models
+          persistentVolumeClaim:
+            claimName: ai-forge-models

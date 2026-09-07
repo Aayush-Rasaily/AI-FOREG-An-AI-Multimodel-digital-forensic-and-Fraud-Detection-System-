@@ -122,3 +122,9 @@ Supported operations:
 When `JWT_SECRET` and `AUTH_BOOTSTRAP_PASSWORD` are set and no users exist,
 the service seeds built-in roles/permissions and creates the bootstrap administrator
 (`AUTH_BOOTSTRAP_USERNAME`, default `admin`).
+
+## Related docs
+
+- [api-reference.md](api-reference.md)
+- [administrator-guide.md](administrator-guide.md)
+- [frontend-architecture.md](frontend-architecture.md)

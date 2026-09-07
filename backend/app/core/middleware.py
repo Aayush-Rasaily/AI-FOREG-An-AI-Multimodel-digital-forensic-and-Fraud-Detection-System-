@@ -1,4 +1,4 @@
-"""HTTP middleware for request correlation and access logging."""
+"""HTTP middleware for request correlation, access logging, and security."""
 
 import logging
 from time import perf_counter
@@ -6,7 +6,7 @@ from uuid import uuid4
 
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.requests import Request
-from starlette.responses import Response
+from starlette.responses import JSONResponse, Response
 
 from backend.app.core.request_context import (
     clear_request_id,
@@ -23,6 +23,12 @@ from backend.app.monitoring.logging import (
 )
 from backend.app.monitoring.prometheus import observe_request
 from backend.app.monitoring.tracing import get_trace_id
+from backend.app.security.headers import apply_security_headers
+from backend.app.security.ratelimit import (
+    allow_request,
+    classify_request,
+    identity_keys,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -86,7 +92,7 @@ class RequestContextMiddleware(BaseHTTPMiddleware):
 
 
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):
-    """Add conservative response headers for the API surface."""
+    """Add enterprise security headers for the API surface."""
 
     async def dispatch(
         self,
@@ -96,8 +102,72 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         """Apply headers without exposing runtime or infrastructure details."""
 
         response = await call_next(request)
-        response.headers.setdefault("X-Content-Type-Options", "nosniff")
-        response.headers.setdefault("X-Frame-Options", "DENY")
-        response.headers.setdefault("Referrer-Policy", "no-referrer")
-        response.headers.setdefault("Content-Security-Policy", "default-src 'none'")
+        settings = getattr(request.app.state, "settings", None)
+        forwarded_proto = request.headers.get("x-forwarded-proto", "")
+        https = request.url.scheme == "https" or forwarded_proto.lower() == "https"
+        enable_hsts = bool(
+            settings is not None
+            and settings.app_env in {"production", "staging"}
+            and https
+        )
+        apply_security_headers(
+            response.headers,
+            enable_hsts=enable_hsts,
+            hsts_max_age=getattr(settings, "hsts_max_age", 31536000),
+        )
         return response
+
+
+class RateLimitMiddleware(BaseHTTPMiddleware):
+    """Enforce burst + sustained rate limits for sensitive API categories."""
+
+    async def dispatch(
+        self,
+        request: Request,
+        call_next: RequestResponseEndpoint,
+    ) -> Response:
+        settings = getattr(request.app.state, "settings", None)
+        enabled = True if settings is None else bool(
+            getattr(settings, "rate_limit_enabled", True)
+        )
+        if not enabled:
+            return await call_next(request)
+
+        category = classify_request(request.method, request.url.path)
+        if category is None:
+            return await call_next(request)
+
+        ip, user_key = identity_keys(request)
+        use_redis = True if settings is None else bool(
+            getattr(settings, "rate_limit_use_redis", True)
+        )
+        allowed = await allow_request(
+            category=category,
+            ip=ip,
+            user_key=user_key,
+            use_redis=use_redis,
+        )
+        if not allowed:
+            logger.warning(
+                "Rate limit exceeded",
+                extra={
+                    "path": request.url.path,
+                    "method": request.method,
+                    "category": category,
+                    "client": ip,
+                },
+            )
+            request_id = getattr(request.state, "request_id", None)
+            return JSONResponse(
+                status_code=429,
+                content={
+                    "error": {
+                        "code": "RATE_LIMIT_EXCEEDED",
+                        "message": "Too many requests. Please retry later.",
+                        "request_id": str(request_id) if request_id else None,
+                        "details": {"category": category},
+                    }
+                },
+                headers={"Retry-After": "60"},
+            )
+        return await call_next(request)

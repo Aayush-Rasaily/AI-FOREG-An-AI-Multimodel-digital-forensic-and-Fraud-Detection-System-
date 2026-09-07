@@ -59,5 +59,6 @@ Administration → **Deployment** (`/deployment`):
 
 ## Related docs
 
+- [release-engineering.md](release-engineering.md) — GitHub Actions, SemVer tags, image publishing
 - [deployment.md](deployment.md) — infrastructure and upgrade/rollback
 - [operations.md](operations.md) — day-2 validation and probes

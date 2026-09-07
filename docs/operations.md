@@ -1,5 +1,7 @@
 # Operations (Phase 8G)
 
+Operator runbook: [operations-guide.md](operations-guide.md).
+
 Day-2 operational validation and probes for AI-Forge.
 
 ## Probe map

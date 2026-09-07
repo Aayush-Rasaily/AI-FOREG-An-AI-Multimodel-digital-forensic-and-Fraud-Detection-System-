@@ -94,6 +94,13 @@ class ProcessingError(ApplicationError):
         self.code = error_code
 
 
+class RateLimitExceededError(ApplicationError):
+    """Raised when a client exceeds configured request rate limits."""
+
+    status_code = status.HTTP_429_TOO_MANY_REQUESTS
+    code = "RATE_LIMIT_EXCEEDED"
+
+
 def _error_payload(
     *,
     code: str,

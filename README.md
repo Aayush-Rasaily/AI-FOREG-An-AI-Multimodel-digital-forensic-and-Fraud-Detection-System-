@@ -1,133 +1,145 @@
-# AI_Forge
+# AI-Forge
 
-AI_Forge is an enterprise foundation for a multimodal digital forensics and
-fraud intelligence platform. It is intended for banks, insurers, forensic
-laboratories, law enforcement, cybersecurity teams, and other regulated
-organizations.
+Enterprise multimodal **digital forensics and fraud intelligence** platform
+for banks, insurers, forensic laboratories, law enforcement, and regulated
+security teams.
 
-This repository currently contains the platform foundation, Phase 3
-case/evidence preservation, the Phase 4 evidence processing pipeline, and the
-Phase 5A extraction/localization foundation. It deliberately does not contain
-forensic detectors, fraud rules, authenticity decisions, or analysis
-implementations.
+[![CI](https://img.shields.io/badge/CI-GitHub%20Actions-2088FF?logo=githubactions)](.github/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Python 3.12](https://img.shields.io/badge/python-3.12-3776AB.svg)](https://www.python.org/)
+[![Node 22](https://img.shields.io/badge/node-22-339933.svg)](https://nodejs.org/)
+
+Phases **1–10** are in this repository: case/evidence preservation, processing,
+extraction, forensic and modality AI, fusion, correlation, reporting,
+identity/RBAC, monitoring, production infrastructure, performance, security
+hardening, scale, disaster recovery, CI/CD, and this documentation set.
+
+The platform **does not** invent legal conclusions. Original evidence is
+immutable. Missing capabilities are reported explicitly.
+
+## Overview
+
+Investigators create cases, upload evidence, run processing and AI analyses,
+fuse multimodal findings, correlate events, reconstruct timelines, collaborate,
+and generate provenance-bearing reports. Operators deploy a stateless API,
+workers, PostgreSQL, Redis, and optional object storage behind TLS.
+
+Full map: [docs/architecture-overview.md](docs/architecture-overview.md).
 
 ## Architecture
 
-The backend follows Clean Architecture:
+Clean Architecture backend (`backend/app/`) plus a React investigation SPA
+(`frontend/`).
 
-```text
-backend/
-├── app/
-│   ├── api/             # HTTP transport and versioned routes
-│   ├── application/    # Use-case and service boundaries
-│   ├── core/           # Cross-cutting configuration and platform concerns
-│   ├── domain/         # Framework-independent contracts and ports
-│   ├── models/         # Persistence models for cases, evidence, jobs, artifacts, extractions
-│   ├── extraction/     # Versioned multimodal extraction and localization
-│   ├── ai_engines/     # Future engine modules; intentionally empty
-│   └── infrastructure/ # Database, cache, messaging, storage, and audit seams
-└── alembic/             # Database migration environment
+```mermaid
+flowchart LR
+  user[Investigators] --> edge[Nginx / TLS]
+  edge --> spa[Frontend]
+  edge --> api[FastAPI]
+  api --> pg[(PostgreSQL)]
+  api --> redis[(Redis)]
+  api --> store[(Storage)]
+  api --> workers[Workers]
 ```
 
-Dependencies point inward: API and infrastructure may depend on application
-and domain abstractions, while domain code does not depend on FastAPI,
-SQLAlchemy, Celery, or vendor SDKs. Future AI engines should implement the
-domain engine contract and be registered through the extension boundary rather
-than changing existing use cases.
+- [Backend](docs/backend-architecture.md)
+- [Frontend](docs/frontend-architecture.md)
+- [AI](docs/ai-architecture.md)
+- [Database](docs/database-schema.md)
 
-See [`docs/architecture.md`](docs/architecture.md) for boundaries and
-scalability guidance.
+## Feature matrix
 
-## Frontend workspace
+| Area | Capabilities |
+| --- | --- |
+| Cases & evidence | Numbered cases, SHA-256 originals, custody, allow-listed uploads |
+| Processing | Deterministic jobs, derived hashed artifacts |
+| Extraction | PDF/image/audio localization, optional OCR, no invented regions |
+| Forensics & AI | Classic analysis, image/document/video/audio AI, signatures |
+| Fusion | Deterministic multimodal jury, conflicts, assessments |
+| Investigation | Correlation, entities, timeline, knowledge graph, intelligence |
+| Reporting | Aggregated JSON/Markdown/HTML reports + download |
+| Collaboration | Members, tasks, comments, workflow, case review |
+| Security | JWT/RBAC, headers/CSP, rate limits, upload validation, audits |
+| Operations | Health/readiness, monitoring, diagnostics, release-check |
+| Scale & DR | HPA/workers, S3/Azure/GCS, backup/restore/verify |
+| CI/CD | GitHub Actions quality gates, GHCR images, SemVer releases |
 
-Phase 2/3/4 adds a separate Vite/React investigation workspace under
-[`frontend/`](frontend/). It contains route-level UI architecture and
-backend-health integration plus real case/evidence registration, processing
-state, and derived-artifact metadata; it does not produce forensic results.
+## Installation
 
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-See [`frontend/README.md`](frontend/README.md) for frontend configuration and
-quality commands.
-
-## Local development
-
-Requirements:
-
-- Python 3.12
-- [uv](https://docs.astral.sh/uv/)
-- Docker and Docker Compose
-
-Create local configuration and install development dependencies:
+Requirements: Python 3.12, [uv](https://docs.astral.sh/uv/), Node.js 22, Docker.
 
 ```bash
 copy .env.example .env
 uv sync --dev
-```
-
-Start the local dependency stack and API:
-
-```bash
 docker compose up --build
 ```
 
-The Compose `migrate` service applies Alembic migrations before the API starts.
-For a non-Docker local API, run:
+API: `http://localhost:8000` — `GET /api/v1/health/live`.
+
+Frontend:
+
+```bash
+cd frontend
+npm ci
+npm run dev
+```
+
+Without Compose:
 
 ```bash
 uv run alembic -c backend/alembic.ini upgrade head
 uv run uvicorn backend.app.main:app --reload
 ```
 
-The API is available at `http://localhost:8000`. The health endpoint is
-`GET /api/v1/health`, and the dependency-free liveness endpoint is
-`GET /api/v1/health/live`. OpenAPI is available at `/docs` when `DEBUG=true`.
+OpenAPI UI is at `/docs` when `DEBUG=true`. Setup details:
+[docs/development.md](docs/development.md).
 
-Run checks locally:
+## Deployment
 
-```bash
-uv run ruff check .
-uv run ruff format --check .
-uv run mypy backend
-uv run pytest
-```
+Production images: `deployment/docker/backend.Dockerfile` and
+`frontend.Dockerfile`. Compose/Kubernetes/Nginx:
+[docs/deployment-guide.md](docs/deployment-guide.md),
+[docs/deployment.md](docs/deployment.md).
 
-## Configuration and secrets
+Publish path: tag `vMAJOR.MINOR.PATCH` matching `pyproject.toml`
+([docs/release-engineering.md](docs/release-engineering.md)).
 
-Runtime settings are loaded from environment variables and an optional `.env`
-file. `.env.example` contains placeholders only and must never be used as a
-production secret store. Production deployments should inject secrets through
-the platform's secret-management facility.
+## Documentation index
 
-## Operational direction
+Start at **[docs/README.md](docs/README.md)**.
 
-The API is stateless and can scale horizontally behind a load balancer.
-Long-running work belongs in Celery workers, with RabbitMQ as the broker and
-Redis as the result backend/cache. PostgreSQL connections are pooled per
-process, so pool limits must be sized against the database connection budget
-when replicas or workers are added. Phase 4 uses a deterministic local runner
-and local storage under `data/evidence/` for development. The runner hashes
-read-only originals, classifies files, extracts basic metadata, and stores
-independently hashed preview manifests, metadata, and classification artifacts.
-A real worker queue can call the same orchestrator later without changing
-processors. Phase 5A adds native PDF/image/WAV extraction, optional
-Tesseract OCR, provenance-preserving extraction records, normalized
-coordinates, and extraction artifacts. It reports unavailable media
-capabilities explicitly and never invents regions or coordinates. Extraction
-is intentionally separate from forensic analysis. See
-[`docs/case-evidence.md`](docs/case-evidence.md),
-[`docs/processing-pipeline.md`](docs/processing-pipeline.md), and
-[`docs/extraction-and-localization.md`](docs/extraction-and-localization.md)
-for the preservation, custody, processing, and extraction contracts.
+| Topic | Document |
+| --- | --- |
+| Architecture | [architecture-overview.md](docs/architecture-overview.md) |
+| API (every endpoint) | [api-reference.md](docs/api-reference.md) |
+| Investigators | [investigator-guide.md](docs/investigator-guide.md) |
+| Administrators | [administrator-guide.md](docs/administrator-guide.md) |
+| Operations | [operations-guide.md](docs/operations-guide.md) |
+| v1.0 checklist | [release-checklist.md](docs/release-checklist.md) |
+| Release notes | [RELEASE_NOTES.md](RELEASE_NOTES.md) |
+| Contributing | [docs/contributing.md](docs/contributing.md) |
 
-See [`docs/operations.md`](docs/operations.md) and
-[`deployment/README.md`](deployment/README.md) before creating a production
-deployment.
+## Screenshots
+
+Capture these from a running workspace (do not commit real case data):
+
+- Sign-in (`/login`)
+- Investigations list and case workspace
+- Evidence upload and processing status
+- Fusion / jury and timeline panels
+- Report download and monitoring dashboard
+
+Place organizational screenshots in an internal runbook if you cannot publish
+them in git.
+
+## Roadmap
+
+Completed in-tree: Phases 1–10H (foundation through enterprise documentation).
+
+Possible future work (not implemented here): SSO/MFA, additional licensed
+detectors, tenant isolation at million-analysis scale, and external SIEM
+connectors. Extensions must keep inward dependencies and immutable originals.
 
 ## License
 
-This project is licensed under the MIT License. See [`LICENSE`](LICENSE).
+MIT. See [LICENSE](LICENSE).

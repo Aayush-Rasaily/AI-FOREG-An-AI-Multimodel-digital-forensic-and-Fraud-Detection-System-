@@ -37,8 +37,16 @@ async def process_evidence(
 ) -> ApiResponse[ProcessingJobResponse]:
     """Queue deterministic inspection and derivative generation."""
 
+    from backend.app.scaling.dispatcher import get_job_dispatcher
+
     job = await service.create_job(evidence_id)
-    background_tasks.add_task(service.run, job.id)
+    dispatcher = get_job_dispatcher()
+    await dispatcher.dispatch_processing(
+        job.id,
+        runner=service.run,
+        background_tasks=background_tasks,
+        task_kind="default",
+    )
     return ApiResponse(data=job, request_id=get_request_id())
 
 

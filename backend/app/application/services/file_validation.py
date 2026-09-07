@@ -11,6 +11,10 @@ from backend.app.core.exceptions import (
     InvalidFileError,
     UnsupportedFileError,
 )
+from backend.app.security.uploads import (
+    harden_upload_metadata,
+    scan_archive_for_traversal,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -36,6 +40,7 @@ class FileValidationService:
     ) -> ValidatedFile:
         """Validate filename, extension, and declared MIME category."""
 
+        filename = harden_upload_metadata(filename, content_type)
         if not filename or not filename.strip():
             raise InvalidFileError("The uploaded filename is empty.")
         if "\x00" in filename or "/" in filename or "\\" in filename:
@@ -80,6 +85,16 @@ class FileValidationService:
         header = await asyncio.to_thread(stream.read, 64)
         if not header or not self._matches_signature(header, validated_file):
             raise InvalidFileError("The uploaded content does not match its file type.")
+        if validated_file.extension == "docx":
+            try:
+                position = await asyncio.to_thread(stream.tell)
+                await asyncio.to_thread(stream.seek, 0)
+                sample = await asyncio.to_thread(stream.read, 512 * 1024)
+                await asyncio.to_thread(stream.seek, position)
+            except OSError:
+                return
+            if sample.startswith(b"PK"):
+                scan_archive_for_traversal(sample, ignore_truncated=True)
 
     def validate_size(self, file_size: int) -> None:
         """Enforce the configured maximum after streamed ingestion."""

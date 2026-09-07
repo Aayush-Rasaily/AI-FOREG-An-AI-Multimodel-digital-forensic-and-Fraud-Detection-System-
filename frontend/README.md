@@ -16,6 +16,8 @@ frontend uses the relative `/api/v1` path and Vite proxies `/api` to the
 backend development server. Set `VITE_BACKEND_URL` when the backend is not
 running at the local proxy default.
 
+Architecture: [docs/frontend-architecture.md](../docs/frontend-architecture.md).
+
 ## Quality checks
 
 ```bash

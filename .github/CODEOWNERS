@@ -1,0 +1,10 @@
+# CODEOWNERS — replace org teams after the repository is hosted under a GitHub organization.
+# Invalid teams are ignored by GitHub; update these paths before enforcing reviews.
+
+* @AI-Forge/maintainers
+
+/.github/ @AI-Forge/maintainers
+/backend/ @AI-Forge/maintainers
+/frontend/ @AI-Forge/maintainers
+/deployment/ @AI-Forge/maintainers
+/docs/ @AI-Forge/maintainers

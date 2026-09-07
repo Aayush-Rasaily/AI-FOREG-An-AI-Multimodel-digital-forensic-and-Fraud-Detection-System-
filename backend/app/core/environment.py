@@ -254,6 +254,18 @@ def validate_environment(settings: Settings) -> dict[str, Any]:
         *detect_missing_secrets(settings),
         *verify_storage_layout(settings),
     ]
+    try:
+        from backend.app.security.secrets import validate_runtime_secrets
+
+        checks.extend(validate_runtime_secrets(settings))
+    except Exception:  # noqa: BLE001 — never block validation assembly
+        checks.append(
+            _status(
+                "secret_hardening",
+                "WARN",
+                "Extended secret validation could not run.",
+            )
+        )
     # Deduplicate overlapping secret PASS/FAIL preferring FAIL.
     by_check: dict[str, dict[str, Any]] = {}
     for item in checks:

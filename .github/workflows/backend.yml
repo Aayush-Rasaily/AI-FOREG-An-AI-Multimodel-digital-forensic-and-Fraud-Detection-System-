@@ -1,0 +1,72 @@
+name: Backend quality
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    name: Ruff, MyPy, pytest, Alembic, OpenAPI
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "0.11.12"
+
+      - name: Install dependencies
+        run: uv sync --locked --dev
+
+      - name: Ruff
+        run: uv run ruff check backend tests
+
+      - name: Ruff format
+        run: uv run ruff format --check backend tests
+
+      - name: MyPy
+        run: uv run mypy backend
+
+      - name: Backend pytest
+        run: uv run pytest tests -q --tb=short
+
+      - name: Alembic migration verification
+        run: uv run python -c "from pathlib import Path; from backend.app.cicd.gates import validate_alembic_heads; r=validate_alembic_heads(repo_root=Path('.').resolve()); print(r); raise SystemExit(0 if r['status']=='PASSED' else 1)"
+
+      - name: OpenAPI validation
+        run: |
+          uv run python - <<'PY'
+          from pathlib import Path
+          import tempfile
+          from backend.app.cicd.gates import validate_openapi_schema
+          from backend.app.core.config import Settings
+          from backend.app.main import create_app
+
+          tmp = Path(tempfile.mkdtemp())
+          settings = Settings(
+              debug=True,
+              app_env="test",
+              database_url="sqlite+aiosqlite://",
+              storage_root=tmp / "data",
+              temp_storage_path=tmp / "data" / "tmp",
+              ai_model_root=tmp / "models",
+              log_config_path=tmp / "missing-logging.json",
+              rate_limit_enabled=False,
+              rate_limit_use_redis=False,
+          )
+          (tmp / "data").mkdir(parents=True, exist_ok=True)
+          app = create_app(settings)
+          result = validate_openapi_schema(app.openapi())
+          print(result)
+          raise SystemExit(0 if result["status"] == "PASSED" else 1)
+          PY

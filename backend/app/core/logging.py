@@ -9,6 +9,7 @@ from typing import Any, override
 
 from backend.app.core.config import Settings
 from backend.app.core.request_context import get_request_id
+from backend.app.security.secrets import redact_secrets
 
 
 class JsonFormatter(logging.Formatter):
@@ -26,13 +27,13 @@ class JsonFormatter(logging.Formatter):
         return timestamp.strftime(datefmt or "%Y-%m-%dT%H:%M:%S%z")
 
     def format(self, record: logging.LogRecord) -> str:
-        """Return a JSON log line without serializing sensitive arguments."""
+        """Return a JSON log line with secrets redacted."""
 
         payload: dict[str, Any] = {
             "timestamp": self.formatTime(record, "%Y-%m-%dT%H:%M:%S%z"),
             "level": record.levelname,
             "logger": record.name,
-            "message": record.getMessage(),
+            "message": redact_secrets(record.getMessage()),
             "module": record.module,
         }
         for field_name in (
@@ -44,6 +45,8 @@ class JsonFormatter(logging.Formatter):
             "evidence_id",
             "user_id",
             "trace_id",
+            "category",
+            "client",
         ):
             if hasattr(record, field_name):
                 value = getattr(record, field_name)
@@ -53,7 +56,9 @@ class JsonFormatter(logging.Formatter):
         if request_id is not None:
             payload["request_id"] = str(request_id)
         if record.exc_info:
-            payload["exception"] = self.formatException(record.exc_info)
+            payload["exception"] = redact_secrets(
+                self.formatException(record.exc_info)
+            )
         return json.dumps(payload, default=str)
 
 

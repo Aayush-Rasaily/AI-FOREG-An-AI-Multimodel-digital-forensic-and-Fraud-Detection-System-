@@ -1,5 +1,7 @@
 # Deployment (Phase 8G + Phase 10A)
 
+Narrative guide: [deployment-guide.md](deployment-guide.md).
+
 Production infrastructure for AI-Forge: container images, Compose/Kubernetes
 manifests, Nginx reverse proxy, environment validation, startup verification,
 and graceful shutdown.

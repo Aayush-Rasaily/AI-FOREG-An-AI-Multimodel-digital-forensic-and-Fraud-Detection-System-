@@ -16,15 +16,19 @@ from backend.app.core.config import Settings, get_settings
 def create_engine(settings: Settings) -> AsyncEngine:
     """Create one configured async engine from explicit settings."""
 
-    engine_options: dict[str, object] = {"pool_pre_ping": True}
-    if not settings.database_url.startswith("sqlite"):
-        engine_options.update(
-            pool_size=settings.db_pool_size,
-            max_overflow=settings.db_max_overflow,
-            pool_timeout=settings.db_pool_timeout,
-            pool_recycle=settings.db_pool_recycle,
-        )
-    return create_async_engine(settings.database_url, **engine_options)
+    from backend.app.scaling.database import pool_kwargs, resolve_database_url
+
+    url = resolve_database_url(settings, prefer_read=False)
+    return create_async_engine(url, **pool_kwargs(settings))
+
+
+def create_read_engine(settings: Settings) -> AsyncEngine:
+    """Create a read-replica engine when DATABASE_READ_URL is configured."""
+
+    from backend.app.scaling.database import pool_kwargs, resolve_database_url
+
+    url = resolve_database_url(settings, prefer_read=True)
+    return create_async_engine(url, **pool_kwargs(settings))
 
 
 def create_session_factory(

@@ -56,7 +56,7 @@ class Settings(BaseSettings):
         default="local",
         validation_alias=AliasChoices("APP_ENV", "ENVIRONMENT"),
     )
-    app_version: str = "0.1.0"
+    app_version: str = "1.0.0"
     debug: bool = False
     api_prefix: str = Field(
         default="/api/v1",
@@ -66,11 +66,17 @@ class Settings(BaseSettings):
     log_config_path: Path = Path("configs/logging.json")
 
     database_url: str = Field(default="postgresql+psycopg://localhost:5432/ai_forge")
+    database_read_url: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("DATABASE_READ_URL", "DB_READ_URL"),
+    )
     db_pool_size: int = Field(default=10, ge=1)
     db_max_overflow: int = Field(default=20, ge=0)
     db_pool_timeout: int = Field(default=30, ge=1)
     db_pool_recycle: int = Field(default=1800, ge=60)
     db_health_timeout_seconds: float = Field(default=2.0, gt=0)
+    db_retry_attempts: int = Field(default=3, ge=1, le=10)
+    db_statement_timeout_seconds: float = Field(default=0, ge=0)
 
     storage_root: Path = Path("data")
     temp_storage_path: Path = Field(
@@ -81,7 +87,7 @@ class Settings(BaseSettings):
         default=Path("models"),
         validation_alias=AliasChoices("AI_MODEL_ROOT", "MODEL_ROOT"),
     )
-    storage_backend: Literal["local", "s3", "minio"] = "local"
+    storage_backend: Literal["local", "s3", "minio", "azure", "gcs"] = "local"
     max_upload_size_mb: int = Field(default=50, ge=1, le=10240)
     upload_chunk_size_bytes: int = Field(default=1024 * 1024, ge=4096)
     supported_extensions: dict[str, list[str]] = Field(
@@ -108,6 +114,21 @@ class Settings(BaseSettings):
     redis_max_connections: int = Field(default=50, ge=1)
     celery_broker_url: str = "amqp://localhost:5672//"
     celery_result_backend: str = "redis://localhost:6379/1"
+    job_queue_mode: Literal["local", "redis", "celery"] = Field(
+        default="local",
+        validation_alias=AliasChoices("JOB_QUEUE_MODE", "QUEUE_MODE"),
+    )
+
+    object_storage_bucket: str = "ai-forge"
+    object_storage_endpoint: str | None = None
+    object_storage_access_key: str | None = None
+    object_storage_secret_key: SecretStr | None = None
+    object_storage_region: str = "us-east-1"
+    object_storage_prefix: str = "ai-forge/"
+    azure_blob_connection_string: str | None = None
+    azure_blob_container: str = "ai-forge"
+    gcs_bucket: str = "ai-forge"
+    gcs_project: str | None = None
 
     cors_origins: list[str] = Field(default_factory=list)
     jwt_secret: SecretStr | None = None
@@ -117,6 +138,17 @@ class Settings(BaseSettings):
     auth_remember_me_days: int = Field(default=30, ge=1, le=180)
     auth_bootstrap_username: str = "admin"
     auth_bootstrap_password: SecretStr | None = None
+
+    rate_limit_enabled: bool = True
+    rate_limit_use_redis: bool = True
+    hsts_max_age: int = Field(default=31536000, ge=0)
+
+    backup_retain_days: int = Field(default=30, ge=1, le=3650)
+    report_retain_days: int = Field(default=90, ge=1, le=3650)
+    temp_retain_days: int = Field(default=1, ge=1, le=365)
+    log_retain_days: int = Field(default=14, ge=1, le=3650)
+    export_retain_days: int = Field(default=60, ge=1, le=3650)
+    ai_cache_retain_days: int = Field(default=7, ge=1, le=365)
 
     @property
     def environment(self) -> str:
@@ -177,6 +209,8 @@ class TestingSettings(Settings):
     storage_root: Path = Path("data/test")
     temp_storage_path: Path = Path("data/test/tmp")
     ai_model_root: Path = Path("models/test")
+    rate_limit_enabled: bool = False
+    rate_limit_use_redis: bool = False
 
 
 class ProductionSettings(Settings):

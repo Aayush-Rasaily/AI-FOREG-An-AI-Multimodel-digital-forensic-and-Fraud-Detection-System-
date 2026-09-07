@@ -1,0 +1,157 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Semantic version without the leading v
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  quality:
+    name: Pre-release quality gates
+    uses: ./.github/workflows/ci.yml
+
+  publish:
+    name: Package and publish
+    needs: [quality]
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.value }}
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "0.11.12"
+
+      - name: Install dependencies
+        run: uv sync --locked --dev
+
+      - name: Resolve version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            version="${{ inputs.version }}"
+          else
+            version="${GITHUB_REF_NAME#v}"
+          fi
+          echo "value=${version}" >> "$GITHUB_OUTPUT"
+
+      - name: Generate changelog, notes, and metadata
+        env:
+          RELEASE_VERSION: ${{ steps.version.outputs.value }}
+        run: |
+          uv run python - <<'PY'
+          import os
+          import subprocess
+          from datetime import UTC, datetime
+          from pathlib import Path
+
+          from backend.app.cicd.gates import parse_semver, read_project_version
+          from backend.app.cicd.packaging import build_version_metadata, write_version_metadata
+          from backend.app.cicd.release_notes import generate_changelog_section, prepend_changelog
+
+          version = os.environ["RELEASE_VERSION"]
+          parse_semver(version)
+          declared = read_project_version(Path(".").resolve())
+          if declared != version:
+              raise SystemExit(
+                  f"Tag version {version} does not match pyproject.toml {declared}."
+              )
+
+          artifact_dir = Path("dist/release")
+          artifact_dir.mkdir(parents=True, exist_ok=True)
+
+          log = subprocess.run(
+              ["git", "log", "-n", "40", "--pretty=format:%s"],
+              capture_output=True,
+              text=True,
+              check=False,
+          )
+          commits = [line for line in (log.stdout or "").splitlines() if line.strip()]
+          section = generate_changelog_section(
+              version,
+              commits,
+              released_at=datetime.now(UTC),
+          )
+          changelog_path = Path("CHANGELOG.md")
+          existing = (
+              changelog_path.read_text(encoding="utf-8")
+              if changelog_path.is_file()
+              else "# Changelog\n"
+          )
+          changelog_path.write_text(prepend_changelog(existing, section), encoding="utf-8")
+          notes = artifact_dir / "RELEASE_NOTES.md"
+          notes.write_text(section, encoding="utf-8")
+          sha = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
+          owner = os.environ.get("GITHUB_REPOSITORY_OWNER", "example").lower()
+          metadata = build_version_metadata(
+              version=version,
+              git_sha=sha,
+              image_namespace=f"ghcr.io/{owner}/ai-forge",
+              repo_root=Path(".").resolve(),
+          )
+          write_version_metadata(artifact_dir / "version.json", metadata)
+          (artifact_dir / "container-manifest.json").write_text(
+              __import__("json").dumps(metadata["images"], indent=2) + "\n",
+              encoding="utf-8",
+          )
+          print(metadata)
+          PY
+
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-forge-${{ steps.version.outputs.value }}
+          path: |
+            CHANGELOG.md
+            dist/release/**
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tag="v${{ steps.version.outputs.value }}"
+          if ! git rev-parse "$tag" >/dev/null 2>&1; then
+            git tag "$tag"
+          fi
+          gh release create "$tag" \
+            --title "AI-Forge ${{ steps.version.outputs.value }}" \
+            --notes-file dist/release/RELEASE_NOTES.md \
+            CHANGELOG.md \
+            dist/release/version.json \
+            dist/release/container-manifest.json \
+            || gh release upload "$tag" \
+              CHANGELOG.md \
+              dist/release/version.json \
+              dist/release/container-manifest.json \
+              --clobber
+
+  docker:
+    name: Publish containers
+    needs: [publish]
+    uses: ./.github/workflows/docker.yml
+    with:
+      push: true
+      version: ${{ needs.publish.outputs.version }}
+    permissions:
+      contents: read
+      packages: write

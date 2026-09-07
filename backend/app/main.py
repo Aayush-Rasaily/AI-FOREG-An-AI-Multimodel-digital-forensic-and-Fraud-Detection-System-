@@ -26,6 +26,7 @@ from backend.app.core.environment import (
 from backend.app.core.exceptions import register_exception_handlers
 from backend.app.core.logging import configure_logging
 from backend.app.core.middleware import (
+    RateLimitMiddleware,
     RequestContextMiddleware,
     SecurityHeadersMiddleware,
 )
@@ -52,6 +53,14 @@ async def application_lifespan(app: FastAPI) -> AsyncIterator[None]:
         configure_default_executor,
         shutdown_thread_pool,
     )
+    from backend.app.security.secrets import assert_production_secrets
+
+    try:
+        assert_production_secrets(settings)
+    except RuntimeError:
+        if settings.app_env == "production":
+            raise
+        logger.warning("Secret validation warnings present outside production")
 
     configure_default_executor()
     app.state.startup_validation = run_startup_validation(settings)
@@ -171,6 +180,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         allow_headers=["Authorization", "Content-Type", "X-Request-ID"],
     )
     app.add_middleware(RequestContextMiddleware)
+    app.add_middleware(RateLimitMiddleware)
     app.add_middleware(SecurityHeadersMiddleware)
     register_exception_handlers(app)
     app.include_router(api_v1_router, prefix=runtime_settings.api_v1_prefix)

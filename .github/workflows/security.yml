@@ -1,0 +1,115 @@
+name: Security scans
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  python-and-npm:
+    name: pip-audit and npm audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "0.11.12"
+
+      - name: Install dependencies
+        run: uv sync --locked --dev
+
+      - name: Install pip-audit
+        run: pip install --no-cache-dir pip-audit
+
+      - name: pip-audit (fail on critical)
+        run: |
+          uv run python - <<'PY'
+          import json
+          import subprocess
+          import sys
+          from pathlib import Path
+
+          from backend.app.cicd.gates import fail_on_critical_advisories
+
+          Path("reports/security").mkdir(parents=True, exist_ok=True)
+          completed = subprocess.run(
+              [
+                  "pip-audit",
+                  "-r",
+                  "requirements.txt",
+                  "--progress-spinner",
+                  "off",
+                  "--format",
+                  "json",
+              ],
+              capture_output=True,
+              text=True,
+              check=False,
+          )
+          (Path("reports/security") / "pip-audit-ci.json").write_text(
+              completed.stdout or "{}",
+              encoding="utf-8",
+          )
+          print(completed.stderr or "")
+          print((completed.stdout or "")[-8000:])
+          try:
+              payload = json.loads(completed.stdout or "{}")
+          except json.JSONDecodeError:
+              payload = {"dependencies": []}
+          result = fail_on_critical_advisories(payload)
+          print(result)
+          if result["status"] == "FAILED":
+              sys.exit(1)
+          PY
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: npm audit (critical)
+        working-directory: frontend
+        run: npm audit --omit=dev --audit-level=critical
+
+  dependency-review:
+    name: Dependency review
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Dependency review
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: critical
+
+  filesystem-scan:
+    name: Filesystem vulnerability scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Trivy filesystem scan
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          format: table
+          exit-code: "1"
+          severity: CRITICAL
+          ignore-unfixed: true

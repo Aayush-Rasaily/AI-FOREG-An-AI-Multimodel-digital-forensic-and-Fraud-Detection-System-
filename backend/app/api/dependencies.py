@@ -18,11 +18,9 @@ from backend.app.application.services.processing_service import (
 from backend.app.application.services.storage import StorageService
 from backend.app.comparison.service import ComparisonService
 from backend.app.core.config import Settings
-from backend.app.core.exceptions import StorageError
 from backend.app.extraction.service import ExtractionService
 from backend.app.forensics.service import ForensicAnalysisService
 from backend.app.infrastructure.database.session import get_db_session
-from backend.app.infrastructure.storage.local import LocalStorage
 
 if TYPE_CHECKING:
     from backend.app.ai.audio.service import AudioAnalysisService
@@ -30,24 +28,24 @@ if TYPE_CHECKING:
     from backend.app.ai.document.signature.service import SignatureVerificationService
     from backend.app.ai.image.service import ImageAnalysisService
     from backend.app.ai.video.service import VideoAnalysisService
+    from backend.app.analytics.service import AnalyticsService
     from backend.app.audit.service import AuditService
     from backend.app.case_intelligence.service import CaseIntelligenceService
+    from backend.app.case_review.service import CaseReviewService
     from backend.app.collaboration.service import CollaborationService
     from backend.app.correlation.service import CorrelationService
+    from backend.app.decision_support.service import DecisionSupportService
     from backend.app.entities.service import EntityService
     from backend.app.fusion.service import FusionService
+    from backend.app.integrity.service import IntegrityMonitorService
     from backend.app.intelligence.service import InvestigationIntelligenceService
     from backend.app.interoperability.service import InteroperabilityService
-    from backend.app.knowledge_graph.service import KnowledgeGraphService
     from backend.app.investigation_intelligence.service import (
         InvestigationIntelligenceEngineService,
     )
-    from backend.app.decision_support.service import DecisionSupportService
-    from backend.app.case_review.service import CaseReviewService
-    from backend.app.integrity.service import IntegrityMonitorService
-    from backend.app.analytics.service import AnalyticsService
-    from backend.app.platform_validation.service import PlatformValidationService
+    from backend.app.knowledge_graph.service import KnowledgeGraphService
     from backend.app.monitoring.service import MonitoringService
+    from backend.app.platform_validation.service import PlatformValidationService
     from backend.app.reporting.service import ReportService
     from backend.app.security.service import SecurityService
     from backend.app.system.service import SystemService
@@ -69,11 +67,9 @@ RuntimeSettingsDependency = Annotated[Settings, Depends(get_runtime_settings)]
 def get_storage_service(settings: RuntimeSettingsDependency) -> StorageService:
     """Build the configured storage adapter at the composition boundary."""
 
-    if settings.storage_backend != "local":
-        raise StorageError(
-            "The configured storage backend is not available in this deployment."
-        )
-    return LocalStorage(settings.storage_root)
+    from backend.app.scaling.storage_factory import create_storage_service
+
+    return create_storage_service(settings)
 
 
 def get_hash_service() -> HashService:
