@@ -21,9 +21,7 @@ def compute_workload(
     total = len(tasks) or 1
     scores = [item.priority_score for item in tasks]
     avg_priority = round(sum(scores) / len(scores), 4) if scores else 0.0
-    critical = sum(
-        1 for item in review_queue if item.priority.value == "HIGH"
-    )
+    critical = sum(1 for item in review_queue if item.priority.value == "HIGH")
     workflow_completion = round(completed / total, 4)
     reviewed = len({item.evidence_id for item in review_queue})
     # Coverage of evidence that has been queued (attention), not yet cleared

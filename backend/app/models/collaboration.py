@@ -47,9 +47,7 @@ class CaseMember(Base):
         nullable=False,
     )
     role: Mapped[str] = mapped_column(String(64), nullable=False)
-    invited_by: Mapped[UUID | None] = mapped_column(
-        Uuid(as_uuid=True), nullable=True
-    )
+    invited_by: Mapped[UUID | None] = mapped_column(Uuid(as_uuid=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,
@@ -93,12 +91,8 @@ class EvidenceAssignment(Base):
         nullable=False,
     )
     assigned_by: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), nullable=False)
-    priority: Mapped[str] = mapped_column(
-        String(16), nullable=False, default="medium"
-    )
-    status: Mapped[str] = mapped_column(
-        String(32), nullable=False, default="pending"
-    )
+    priority: Mapped[str] = mapped_column(String(16), nullable=False, default="medium")
+    status: Mapped[str] = mapped_column(String(32), nullable=False, default="pending")
     due_date: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), nullable=True
     )
@@ -149,18 +143,14 @@ class InvestigationComment(Base):
         nullable=True,
     )
     body: Mapped[str] = mapped_column(Text, nullable=False)
-    body_markdown: Mapped[bool] = mapped_column(
-        Boolean, nullable=False, default=True
-    )
+    body_markdown: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     edit_history_json: Mapped[list[Any]] = mapped_column(
         "edit_history",
         JSON,
         nullable=False,
         default=list,
     )
-    is_deleted: Mapped[bool] = mapped_column(
-        Boolean, nullable=False, default=False
-    )
+    is_deleted: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,
@@ -232,9 +222,7 @@ class InvestigationTask(Base):
         nullable=True,
     )
     created_by: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), nullable=False)
-    priority: Mapped[str] = mapped_column(
-        String(16), nullable=False, default="medium"
-    )
+    priority: Mapped[str] = mapped_column(String(16), nullable=False, default="medium")
     status: Mapped[str] = mapped_column(String(32), nullable=False, default="open")
     due_date: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), nullable=True
@@ -282,13 +270,9 @@ class InvestigationReview(Base):
     )
     resource_type: Mapped[str] = mapped_column(String(64), nullable=False)
     resource_id: Mapped[str] = mapped_column(String(64), nullable=False)
-    state: Mapped[str] = mapped_column(
-        String(32), nullable=False, default="draft"
-    )
+    state: Mapped[str] = mapped_column(String(32), nullable=False, default="draft")
     requested_by: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), nullable=False)
-    reviewer_id: Mapped[UUID | None] = mapped_column(
-        Uuid(as_uuid=True), nullable=True
-    )
+    reviewer_id: Mapped[UUID | None] = mapped_column(Uuid(as_uuid=True), nullable=True)
     decision: Mapped[str | None] = mapped_column(String(32), nullable=True)
     comments: Mapped[str | None] = mapped_column(Text, nullable=True)
     decided_at: Mapped[datetime | None] = mapped_column(
@@ -326,15 +310,11 @@ class Notification(Base):
         ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False,
     )
-    case_id: Mapped[UUID | None] = mapped_column(
-        Uuid(as_uuid=True), nullable=True
-    )
+    case_id: Mapped[UUID | None] = mapped_column(Uuid(as_uuid=True), nullable=True)
     kind: Mapped[str] = mapped_column(String(64), nullable=False)
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     body: Mapped[str] = mapped_column(Text, nullable=False)
-    status: Mapped[str] = mapped_column(
-        String(16), nullable=False, default="unread"
-    )
+    status: Mapped[str] = mapped_column(String(16), nullable=False, default="unread")
     payload_json: Mapped[dict[str, Any]] = mapped_column(
         "payload",
         JSON,
@@ -369,9 +349,7 @@ class ActivityLog(Base):
         ForeignKey("cases.id", ondelete="CASCADE"),
         nullable=False,
     )
-    actor_id: Mapped[UUID | None] = mapped_column(
-        Uuid(as_uuid=True), nullable=True
-    )
+    actor_id: Mapped[UUID | None] = mapped_column(Uuid(as_uuid=True), nullable=True)
     actor_username: Mapped[str] = mapped_column(
         String(64), nullable=False, default="system"
     )
@@ -407,12 +385,8 @@ class CaseWorkflowState(Base):
         ForeignKey("cases.id", ondelete="CASCADE"),
         nullable=False,
     )
-    stage: Mapped[str] = mapped_column(
-        String(64), nullable=False, default="open"
-    )
-    updated_by: Mapped[UUID | None] = mapped_column(
-        Uuid(as_uuid=True), nullable=True
-    )
+    stage: Mapped[str] = mapped_column(String(64), nullable=False, default="open")
+    updated_by: Mapped[UUID | None] = mapped_column(Uuid(as_uuid=True), nullable=True)
     version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

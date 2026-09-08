@@ -77,13 +77,19 @@ def upgrade() -> None:
         ),
     )
     op.create_index(
-        "ix_case_access_records_case_id", "case_access_records", ["case_id"],
+        "ix_case_access_records_case_id",
+        "case_access_records",
+        ["case_id"],
     )
     op.create_index(
-        "ix_case_access_records_user_id", "case_access_records", ["user_id"],
+        "ix_case_access_records_user_id",
+        "case_access_records",
+        ["user_id"],
     )
     op.create_index(
-        "ix_case_access_records_active", "case_access_records", ["active"],
+        "ix_case_access_records_active",
+        "case_access_records",
+        ["active"],
     )
 
     op.create_table(
@@ -98,12 +104,16 @@ def upgrade() -> None:
         sa.Column("resolved_at", sa.DateTime(timezone=True), nullable=True),
         sa.Column("policy_version", sa.String(length=32), nullable=False),
         sa.ForeignKeyConstraint(
-            ["case_id"], ["cases.id"], ondelete="SET NULL",
+            ["case_id"],
+            ["cases.id"],
+            ondelete="SET NULL",
         ),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index(
-        "ix_policy_violations_case_id", "policy_violations", ["case_id"],
+        "ix_policy_violations_case_id",
+        "policy_violations",
+        ["case_id"],
     )
     op.create_index(
         "ix_policy_violations_policy_code",
@@ -126,12 +136,16 @@ def upgrade() -> None:
         sa.Column("engine_version", sa.String(length=32), nullable=False),
         sa.Column("generated_at", sa.DateTime(timezone=True), nullable=False),
         sa.ForeignKeyConstraint(
-            ["case_id"], ["cases.id"], ondelete="SET NULL",
+            ["case_id"],
+            ["cases.id"],
+            ondelete="SET NULL",
         ),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index(
-        "ix_compliance_reports_case_id", "compliance_reports", ["case_id"],
+        "ix_compliance_reports_case_id",
+        "compliance_reports",
+        ["case_id"],
     )
     op.create_index(
         "ix_compliance_reports_generated_at",
@@ -148,29 +162,36 @@ def downgrade() -> None:
         table_name="compliance_reports",
     )
     op.drop_index(
-        "ix_compliance_reports_case_id", table_name="compliance_reports",
+        "ix_compliance_reports_case_id",
+        table_name="compliance_reports",
     )
     op.drop_table("compliance_reports")
 
     op.drop_index(
-        "ix_policy_violations_detected_at", table_name="policy_violations",
+        "ix_policy_violations_detected_at",
+        table_name="policy_violations",
     )
     op.drop_index(
-        "ix_policy_violations_policy_code", table_name="policy_violations",
+        "ix_policy_violations_policy_code",
+        table_name="policy_violations",
     )
     op.drop_index(
-        "ix_policy_violations_case_id", table_name="policy_violations",
+        "ix_policy_violations_case_id",
+        table_name="policy_violations",
     )
     op.drop_table("policy_violations")
 
     op.drop_index(
-        "ix_case_access_records_active", table_name="case_access_records",
+        "ix_case_access_records_active",
+        table_name="case_access_records",
     )
     op.drop_index(
-        "ix_case_access_records_user_id", table_name="case_access_records",
+        "ix_case_access_records_user_id",
+        table_name="case_access_records",
     )
     op.drop_index(
-        "ix_case_access_records_case_id", table_name="case_access_records",
+        "ix_case_access_records_case_id",
+        table_name="case_access_records",
     )
     op.drop_table("case_access_records")
 

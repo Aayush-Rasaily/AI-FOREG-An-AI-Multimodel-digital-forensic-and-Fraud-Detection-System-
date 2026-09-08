@@ -66,7 +66,8 @@ async def phase8d_client(
     app.dependency_overrides[get_db_session] = _override_db
     transport = httpx.ASGITransport(app=app)
     async with httpx.AsyncClient(
-        transport=transport, base_url="http://test",
+        transport=transport,
+        base_url="http://test",
     ) as client:
         yield client
     await engine.dispose()
@@ -75,7 +76,8 @@ async def phase8d_client(
 class TestEmptyDatabase:
     @pytest.mark.asyncio
     async def test_empty_dashboard_and_health(
-        self, phase8d_client: httpx.AsyncClient,
+        self,
+        phase8d_client: httpx.AsyncClient,
     ) -> None:
         response = await phase8d_client.get("/api/v1/monitoring/dashboard")
         assert response.status_code == 200, response.text
@@ -97,7 +99,8 @@ class TestEmptyDatabase:
 class TestAggregationAndRefresh:
     @pytest.mark.asyncio
     async def test_metrics_refresh_and_sections(
-        self, phase8d_client: httpx.AsyncClient,
+        self,
+        phase8d_client: httpx.AsyncClient,
     ) -> None:
         case = await create_case(phase8d_client)
         await process_and_extract(
@@ -150,7 +153,8 @@ class TestKpiHelpers:
 class TestMigration:
     def test_migration_file_loads(self) -> None:
         spec = importlib.util.spec_from_file_location(
-            "phase8d_migration", MIGRATION_PATH,
+            "phase8d_migration",
+            MIGRATION_PATH,
         )
         assert spec is not None and spec.loader is not None
         module = importlib.util.module_from_spec(spec)

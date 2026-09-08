@@ -102,9 +102,7 @@ async def distributed_lock(
     acquired = False
     try:
         client = get_redis_client()
-        acquired = bool(
-            await client.set(key, token, nx=True, ex=max(1, ttl_seconds))
-        )
+        acquired = bool(await client.set(key, token, nx=True, ex=max(1, ttl_seconds)))
     except Exception:  # noqa: BLE001
         logger.debug("Distributed lock unavailable for %s", name, exc_info=True)
         acquired = False

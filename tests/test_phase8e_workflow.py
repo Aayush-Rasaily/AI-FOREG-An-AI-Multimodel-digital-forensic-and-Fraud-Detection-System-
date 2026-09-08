@@ -79,7 +79,8 @@ async def phase8e_client(
     app.dependency_overrides[get_db_session] = _override_db
     transport = httpx.ASGITransport(app=app)
     async with httpx.AsyncClient(
-        transport=transport, base_url="http://test",
+        transport=transport,
+        base_url="http://test",
     ) as client:
         yield client, session_factory
     await engine.dispose()
@@ -87,10 +88,7 @@ async def phase8e_client(
 
 class TestEngine:
     def test_valid_and_invalid_transitions(self) -> None:
-        assert (
-            assert_status_transition("NEW", "ACTIVE")
-            is InvestigationStatus.ACTIVE
-        )
+        assert assert_status_transition("NEW", "ACTIVE") is InvestigationStatus.ACTIVE
         with pytest.raises(InvalidWorkflowTransitionError):
             assert_status_transition("NEW", "APPROVED")
         assert can_publish_report("approved") is True
@@ -107,9 +105,7 @@ class TestWorkflowApi:
     @pytest.mark.asyncio
     async def test_initialize_and_transition(
         self,
-        phase8e_client: tuple[
-            httpx.AsyncClient, async_sessionmaker[AsyncSession]
-        ],
+        phase8e_client: tuple[httpx.AsyncClient, async_sessionmaker[AsyncSession]],
     ) -> None:
         client, _ = phase8e_client
         case = await create_case(client)
@@ -142,9 +138,7 @@ class TestWorkflowApi:
     @pytest.mark.asyncio
     async def test_tasks_notes_reviews_milestones_notifications(
         self,
-        phase8e_client: tuple[
-            httpx.AsyncClient, async_sessionmaker[AsyncSession]
-        ],
+        phase8e_client: tuple[httpx.AsyncClient, async_sessionmaker[AsyncSession]],
     ) -> None:
         client, session_factory = phase8e_client
         case = await create_case(client)
@@ -251,9 +245,7 @@ class TestWorkflowApi:
         labels = [item["label"] for item in milestones.json()["data"]["items"]]
         assert "Investigation Started" in labels
         # Deterministic ordering by reached_at then id
-        reached = [
-            item["reached_at"] for item in milestones.json()["data"]["items"]
-        ]
+        reached = [item["reached_at"] for item in milestones.json()["data"]["items"]]
         assert reached == sorted(reached)
 
         notifications = await client.get(
@@ -281,9 +273,7 @@ class TestWorkflowApi:
     @pytest.mark.asyncio
     async def test_report_publish_requires_approval(
         self,
-        phase8e_client: tuple[
-            httpx.AsyncClient, async_sessionmaker[AsyncSession]
-        ],
+        phase8e_client: tuple[httpx.AsyncClient, async_sessionmaker[AsyncSession]],
     ) -> None:
         client, _ = phase8e_client
         case = await create_case(client)
@@ -303,9 +293,7 @@ class TestWorkflowApi:
     @pytest.mark.asyncio
     async def test_phase8b_workflow_path_untouched(
         self,
-        phase8e_client: tuple[
-            httpx.AsyncClient, async_sessionmaker[AsyncSession]
-        ],
+        phase8e_client: tuple[httpx.AsyncClient, async_sessionmaker[AsyncSession]],
     ) -> None:
         client, _ = phase8e_client
         case = await create_case(client)
@@ -324,7 +312,8 @@ class TestWorkflowApi:
 class TestMigration:
     def test_migration_metadata(self) -> None:
         spec = importlib.util.spec_from_file_location(
-            "phase8e_migration", MIGRATION_PATH,
+            "phase8e_migration",
+            MIGRATION_PATH,
         )
         assert spec is not None and spec.loader is not None
         module = importlib.util.module_from_spec(spec)

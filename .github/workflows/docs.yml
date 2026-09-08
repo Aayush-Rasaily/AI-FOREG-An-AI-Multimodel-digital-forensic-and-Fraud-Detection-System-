@@ -1,0 +1,50 @@
+name: Documentation
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  docs:
+    name: Required documentation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Verify release documentation set
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          root = Path(".")
+          required = [
+              "README.md",
+              "CHANGELOG.md",
+              "RELEASE_NOTES.md",
+              "LICENSE",
+              "docs/README.md",
+              "docs/user-guide.md",
+              "docs/administrator-guide.md",
+              "docs/developer-guide.md",
+              "docs/deployment-guide.md",
+              "docs/forensic-methodology.md",
+              "docs/api-reference.md",
+              "docs/release-engineering.md",
+              "docs/operations-guide.md",
+              "docs/scalability.md",
+              "docs/disaster-recovery.md",
+              "docs/production-readiness.md",
+              "docs/rc7-certification.md",
+              "ROADMAP.md",
+              "SECURITY.md",
+              "CODE_OF_CONDUCT.md",
+          ]
+          missing = [path for path in required if not (root / path).is_file()]
+          if missing:
+              raise SystemExit("Missing documentation: " + ", ".join(missing))
+          print("documentation_ok", len(required))
+          PY

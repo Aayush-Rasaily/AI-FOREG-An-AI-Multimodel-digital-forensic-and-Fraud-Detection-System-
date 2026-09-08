@@ -40,6 +40,8 @@ async def phase6h_client(
         database_url="sqlite+aiosqlite://",
         storage_root=tmp_path / "data",
         log_config_path=tmp_path / "missing-logging.json",
+        rate_limit_enabled=False,
+        rate_limit_use_redis=False,
     )
     engine = create_async_engine(
         settings.database_url,
@@ -90,7 +92,9 @@ def test_empty_case_report_content() -> None:
         snapshot=_empty_snapshot(),
     )
     assert content["report_version"] == REPORT_VERSION
-    assert content["sections"]["executive_summary"]["evidence_count"] == 0
+    assert (
+        content["sections"]["case_summary"]["executive_summary"]["evidence_count"] == 0
+    )
 
 
 def test_explainability_without_intelligence() -> None:
@@ -127,8 +131,8 @@ def test_deterministic_report_content() -> None:
         snapshot=snapshot,
     )
     assert (
-        first["sections"]["executive_summary"]
-        == second["sections"]["executive_summary"]
+        first["sections"]["case_summary"]["executive_summary"]
+        == second["sections"]["case_summary"]["executive_summary"]
     )
 
 

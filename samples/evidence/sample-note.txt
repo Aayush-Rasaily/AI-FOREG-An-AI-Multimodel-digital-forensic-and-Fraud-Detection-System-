@@ -1,0 +1,9 @@
+SYNTHETIC DOCUMENT — NOT REAL EVIDENCE
+
+This file is a public training exhibit for AI-Forge v1.0.0.
+It contains no personal data, financial accounts, or case facts.
+
+Invoice reference: DEMO-0001
+Amount: 0.00
+Currency: XXX
+Status: void

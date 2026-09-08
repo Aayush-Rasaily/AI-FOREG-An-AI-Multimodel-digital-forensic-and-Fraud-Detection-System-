@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import hashlib
 import logging
 import time
@@ -60,20 +61,23 @@ def classify_request(method: str, path: str) -> RateCategory | None:
         return "auth"
     if "/evidence" in normalized and method.upper() in {"POST", "PUT", "PATCH"}:
         return "upload"
-    if any(
-        fragment in normalized
-        for fragment in (
-            "/ai/",
-            "/models",
-            "/image-ai",
-            "/document-ai",
-            "/video-ai",
-            "/audio-ai",
-            "/signature",
-            "/forensics",
-            "/fusion",
+    if (
+        any(
+            fragment in normalized
+            for fragment in (
+                "/ai/",
+                "/models",
+                "/image-ai",
+                "/document-ai",
+                "/video-ai",
+                "/audio-ai",
+                "/signature",
+                "/forensics",
+                "/fusion",
+            )
         )
-    ) and method.upper() == "POST":
+        and method.upper() == "POST"
+    ):
         return "ai"
     if "/reports" in normalized and method.upper() == "POST":
         return "report"
@@ -158,7 +162,13 @@ async def allow_request(
             key = f"{category}:{dimension}:{suffix}"
             allowed: bool | None = None
             if use_redis:
-                allowed = await _redis_allow(key, limit, window)
+                try:
+                    allowed = await asyncio.wait_for(
+                        _redis_allow(key, limit, window),
+                        timeout=0.15,
+                    )
+                except TimeoutError:
+                    allowed = None
             if allowed is None:
                 allowed = _memory_allow(key, limit, window)
             if not allowed:

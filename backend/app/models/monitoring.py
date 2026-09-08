@@ -17,9 +17,7 @@ class MonitoringSnapshot(Base):
     """Persisted operational dashboard snapshot."""
 
     __tablename__ = "monitoring_snapshots"
-    __table_args__ = (
-        Index("ix_monitoring_snapshots_generated_at", "generated_at"),
-    )
+    __table_args__ = (Index("ix_monitoring_snapshots_generated_at", "generated_at"),)
 
     id: Mapped[UUID] = mapped_column(
         Uuid(as_uuid=True), primary_key=True, default=uuid4
@@ -41,9 +39,7 @@ class AuditStatistics(Base):
     """Persisted audit analytics summary."""
 
     __tablename__ = "audit_statistics"
-    __table_args__ = (
-        Index("ix_audit_statistics_generated_at", "generated_at"),
-    )
+    __table_args__ = (Index("ix_audit_statistics_generated_at", "generated_at"),)
 
     id: Mapped[UUID] = mapped_column(
         Uuid(as_uuid=True), primary_key=True, default=uuid4

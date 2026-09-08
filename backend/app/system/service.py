@@ -40,7 +40,8 @@ class SystemService:
 
     async def get_health(self) -> HealthSnapshotResponse:
         data = await build_health_snapshot(
-            self.session, self.settings,
+            self.session,
+            self.settings,
         )
         return HealthSnapshotResponse(**data)
 
@@ -58,13 +59,15 @@ class SystemService:
 
     async def get_diagnostics(self) -> DiagnosticsResponse:
         data = await run_diagnostics(
-            self.session, self.settings,
+            self.session,
+            self.settings,
         )
         return DiagnosticsResponse(**data)
 
     async def run_diagnostics(self) -> DiagnosticsRunResponse:
         results = await run_diagnostics(
-            self.session, self.settings,
+            self.session,
+            self.settings,
         )
         run = SystemDiagnosticsRun(
             id=uuid4(),

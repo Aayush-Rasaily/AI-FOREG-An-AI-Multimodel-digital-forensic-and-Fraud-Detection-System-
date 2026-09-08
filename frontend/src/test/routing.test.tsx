@@ -14,7 +14,7 @@ beforeEach(() => {
         data: {
           status: "healthy",
           database: "healthy",
-          version: "0.1.0",
+          version: "1.0.0",
           environment: "test",
         },
       }),
@@ -43,4 +43,3 @@ describe("application routing", () => {
     expect(await screen.findByRole("heading", { name: "Page not found" })).toBeInTheDocument();
   });
 });
-

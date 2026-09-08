@@ -82,7 +82,9 @@ def upgrade() -> None:
         sa.Column("package_checksum", sa.String(length=64), nullable=False),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
         sa.ForeignKeyConstraint(
-            ["export_job_id"], ["export_jobs.id"], ondelete="CASCADE",
+            ["export_job_id"],
+            ["export_jobs.id"],
+            ondelete="CASCADE",
         ),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("export_job_id"),
@@ -98,7 +100,8 @@ def downgrade() -> None:
     """Drop interoperability tables."""
 
     op.drop_index(
-        "ix_package_manifests_export_job_id", table_name="package_manifests",
+        "ix_package_manifests_export_job_id",
+        table_name="package_manifests",
     )
     op.drop_table("package_manifests")
     op.drop_index("ix_import_jobs_created_at", table_name="import_jobs")

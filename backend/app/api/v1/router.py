@@ -8,11 +8,17 @@ from backend.app.api.v1.endpoints.admin import (
     sessions_router,
 )
 from backend.app.api.v1.endpoints.ai import router as ai_router
+from backend.app.api.v1.endpoints.analytics import (
+    router as analytics_router,
+)
 from backend.app.api.v1.endpoints.audio_ai import router as audio_ai_router
 from backend.app.api.v1.endpoints.audit import router as audit_router
 from backend.app.api.v1.endpoints.auth import router as auth_router
 from backend.app.api.v1.endpoints.case_intelligence import (
     router as case_intelligence_router,
+)
+from backend.app.api.v1.endpoints.case_review import (
+    router as case_review_router,
 )
 from backend.app.api.v1.endpoints.cases import router as cases_router
 from backend.app.api.v1.endpoints.collaboration import (
@@ -20,6 +26,9 @@ from backend.app.api.v1.endpoints.collaboration import (
 )
 from backend.app.api.v1.endpoints.comparison import router as comparison_router
 from backend.app.api.v1.endpoints.correlation import router as correlation_router
+from backend.app.api.v1.endpoints.decision_support import (
+    router as decision_support_router,
+)
 from backend.app.api.v1.endpoints.document_ai import router as document_ai_router
 from backend.app.api.v1.endpoints.entities import router as entities_router
 from backend.app.api.v1.endpoints.evidence import router as evidence_router
@@ -28,29 +37,19 @@ from backend.app.api.v1.endpoints.forensics import router as forensics_router
 from backend.app.api.v1.endpoints.fusion import router as fusion_router
 from backend.app.api.v1.endpoints.health import (
     metrics_router,
+)
+from backend.app.api.v1.endpoints.health import (
     router as health_router,
 )
 from backend.app.api.v1.endpoints.image_ai import router as image_ai_router
+from backend.app.api.v1.endpoints.integrity import (
+    router as integrity_router,
+)
 from backend.app.api.v1.endpoints.intelligence import (
     router as intelligence_router,
 )
 from backend.app.api.v1.endpoints.interoperability import (
     router as interoperability_router,
-)
-from backend.app.api.v1.endpoints.decision_support import (
-    router as decision_support_router,
-)
-from backend.app.api.v1.endpoints.case_review import (
-    router as case_review_router,
-)
-from backend.app.api.v1.endpoints.integrity import (
-    router as integrity_router,
-)
-from backend.app.api.v1.endpoints.analytics import (
-    router as analytics_router,
-)
-from backend.app.api.v1.endpoints.platform_validation import (
-    router as platform_validation_router,
 )
 from backend.app.api.v1.endpoints.investigation_intelligence import (
     router as investigation_intelligence_router,
@@ -60,6 +59,9 @@ from backend.app.api.v1.endpoints.knowledge_graph import (
 )
 from backend.app.api.v1.endpoints.monitoring import (
     router as monitoring_router,
+)
+from backend.app.api.v1.endpoints.platform_validation import (
+    router as platform_validation_router,
 )
 from backend.app.api.v1.endpoints.processing import router as processing_router
 from backend.app.api.v1.endpoints.reports import router as reports_router

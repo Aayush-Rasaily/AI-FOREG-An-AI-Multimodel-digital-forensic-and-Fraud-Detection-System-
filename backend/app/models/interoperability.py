@@ -21,7 +21,9 @@ class ExportJob(Base):
     )
 
     id: Mapped[UUID] = mapped_column(
-        Uuid(as_uuid=True), primary_key=True, default=uuid4,
+        Uuid(as_uuid=True),
+        primary_key=True,
+        default=uuid4,
     )
     case_id: Mapped[UUID] = mapped_column(
         Uuid(as_uuid=True),
@@ -37,11 +39,15 @@ class ExportJob(Base):
     manifest_checksum: Mapped[str | None] = mapped_column(String(64), nullable=True)
     evidence_ids_json: Mapped[list] = mapped_column(JSON, nullable=False, default=list)
     report_versions_json: Mapped[list] = mapped_column(
-        JSON, nullable=False, default=list,
+        JSON,
+        nullable=False,
+        default=list,
     )
     timeline_version: Mapped[str | None] = mapped_column(String(128), nullable=True)
     policy_versions_json: Mapped[dict] = mapped_column(
-        JSON, nullable=False, default=dict,
+        JSON,
+        nullable=False,
+        default=dict,
     )
     error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_by: Mapped[str | None] = mapped_column(String(128), nullable=True)
@@ -53,7 +59,8 @@ class ExportJob(Base):
         default=lambda: datetime.now(UTC),
     )
     completed_at: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=True), nullable=True,
+        DateTime(timezone=True),
+        nullable=True,
     )
 
 
@@ -67,7 +74,9 @@ class ImportJob(Base):
     )
 
     id: Mapped[UUID] = mapped_column(
-        Uuid(as_uuid=True), primary_key=True, default=uuid4,
+        Uuid(as_uuid=True),
+        primary_key=True,
+        default=uuid4,
     )
     source_filename: Mapped[str | None] = mapped_column(String(255), nullable=True)
     status: Mapped[str] = mapped_column(String(32), nullable=False)
@@ -79,7 +88,8 @@ class ImportJob(Base):
     package_checksum: Mapped[str | None] = mapped_column(String(64), nullable=True)
     storage_key: Mapped[str | None] = mapped_column(String(512), nullable=True)
     target_case_id: Mapped[UUID | None] = mapped_column(
-        Uuid(as_uuid=True), nullable=True,
+        Uuid(as_uuid=True),
+        nullable=True,
     )
     error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_by: Mapped[str | None] = mapped_column(String(128), nullable=True)
@@ -91,7 +101,8 @@ class ImportJob(Base):
         default=lambda: datetime.now(UTC),
     )
     completed_at: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=True), nullable=True,
+        DateTime(timezone=True),
+        nullable=True,
     )
 
 
@@ -99,12 +110,12 @@ class PackageManifestRecord(Base):
     """Persisted manifest metadata for an export (no file duplication)."""
 
     __tablename__ = "package_manifests"
-    __table_args__ = (
-        Index("ix_package_manifests_export_job_id", "export_job_id"),
-    )
+    __table_args__ = (Index("ix_package_manifests_export_job_id", "export_job_id"),)
 
     id: Mapped[UUID] = mapped_column(
-        Uuid(as_uuid=True), primary_key=True, default=uuid4,
+        Uuid(as_uuid=True),
+        primary_key=True,
+        default=uuid4,
     )
     export_job_id: Mapped[UUID] = mapped_column(
         Uuid(as_uuid=True),

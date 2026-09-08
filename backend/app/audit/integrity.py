@@ -89,10 +89,7 @@ async def verify_case_integrity(
                 status=IntegrityStatus.VERIFIED,
                 expected_hash=ev.sha256_hash,
                 computed_hash=ev.sha256_hash,
-                detail=(
-                    "Hash recorded at ingestion; "
-                    "integrity preserved."
-                ),
+                detail=("Hash recorded at ingestion; integrity preserved."),
             )
         )
     return results

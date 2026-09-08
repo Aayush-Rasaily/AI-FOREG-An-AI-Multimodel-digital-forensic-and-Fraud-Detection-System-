@@ -41,9 +41,7 @@ def compute_overall_confidence(snapshot: dict[str, Any]) -> dict[str, Any]:
         if isinstance(item.get("confidence"), (int, float))
     ]
     fusion_confidence = (
-        sum(fusion_confidences) / len(fusion_confidences)
-        if fusion_confidences
-        else 0.0
+        sum(fusion_confidences) / len(fusion_confidences) if fusion_confidences else 0.0
     )
 
     finding_scores: list[float] = []
@@ -69,9 +67,7 @@ def compute_overall_confidence(snapshot: dict[str, Any]) -> dict[str, Any]:
     )
 
     verdicts = [
-        str(item.get("verdict") or "")
-        for item in fusion_rows
-        if item.get("verdict")
+        str(item.get("verdict") or "") for item in fusion_rows if item.get("verdict")
     ]
     if len(verdicts) <= 1:
         agreement = 1.0 if verdicts else 0.0

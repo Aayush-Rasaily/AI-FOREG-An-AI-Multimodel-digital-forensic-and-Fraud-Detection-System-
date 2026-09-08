@@ -1,6 +1,12 @@
 """SQLAlchemy persistence models."""
 
 from backend.app.models.ai import AIModelRecord, InferenceJob, InferenceLog
+from backend.app.models.analytics import (
+    AnalyticsDashboard,
+    AnalyticsMetric,
+    AnalyticsRun,
+    AnalyticsSnapshot,
+)
 from backend.app.models.audio_ai import (
     AudioAIFinding,
     AudioAIFindingRegion,
@@ -14,6 +20,13 @@ from backend.app.models.case_intelligence import (
     CaseIntelligenceRun,
     CaseRelationshipRecord,
     CaseTimelineEventRecord,
+)
+from backend.app.models.case_review import (
+    CaseReviewApproval,
+    CaseReviewChecklist,
+    CaseReviewChecklistItem,
+    CaseReviewRun,
+    CaseReviewValidationRecord,
 )
 from backend.app.models.collaboration import (
     ActivityLog,
@@ -38,6 +51,12 @@ from backend.app.models.correlation import (
     EvidenceCorrelationRecord,
 )
 from backend.app.models.custody import ChainOfCustodyEvent
+from backend.app.models.decision_support import (
+    DecisionSupportDecision,
+    DecisionSupportReviewItem,
+    DecisionSupportRun,
+    DecisionSupportTask,
+)
 from backend.app.models.document_ai import (
     DocumentAIFinding,
     DocumentAIFindingRegion,
@@ -63,15 +82,51 @@ from backend.app.models.image_ai import (
     ImageAIFindingRegion,
     ImageAnalysisRun,
 )
+from backend.app.models.integrity import (
+    IntegrityAlert,
+    IntegrityCheck,
+    IntegrityDriftRecord,
+    IntegrityMonitorRun,
+)
+from backend.app.models.interoperability import (
+    ExportJob,
+    ImportJob,
+    PackageManifestRecord,
+)
+from backend.app.models.investigation_intelligence import (
+    EvidenceGapRecordRow,
+    InvestigationHypothesis,
+    InvestigationIntelligenceRun,
+    InvestigationRecommendation,
+)
 from backend.app.models.investigation_summary import InvestigationSummary
+from backend.app.models.knowledge_graph import (
+    GraphEntity,
+    GraphEntityAlias,
+    GraphProvenance,
+    GraphRelationship,
+    KnowledgeGraphRun,
+)
 from backend.app.models.monitoring import (
     AuditStatistics,
     MonitoringSnapshot,
     SystemHealthRecord,
 )
 from backend.app.models.permission import Permission
+from backend.app.models.platform_validation import (
+    PlatformValidationIssue,
+    PlatformValidationResult,
+    PlatformValidationRun,
+)
 from backend.app.models.processing import Artifact, ProcessingJob
 from backend.app.models.role import Role
+from backend.app.models.security import (
+    CaseAccessRecord,
+    ComplianceReport,
+    PolicyViolation,
+    SecurityPermission,
+    SecurityRole,
+)
 from backend.app.models.session import RefreshToken, UserSession
 from backend.app.models.signature_ai import SignatureVerificationRun
 from backend.app.models.system import SystemDiagnosticsRun
@@ -93,61 +148,6 @@ from backend.app.models.workflow import (
     WorkflowNotification,
     WorkflowReview,
     WorkflowTask,
-)
-from backend.app.models.security import (
-    CaseAccessRecord,
-    ComplianceReport,
-    PolicyViolation,
-    SecurityPermission,
-    SecurityRole,
-)
-from backend.app.models.interoperability import (
-    ExportJob,
-    ImportJob,
-    PackageManifestRecord,
-)
-from backend.app.models.knowledge_graph import (
-    GraphEntity,
-    GraphEntityAlias,
-    GraphProvenance,
-    GraphRelationship,
-    KnowledgeGraphRun,
-)
-from backend.app.models.investigation_intelligence import (
-    EvidenceGapRecordRow,
-    InvestigationHypothesis,
-    InvestigationIntelligenceRun,
-    InvestigationRecommendation,
-)
-from backend.app.models.decision_support import (
-    DecisionSupportDecision,
-    DecisionSupportReviewItem,
-    DecisionSupportRun,
-    DecisionSupportTask,
-)
-from backend.app.models.case_review import (
-    CaseReviewApproval,
-    CaseReviewChecklist,
-    CaseReviewChecklistItem,
-    CaseReviewRun,
-    CaseReviewValidationRecord,
-)
-from backend.app.models.integrity import (
-    IntegrityAlert,
-    IntegrityCheck,
-    IntegrityDriftRecord,
-    IntegrityMonitorRun,
-)
-from backend.app.models.analytics import (
-    AnalyticsDashboard,
-    AnalyticsMetric,
-    AnalyticsRun,
-    AnalyticsSnapshot,
-)
-from backend.app.models.platform_validation import (
-    PlatformValidationIssue,
-    PlatformValidationResult,
-    PlatformValidationRun,
 )
 
 __all__ = [

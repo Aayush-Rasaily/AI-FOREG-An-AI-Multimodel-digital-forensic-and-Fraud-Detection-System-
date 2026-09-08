@@ -29,12 +29,8 @@ async def detect_relationships(
     evidence_ids = {item.evidence_id for item in participations}
     relationships: list[EvidenceRelationship] = []
     relationships.extend(_duplicate_hash_relationships(participations))
-    relationships.extend(
-        await _comparison_relationships(session, evidence_ids)
-    )
-    relationships.extend(
-        await _signature_relationships(session, evidence_ids)
-    )
+    relationships.extend(await _comparison_relationships(session, evidence_ids))
+    relationships.extend(await _signature_relationships(session, evidence_ids))
     relationships.extend(
         await _shared_metadata_relationships(session, case_id, evidence_ids)
     )
@@ -78,9 +74,7 @@ async def _comparison_relationships(
 ) -> list[EvidenceRelationship]:
     rows = list(
         await session.scalars(
-            select(ComparisonRun).where(
-                ComparisonRun.evidence_id.in_(evidence_ids)
-            )
+            select(ComparisonRun).where(ComparisonRun.evidence_id.in_(evidence_ids))
         )
     )
     results: list[EvidenceRelationship] = []
@@ -168,9 +162,7 @@ async def _shared_metadata_relationships(
                 continue
             results.append(
                 EvidenceRelationship(
-                    relationship_id=(
-                        f"shared_metadata:{left.id}:{right.id}:creator"
-                    ),
+                    relationship_id=(f"shared_metadata:{left.id}:{right.id}:creator"),
                     evidence_a_id=left.id,
                     evidence_b_id=right.id,
                     relationship_type=RelationshipType.SHARED_METADATA,

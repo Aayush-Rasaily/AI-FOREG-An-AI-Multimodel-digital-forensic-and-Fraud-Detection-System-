@@ -127,7 +127,5 @@ class TestArtifacts:
         ):
             assert (scripts / name).is_file()
         assert (REPO_ROOT / "docs" / "disaster-recovery.md").is_file()
-        text = (REPO_ROOT / "docs" / "disaster-recovery.md").read_text(
-            encoding="utf-8"
-        )
+        text = (REPO_ROOT / "docs" / "disaster-recovery.md").read_text(encoding="utf-8")
         assert "RTO" in text and "RPO" in text

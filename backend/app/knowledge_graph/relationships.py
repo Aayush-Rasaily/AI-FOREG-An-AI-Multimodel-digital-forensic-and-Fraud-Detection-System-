@@ -18,9 +18,7 @@ def _edge_id(
     target: str,
     rel_type: str,
 ) -> str:
-    digest = hashlib.sha256(
-        f"{source}|{target}|{rel_type}".encode()
-    ).hexdigest()
+    digest = hashlib.sha256(f"{source}|{target}|{rel_type}".encode()).hexdigest()
     return f"kgedge_{digest[:24]}"
 
 
@@ -111,9 +109,7 @@ def build_relationships(
             GraphRelationshipType.CORRELATED_WITH,
             creation_source="correlation",
             provenance=(prov,),
-            evidence_ids=tuple(
-                item for item in (prov.evidence_id,) if item
-            ),
+            evidence_ids=tuple(item for item in (prov.evidence_id,) if item),
             base_confidence=min(1.0, max(0.0, score)),
         )
 

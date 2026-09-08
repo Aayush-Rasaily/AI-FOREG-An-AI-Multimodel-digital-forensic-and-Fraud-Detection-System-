@@ -90,7 +90,8 @@ class DecisionSupportEngine:
             "hypotheses": intelligence.get("hypotheses") or [],
             "gaps": intelligence.get("gaps") or [],
             "recommendations": intelligence.get("recommendations") or [],
-            "coverage": intelligence.get("coverage") or {
+            "coverage": intelligence.get("coverage")
+            or {
                 "evidence_total": len(evidence),
                 "overall_completeness": 0.0,
             },
@@ -136,9 +137,7 @@ class DecisionSupportEngine:
             )
         )
         gaps = await self.session.execute(
-            select(EvidenceGapRecordRow).where(
-                EvidenceGapRecordRow.run_id == run.id
-            )
+            select(EvidenceGapRecordRow).where(EvidenceGapRecordRow.run_id == run.id)
         )
         recs = await self.session.execute(
             select(InvestigationRecommendation).where(
@@ -167,13 +166,9 @@ class DecisionSupportEngine:
                     "gap_type": row.gap_type,
                     "severity": row.severity,
                     "reason": row.reason,
-                    "affected_evidence_ids": list(
-                        row.affected_evidence_ids_json or []
-                    ),
+                    "affected_evidence_ids": list(row.affected_evidence_ids_json or []),
                 }
-                for row in sorted(
-                    gaps.scalars().all(), key=lambda item: item.gap_key
-                )
+                for row in sorted(gaps.scalars().all(), key=lambda item: item.gap_key)
             ],
             "recommendations": [
                 {
@@ -181,9 +176,7 @@ class DecisionSupportEngine:
                     "code": row.code,
                     "action_text": row.action_text,
                     "priority": row.priority,
-                    "affected_evidence_ids": list(
-                        row.affected_evidence_ids_json or []
-                    ),
+                    "affected_evidence_ids": list(row.affected_evidence_ids_json or []),
                 }
                 for row in sorted(
                     recs.scalars().all(), key=lambda item: item.recommendation_key
@@ -202,15 +195,14 @@ class DecisionSupportEngine:
             {
                 "id": str(row.id),
                 "left_evidence_id": str(row.left_evidence_id),
-                "right_evidence_id": str(
-                    getattr(row, "right_evidence_id", None) or ""
-                ),
+                "right_evidence_id": str(getattr(row, "right_evidence_id", None) or ""),
             }
             for row in sorted(rows, key=lambda item: str(item.id))
         ]
 
     async def _fusion(
-        self, evidence_ids: list[UUID],
+        self,
+        evidence_ids: list[UUID],
     ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
         if not evidence_ids:
             return [], []
@@ -249,7 +241,8 @@ class DecisionSupportEngine:
         return run_rows, conflicts
 
     async def _timeline_conflicts(
-        self, case_id: UUID,
+        self,
+        case_id: UUID,
     ) -> list[dict[str, Any]]:
         tl = await self.session.execute(
             select(InvestigationTimeline)
@@ -267,9 +260,7 @@ class DecisionSupportEngine:
         return [
             {
                 "id": str(row.id),
-                "evidence_ids": (
-                    [str(row.evidence_id)] if row.evidence_id else []
-                ),
+                "evidence_ids": ([str(row.evidence_id)] if row.evidence_id else []),
             }
             for row in sorted(result.scalars().all(), key=lambda item: str(item.id))
         ]

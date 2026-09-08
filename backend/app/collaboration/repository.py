@@ -58,7 +58,9 @@ class CollaborationRepository:
         return list(result.scalars().all())
 
     async def get_member(
-        self, case_id: UUID, member_id: UUID,
+        self,
+        case_id: UUID,
+        member_id: UUID,
     ) -> CaseMember | None:
         result = await self.session.execute(
             select(CaseMember).where(
@@ -69,7 +71,9 @@ class CollaborationRepository:
         return result.scalar_one_or_none()
 
     async def get_member_by_user(
-        self, case_id: UUID, user_id: UUID,
+        self,
+        case_id: UUID,
+        user_id: UUID,
     ) -> CaseMember | None:
         result = await self.session.execute(
             select(CaseMember).where(
@@ -89,7 +93,8 @@ class CollaborationRepository:
         return int(result.scalar_one())
 
     async def list_assignments(
-        self, evidence_id: UUID,
+        self,
+        evidence_id: UUID,
     ) -> list[EvidenceAssignment]:
         result = await self.session.execute(
             select(EvidenceAssignment)
@@ -115,7 +120,8 @@ class CollaborationRepository:
         return list(result.scalars().all())
 
     async def get_comment(
-        self, comment_id: UUID,
+        self,
+        comment_id: UUID,
     ) -> InvestigationComment | None:
         result = await self.session.execute(
             select(InvestigationComment).where(
@@ -125,7 +131,8 @@ class CollaborationRepository:
         return result.scalar_one_or_none()
 
     async def list_mentions(
-        self, comment_id: UUID,
+        self,
+        comment_id: UUID,
     ) -> list[InvestigationMention]:
         result = await self.session.execute(
             select(InvestigationMention).where(
@@ -149,7 +156,8 @@ class CollaborationRepository:
         return result.scalar_one_or_none()
 
     async def get_review(
-        self, review_id: UUID,
+        self,
+        review_id: UUID,
     ) -> InvestigationReview | None:
         result = await self.session.execute(
             select(InvestigationReview).where(
@@ -159,7 +167,8 @@ class CollaborationRepository:
         return result.scalar_one_or_none()
 
     async def list_notifications(
-        self, user_id: UUID,
+        self,
+        user_id: UUID,
     ) -> list[Notification]:
         result = await self.session.execute(
             select(Notification)
@@ -169,7 +178,8 @@ class CollaborationRepository:
         return list(result.scalars().all())
 
     async def get_notification(
-        self, notification_id: UUID,
+        self,
+        notification_id: UUID,
     ) -> Notification | None:
         result = await self.session.execute(
             select(Notification).where(Notification.id == notification_id)
@@ -194,7 +204,8 @@ class CollaborationRepository:
         return list(result.scalars().all())
 
     async def get_workflow(
-        self, case_id: UUID,
+        self,
+        case_id: UUID,
     ) -> CaseWorkflowState | None:
         result = await self.session.execute(
             select(CaseWorkflowState).where(

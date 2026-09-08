@@ -250,9 +250,7 @@ class EntityService:
                 edges.append(edge)
                 related_ids.add(edge.source_canonical_id)
                 related_ids.add(edge.target_canonical_id)
-        nodes = [
-            item for item in run.entities if item.canonical_id in related_ids
-        ]
+        nodes = [item for item in run.entities if item.canonical_id in related_ids]
         node_responses = [
             self._entity_response(item)
             for item in sorted(

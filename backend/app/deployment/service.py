@@ -74,7 +74,8 @@ class DeploymentService:
         return LivenessResponse(**liveness_payload(self.settings))
 
     async def get_readiness(
-        self, request: Request | None = None,
+        self,
+        request: Request | None = None,
     ) -> ReadinessResponse:
         state = request.app.state if request is not None else None
         payload = await readiness_payload(
@@ -98,7 +99,8 @@ class DeploymentService:
         )
 
     async def validate(
-        self, request: Request | None = None,
+        self,
+        request: Request | None = None,
     ) -> ValidationResponse:
         state = request.app.state if request is not None else None
         result = await run_operational_validation(
@@ -109,7 +111,8 @@ class DeploymentService:
         return ValidationResponse(**result)
 
     async def release_check(
-        self, request: Request | None = None,
+        self,
+        request: Request | None = None,
     ) -> ReleaseCheckResponse:
         # Ensure backup metadata exists for DR verification path
         create_database_backup_metadata(self.settings)

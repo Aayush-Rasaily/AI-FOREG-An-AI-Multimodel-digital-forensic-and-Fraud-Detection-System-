@@ -12,9 +12,7 @@ from backend.app.models.workflow import InvestigationWorkflow
 
 
 def _iso_now() -> str:
-    return datetime.now(UTC).replace(microsecond=0).isoformat().replace(
-        "+00:00", "Z"
-    )
+    return datetime.now(UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
 async def append_activity(

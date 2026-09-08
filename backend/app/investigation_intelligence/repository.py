@@ -24,14 +24,16 @@ class InvestigationIntelligenceRepository:
         return await self.session.get(Case, case_id)
 
     async def add_run(
-        self, run: InvestigationIntelligenceRun,
+        self,
+        run: InvestigationIntelligenceRun,
     ) -> InvestigationIntelligenceRun:
         self.session.add(run)
         await self.session.flush()
         return run
 
     async def add_hypotheses(
-        self, rows: list[InvestigationHypothesis],
+        self,
+        rows: list[InvestigationHypothesis],
     ) -> None:
         self.session.add_all(rows)
         await self.session.flush()
@@ -41,18 +43,21 @@ class InvestigationIntelligenceRepository:
         await self.session.flush()
 
     async def add_recommendations(
-        self, rows: list[InvestigationRecommendation],
+        self,
+        rows: list[InvestigationRecommendation],
     ) -> None:
         self.session.add_all(rows)
         await self.session.flush()
 
     async def get_run(
-        self, run_id: UUID,
+        self,
+        run_id: UUID,
     ) -> InvestigationIntelligenceRun | None:
         return await self.session.get(InvestigationIntelligenceRun, run_id)
 
     async def get_latest_run(
-        self, case_id: UUID,
+        self,
+        case_id: UUID,
     ) -> InvestigationIntelligenceRun | None:
         result = await self.session.execute(
             select(InvestigationIntelligenceRun)
@@ -74,9 +79,7 @@ class InvestigationIntelligenceRepository:
         if run_id is not None:
             filters.append(InvestigationHypothesis.run_id == run_id)
         total = await self.session.scalar(
-            select(func.count()).select_from(InvestigationHypothesis).where(
-                *filters
-            )
+            select(func.count()).select_from(InvestigationHypothesis).where(*filters)
         )
         result = await self.session.execute(
             select(InvestigationHypothesis)
@@ -111,15 +114,10 @@ class InvestigationIntelligenceRepository:
         if run_id is not None:
             filters.append(EvidenceGapRecordRow.run_id == run_id)
         total = await self.session.scalar(
-            select(func.count()).select_from(EvidenceGapRecordRow).where(
-                *filters
-            )
+            select(func.count()).select_from(EvidenceGapRecordRow).where(*filters)
         )
         result = await self.session.execute(
-            select(EvidenceGapRecordRow)
-            .where(*filters)
-            .limit(limit)
-            .offset(offset)
+            select(EvidenceGapRecordRow).where(*filters).limit(limit).offset(offset)
         )
         rows = list(result.scalars().all())
         rows.sort(
@@ -164,7 +162,8 @@ class InvestigationIntelligenceRepository:
         return rows, int(total or 0)
 
     async def hypotheses_for_run(
-        self, run_id: UUID,
+        self,
+        run_id: UUID,
     ) -> list[InvestigationHypothesis]:
         result = await self.session.execute(
             select(InvestigationHypothesis)
@@ -190,7 +189,8 @@ class InvestigationIntelligenceRepository:
         return list(result.scalars().all())
 
     async def recommendations_for_run(
-        self, run_id: UUID,
+        self,
+        run_id: UUID,
     ) -> list[InvestigationRecommendation]:
         result = await self.session.execute(
             select(InvestigationRecommendation)

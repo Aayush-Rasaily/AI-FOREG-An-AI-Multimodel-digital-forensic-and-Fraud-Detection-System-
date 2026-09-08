@@ -478,9 +478,7 @@ class AudioAnalysisService:
             if record.metadata_json:
                 extraction_metadata.update(record.metadata_json)
         duration = extraction_metadata.get("duration")
-        duration_ms = (
-            int(float(str(duration)) * 1000) if duration is not None else None
-        )
+        duration_ms = int(float(str(duration)) * 1000) if duration is not None else None
         sample_rate_value = extraction_metadata.get("sample_rate")
         channels_value = extraction_metadata.get("channels")
         codec_value = extraction_metadata.get("codec") or extraction_metadata.get(

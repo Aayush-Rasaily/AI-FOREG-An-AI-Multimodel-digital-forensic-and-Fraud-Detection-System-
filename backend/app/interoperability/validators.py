@@ -171,9 +171,7 @@ def validate_package(
     declared_manifest_checksum = manifest.get("manifest_checksum")
     if declared_manifest_checksum:
         stripped = {
-            key: value
-            for key, value in manifest.items()
-            if key != "manifest_checksum"
+            key: value for key, value in manifest.items() if key != "manifest_checksum"
         }
         provenance = dict(stripped.get("provenance") or {})
         provenance.pop("manifest_checksum", None)

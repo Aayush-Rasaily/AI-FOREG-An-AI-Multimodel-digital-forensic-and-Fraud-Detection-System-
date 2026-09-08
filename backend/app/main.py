@@ -6,6 +6,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.gzip import GZipMiddleware
 
 from backend.app.ai.audio.bootstrap import build_audio_analysis_stack
 from backend.app.ai.audio.config import AudioAISettings
@@ -87,7 +88,9 @@ async def application_lifespan(app: FastAPI) -> AsyncIterator[None]:
     finally:
         mark_shutdown_requested()
         try:
-            shutdown_thread_pool(wait=False)
+            # Wait for in-flight to_thread work. wait=False left a shut-down
+            # default executor in place and hung later PDF/media extraction.
+            shutdown_thread_pool(wait=True)
         except Exception:  # noqa: BLE001
             logger.exception("Thread pool shutdown failed")
         try:
@@ -179,6 +182,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
         allow_headers=["Authorization", "Content-Type", "X-Request-ID"],
     )
+    if not runtime_settings.debug:
+        app.add_middleware(GZipMiddleware, minimum_size=1000)
     app.add_middleware(RequestContextMiddleware)
     app.add_middleware(RateLimitMiddleware)
     app.add_middleware(SecurityHeadersMiddleware)

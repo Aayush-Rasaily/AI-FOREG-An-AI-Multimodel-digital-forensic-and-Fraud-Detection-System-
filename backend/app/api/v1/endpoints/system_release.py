@@ -35,7 +35,8 @@ def get_deployment_service(
 
 
 DeploymentServiceDependency = Annotated[
-    DeploymentService, Depends(get_deployment_service),
+    DeploymentService,
+    Depends(get_deployment_service),
 ]
 
 

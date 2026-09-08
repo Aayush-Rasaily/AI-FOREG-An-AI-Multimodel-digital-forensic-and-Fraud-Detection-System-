@@ -29,7 +29,9 @@ class InvestigationIntelligenceRun(Base):
     )
 
     id: Mapped[UUID] = mapped_column(
-        Uuid(as_uuid=True), primary_key=True, default=uuid4,
+        Uuid(as_uuid=True),
+        primary_key=True,
+        default=uuid4,
     )
     case_id: Mapped[UUID] = mapped_column(
         Uuid(as_uuid=True),
@@ -38,29 +40,48 @@ class InvestigationIntelligenceRun(Base):
     )
     status: Mapped[str] = mapped_column(String(32), nullable=False)
     investigation_score: Mapped[float] = mapped_column(
-        Float, nullable=False, default=0.0,
+        Float,
+        nullable=False,
+        default=0.0,
     )
     overall_completeness: Mapped[float] = mapped_column(
-        Float, nullable=False, default=0.0,
+        Float,
+        nullable=False,
+        default=0.0,
     )
     hypothesis_count: Mapped[int] = mapped_column(
-        Integer, nullable=False, default=0,
+        Integer,
+        nullable=False,
+        default=0,
     )
     gap_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     recommendation_count: Mapped[int] = mapped_column(
-        Integer, nullable=False, default=0,
+        Integer,
+        nullable=False,
+        default=0,
     )
     open_conflict_count: Mapped[int] = mapped_column(
-        Integer, nullable=False, default=0,
+        Integer,
+        nullable=False,
+        default=0,
     )
     coverage_json: Mapped[dict[str, Any]] = mapped_column(
-        "coverage", JSON, nullable=False, default=dict,
+        "coverage",
+        JSON,
+        nullable=False,
+        default=dict,
     )
     open_conflicts_json: Mapped[list] = mapped_column(
-        "open_conflicts", JSON, nullable=False, default=list,
+        "open_conflicts",
+        JSON,
+        nullable=False,
+        default=list,
     )
     provenance_json: Mapped[dict[str, Any]] = mapped_column(
-        "provenance", JSON, nullable=False, default=dict,
+        "provenance",
+        JSON,
+        nullable=False,
+        default=dict,
     )
     engine_version: Mapped[str] = mapped_column(String(32), nullable=False)
     policy_version: Mapped[str] = mapped_column(String(32), nullable=False)
@@ -71,7 +92,8 @@ class InvestigationIntelligenceRun(Base):
         default=lambda: datetime.now(UTC),
     )
     completed_at: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=True), nullable=True,
+        DateTime(timezone=True),
+        nullable=True,
     )
 
 
@@ -86,7 +108,9 @@ class InvestigationHypothesis(Base):
     )
 
     id: Mapped[UUID] = mapped_column(
-        Uuid(as_uuid=True), primary_key=True, default=uuid4,
+        Uuid(as_uuid=True),
+        primary_key=True,
+        default=uuid4,
     )
     run_id: Mapped[UUID] = mapped_column(
         Uuid(as_uuid=True),
@@ -106,16 +130,28 @@ class InvestigationHypothesis(Base):
     priority: Mapped[str] = mapped_column(String(16), nullable=False)
     status: Mapped[str] = mapped_column(String(32), nullable=False)
     supporting_evidence_ids_json: Mapped[list] = mapped_column(
-        "supporting_evidence_ids", JSON, nullable=False, default=list,
+        "supporting_evidence_ids",
+        JSON,
+        nullable=False,
+        default=list,
     )
     contradicting_evidence_ids_json: Mapped[list] = mapped_column(
-        "contradicting_evidence_ids", JSON, nullable=False, default=list,
+        "contradicting_evidence_ids",
+        JSON,
+        nullable=False,
+        default=list,
     )
     provenance_json: Mapped[dict[str, Any]] = mapped_column(
-        "provenance", JSON, nullable=False, default=dict,
+        "provenance",
+        JSON,
+        nullable=False,
+        default=dict,
     )
     attributes_json: Mapped[dict[str, Any]] = mapped_column(
-        "attributes", JSON, nullable=False, default=dict,
+        "attributes",
+        JSON,
+        nullable=False,
+        default=dict,
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
@@ -135,7 +171,9 @@ class EvidenceGapRecordRow(Base):
     )
 
     id: Mapped[UUID] = mapped_column(
-        Uuid(as_uuid=True), primary_key=True, default=uuid4,
+        Uuid(as_uuid=True),
+        primary_key=True,
+        default=uuid4,
     )
     run_id: Mapped[UUID] = mapped_column(
         Uuid(as_uuid=True),
@@ -153,10 +191,16 @@ class EvidenceGapRecordRow(Base):
     reason: Mapped[str] = mapped_column(Text, nullable=False)
     recommended_action: Mapped[str] = mapped_column(String(64), nullable=False)
     affected_evidence_ids_json: Mapped[list] = mapped_column(
-        "affected_evidence_ids", JSON, nullable=False, default=list,
+        "affected_evidence_ids",
+        JSON,
+        nullable=False,
+        default=list,
     )
     provenance_json: Mapped[dict[str, Any]] = mapped_column(
-        "provenance", JSON, nullable=False, default=dict,
+        "provenance",
+        JSON,
+        nullable=False,
+        default=dict,
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
@@ -176,7 +220,9 @@ class InvestigationRecommendation(Base):
     )
 
     id: Mapped[UUID] = mapped_column(
-        Uuid(as_uuid=True), primary_key=True, default=uuid4,
+        Uuid(as_uuid=True),
+        primary_key=True,
+        default=uuid4,
     )
     run_id: Mapped[UUID] = mapped_column(
         Uuid(as_uuid=True),
@@ -193,16 +239,28 @@ class InvestigationRecommendation(Base):
     action_text: Mapped[str] = mapped_column(Text, nullable=False)
     priority: Mapped[str] = mapped_column(String(16), nullable=False)
     related_hypothesis_keys_json: Mapped[list] = mapped_column(
-        "related_hypothesis_keys", JSON, nullable=False, default=list,
+        "related_hypothesis_keys",
+        JSON,
+        nullable=False,
+        default=list,
     )
     related_gap_keys_json: Mapped[list] = mapped_column(
-        "related_gap_keys", JSON, nullable=False, default=list,
+        "related_gap_keys",
+        JSON,
+        nullable=False,
+        default=list,
     )
     affected_evidence_ids_json: Mapped[list] = mapped_column(
-        "affected_evidence_ids", JSON, nullable=False, default=list,
+        "affected_evidence_ids",
+        JSON,
+        nullable=False,
+        default=list,
     )
     provenance_json: Mapped[dict[str, Any]] = mapped_column(
-        "provenance", JSON, nullable=False, default=dict,
+        "provenance",
+        JSON,
+        nullable=False,
+        default=dict,
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

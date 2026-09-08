@@ -76,5 +76,6 @@ async def get_current_principal(
 
 
 CurrentPrincipal = Annotated[
-    AuthenticatedPrincipal, Depends(get_current_principal),
+    AuthenticatedPrincipal,
+    Depends(get_current_principal),
 ]

@@ -46,6 +46,8 @@ async def phase8c_client(
         database_url="sqlite+aiosqlite://",
         storage_root=tmp_path / "data",
         log_config_path=tmp_path / "missing-logging.json",
+        rate_limit_enabled=False,
+        rate_limit_use_redis=False,
     )
     engine = create_async_engine(
         settings.database_url,
@@ -68,7 +70,8 @@ async def phase8c_client(
     app.dependency_overrides[get_db_session] = _override_db
     transport = httpx.ASGITransport(app=app)
     async with httpx.AsyncClient(
-        transport=transport, base_url="http://test",
+        transport=transport,
+        base_url="http://test",
     ) as client:
         yield client, session_factory
     await engine.dispose()
@@ -125,8 +128,7 @@ class TestEmptyAndSingleEvidence:
         summary = first.json()["data"]
         assert summary["overview"]["evidence_count"] == 1
         assert any(
-            item["code"] == "export_report"
-            for item in summary["recommendations"]
+            item["code"] == "export_report" for item in summary["recommendations"]
         )
 
         listed = await client.get(
@@ -298,8 +300,7 @@ class TestLargeInvestigationAndMissingAnalyses:
         titles = [item["title"] for item in data["key_findings"]]
         # Without fusion, unavailable analyses should be reported.
         assert (
-            "unavailable_analyses" in titles
-            or data["overview"]["analyzed_count"] >= 0
+            "unavailable_analyses" in titles or data["overview"]["analyzed_count"] >= 0
         )
         assert any(
             item["code"] == "complete_missing_analyses"
@@ -311,7 +312,8 @@ class TestLargeInvestigationAndMissingAnalyses:
 class TestMigration:
     def test_migration_file_loads(self) -> None:
         spec = importlib.util.spec_from_file_location(
-            "phase8c_migration", MIGRATION_PATH,
+            "phase8c_migration",
+            MIGRATION_PATH,
         )
         assert spec is not None and spec.loader is not None
         module = importlib.util.module_from_spec(spec)

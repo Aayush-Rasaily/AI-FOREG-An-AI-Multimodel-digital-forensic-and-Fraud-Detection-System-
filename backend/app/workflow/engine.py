@@ -53,9 +53,7 @@ def assert_task_transition(current: str, target: str) -> TaskStatus:
         current_status = TaskStatus(current)
         target_status = TaskStatus(target)
     except ValueError as exc:
-        raise InvalidTaskTransitionError(
-            f"Unknown task status: {target}"
-        ) from exc
+        raise InvalidTaskTransitionError(f"Unknown task status: {target}") from exc
     allowed = ALLOWED_TASK_TRANSITIONS[current_status]
     if target_status not in allowed:
         raise InvalidTaskTransitionError(
@@ -86,9 +84,7 @@ def assert_report_approval_transition(
         target_status is ReportApprovalStatus.PUBLISHED
         and current_status is not ReportApprovalStatus.APPROVED
     ):
-        raise ReportNotApprovedError(
-            "Reports cannot publish unless approved."
-        )
+        raise ReportNotApprovedError("Reports cannot publish unless approved.")
     return target_status
 
 

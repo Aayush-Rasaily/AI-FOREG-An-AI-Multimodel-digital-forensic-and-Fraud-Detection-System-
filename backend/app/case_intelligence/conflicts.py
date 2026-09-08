@@ -28,9 +28,7 @@ def detect_case_conflicts(
         if item.fusion_verdict in _SUSPICIOUS
     ]
     genuine_ids = [
-        item.evidence_id
-        for item in participations
-        if item.fusion_verdict in _GENUINE
+        item.evidence_id for item in participations if item.fusion_verdict in _GENUINE
     ]
     if suspicious_ids and genuine_ids:
         conflicts.append(

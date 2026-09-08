@@ -47,9 +47,7 @@ class KnowledgeGraphEngine:
         correlations = await self._correlations(case.id)
 
         candidates = []
-        candidates.extend(
-            candidates_from_case(case.id, case.case_number, case.title)
-        )
+        candidates.extend(candidates_from_case(case.id, case.case_number, case.title))
         candidates.extend(candidates_from_evidence(evidence_rows))
         candidates.extend(candidates_from_extractions(extractions))
         candidates.extend(candidates_from_ai_findings(findings))
@@ -71,9 +69,7 @@ class KnowledgeGraphEngine:
         part_of_pairs: list[tuple[str, str, GraphProvenanceRef]] = []
         mention_pairs: list[tuple[str, str, GraphProvenanceRef]] = []
         derived_pairs: list[tuple[str, str, GraphProvenanceRef]] = []
-        correlation_pairs: list[
-            tuple[str, str, str, float, GraphProvenanceRef]
-        ] = []
+        correlation_pairs: list[tuple[str, str, str, float, GraphProvenanceRef]] = []
 
         if case_entity_id:
             for eid, entity_id in sorted(evidence_entity.items()):
@@ -250,17 +246,14 @@ class KnowledgeGraphEngine:
             from backend.app.models.document_ai import DocumentAIFinding
 
             result = await self.session.execute(
-                select(DocumentAIFinding).where(
-                    DocumentAIFinding.evidence_id.in_(ids)
-                )
+                select(DocumentAIFinding).where(DocumentAIFinding.evidence_id.in_(ids))
             )
             for row in result.scalars().all():
                 findings.append(
                     {
                         "id": str(row.id),
                         "evidence_id": str(row.evidence_id),
-                        "description": getattr(row, "description", None)
-                        or str(row.id),
+                        "description": getattr(row, "description", None) or str(row.id),
                         "category": getattr(row, "category", None),
                         "confidence": getattr(row, "confidence", None),
                     }

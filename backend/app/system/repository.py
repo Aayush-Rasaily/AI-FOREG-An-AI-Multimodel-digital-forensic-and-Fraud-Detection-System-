@@ -17,10 +17,12 @@ class SystemRepository:
         self.session = session
 
     async def get_run(
-        self, run_id: UUID,
+        self,
+        run_id: UUID,
     ) -> SystemDiagnosticsRun | None:
         return await self.session.get(
-            SystemDiagnosticsRun, run_id,
+            SystemDiagnosticsRun,
+            run_id,
         )
 
     async def get_latest(self) -> SystemDiagnosticsRun | None:
@@ -32,7 +34,8 @@ class SystemRepository:
         return result.first()
 
     async def add_run(
-        self, run: SystemDiagnosticsRun,
+        self,
+        run: SystemDiagnosticsRun,
     ) -> SystemDiagnosticsRun:
         self.session.add(run)
         await self.session.flush()

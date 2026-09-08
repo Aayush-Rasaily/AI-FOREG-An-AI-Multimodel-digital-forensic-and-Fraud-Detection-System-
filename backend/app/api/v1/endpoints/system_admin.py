@@ -19,7 +19,8 @@ from backend.app.system.service import SystemService
 
 router = APIRouter(prefix="/system", tags=["system-admin"])
 SystemServiceDependency = Annotated[
-    SystemService, Depends(get_system_service),
+    SystemService,
+    Depends(get_system_service),
 ]
 
 

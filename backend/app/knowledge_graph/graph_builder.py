@@ -22,9 +22,7 @@ IP_RE = re.compile(
     r"\b(?:(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}"
     r"(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\b"
 )
-DOMAIN_RE = re.compile(
-    r"\b(?:[a-zA-Z0-9\-]+\.)+[a-zA-Z]{2,}\b"
-)
+DOMAIN_RE = re.compile(r"\b(?:[a-zA-Z0-9\-]+\.)+[a-zA-Z]{2,}\b")
 URL_RE = re.compile(r"https?://[^\s<>\"']+", re.IGNORECASE)
 HASH_RE = re.compile(r"\b[a-fA-F0-9]{64}\b")
 

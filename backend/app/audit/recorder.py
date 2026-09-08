@@ -57,15 +57,9 @@ class AuditRecorder:
             user=event_data["user"],
             operation=event_data["operation"],
             category=event_data["category"],
-            case_id=(
-                UUID(event_data["case_id"])
-                if event_data["case_id"]
-                else None
-            ),
+            case_id=(UUID(event_data["case_id"]) if event_data["case_id"] else None),
             evidence_id=(
-                UUID(event_data["evidence_id"])
-                if event_data["evidence_id"]
-                else None
+                UUID(event_data["evidence_id"]) if event_data["evidence_id"] else None
             ),
             previous_state_json=event_data["previous_state"],
             new_state_json=event_data["new_state"],

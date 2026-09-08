@@ -31,9 +31,17 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<AuthUser | null>(null);
-  const [loading, setLoading] = useState(() => Boolean(getAccessToken()));
+export function AuthProvider({
+  children,
+  initialUser = null,
+}: {
+  children: ReactNode;
+  initialUser?: AuthUser | null;
+}) {
+  const [user, setUser] = useState<AuthUser | null>(initialUser);
+  const [loading, setLoading] = useState(
+    () => Boolean(getAccessToken()) && initialUser == null,
+  );
 
   const refreshProfile = useCallback(async () => {
     if (!getAccessToken()) {
@@ -57,6 +65,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let cancelled = false;
     (async () => {
+      if (initialUser != null) {
+        if (!cancelled) {
+          setLoading(false);
+        }
+        return;
+      }
       if (!getAccessToken()) {
         if (!cancelled) {
           setLoading(false);
@@ -74,7 +88,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, [refreshProfile]);
+  }, [initialUser, refreshProfile]);
 
   const login = useCallback(async (payload: LoginPayload) => {
     const response = await authApi.login(payload);

@@ -141,6 +141,18 @@ async def app_exception_handler(
     if not isinstance(exc, ApplicationError):
         raise TypeError("Application exception handler received an invalid exception.")
     request_id = _request_id_from(request)
+    if exc.status_code in {
+        status.HTTP_401_UNAUTHORIZED,
+        status.HTTP_403_FORBIDDEN,
+    }:
+        logger.warning(
+            "Access denied",
+            extra={
+                "method": request.method,
+                "path": request.url.path,
+                "status_code": exc.status_code,
+            },
+        )
     return JSONResponse(
         status_code=exc.status_code,
         content=_error_payload(

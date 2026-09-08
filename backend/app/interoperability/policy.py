@@ -34,9 +34,7 @@ class JobStatus(StrEnum):
     INVALID = "INVALID"
 
 
-SUPPORTED_EXPORT_FORMATS: tuple[str, ...] = tuple(
-    item.value for item in ExportFormat
-)
+SUPPORTED_EXPORT_FORMATS: tuple[str, ...] = tuple(item.value for item in ExportFormat)
 
 REQUIRED_MANIFEST_KEYS: tuple[str, ...] = (
     "package_version",

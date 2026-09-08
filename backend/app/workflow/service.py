@@ -93,7 +93,8 @@ class WorkflowService:
             raise ResourceNotFoundError("The case was not found.")
 
     async def _workflow_response(
-        self, row: InvestigationWorkflow,
+        self,
+        row: InvestigationWorkflow,
     ) -> WorkflowResponse:
         return WorkflowResponse(
             id=row.id,
@@ -163,7 +164,8 @@ class WorkflowService:
         )
 
     def _milestone_response(
-        self, row: WorkflowMilestone,
+        self,
+        row: WorkflowMilestone,
     ) -> MilestoneResponse:
         return MilestoneResponse(
             id=row.id,
@@ -179,7 +181,8 @@ class WorkflowService:
         )
 
     def _notification_response(
-        self, row: Any,
+        self,
+        row: Any,
     ) -> NotificationResponse:
         return NotificationResponse(
             id=row.id,
@@ -205,7 +208,8 @@ class WorkflowService:
         details: dict[str, Any] | None = None,
     ) -> WorkflowMilestone | None:
         existing = await self.repository.get_milestone(
-            workflow.id, milestone.value,
+            workflow.id,
+            milestone.value,
         )
         if existing is not None:
             return None
@@ -276,8 +280,7 @@ class WorkflowService:
                 select(SignatureVerificationRun.id)
                 .join(
                     Evidence,
-                    SignatureVerificationRun.questioned_evidence_id
-                    == Evidence.id,
+                    SignatureVerificationRun.questioned_evidence_id == Evidence.id,
                 )
                 .where(Evidence.case_id == case_id)
                 .limit(1)
@@ -611,9 +614,7 @@ class WorkflowService:
             normalized = action.strip().lower()
             if normalized == "assign":
                 if assignee_id is None and row.assignee_id is None:
-                    raise WorkflowError(
-                        "assignee_id is required to assign a task."
-                    )
+                    raise WorkflowError("assignee_id is required to assign a task.")
                 target_status = TaskStatus.ASSIGNED.value
             elif normalized == "complete":
                 target_status = TaskStatus.COMPLETED.value
@@ -733,8 +734,8 @@ class WorkflowService:
             vis = NoteVisibility(visibility)
         except ValueError as exc:
             raise WorkflowError("Invalid note category or visibility.") from exc
-        now = datetime.now(UTC).replace(microsecond=0).isoformat().replace(
-            "+00:00", "Z"
+        now = (
+            datetime.now(UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z")
         )
         history = [
             {
@@ -828,9 +829,7 @@ class WorkflowService:
                     f"Unknown report approval status: {initial}"
                 ) from exc
             if initial == ReportApprovalStatus.PUBLISHED.value:
-                raise ReportNotApprovedError(
-                    "Reports cannot publish unless approved."
-                )
+                raise ReportNotApprovedError("Reports cannot publish unless approved.")
 
         assigned_reviewer = reviewer_id or actor_id
         if assigned_reviewer is not None:
@@ -856,9 +855,7 @@ class WorkflowService:
             "reviewer_id": str(assigned_reviewer) if assigned_reviewer else None,
             "comments": comments,
             "reason": reason,
-            "timestamp": now.replace(microsecond=0).isoformat().replace(
-                "+00:00", "Z"
-            ),
+            "timestamp": now.replace(microsecond=0).isoformat().replace("+00:00", "Z"),
         }
         row = WorkflowReview(
             workflow_id=workflow.id,
@@ -950,9 +947,7 @@ class WorkflowService:
                     actor_username=actor_username,
                 )
             if initial == ReportApprovalStatus.PUBLISHED.value:
-                raise ReportNotApprovedError(
-                    "Reports cannot publish unless approved."
-                )
+                raise ReportNotApprovedError("Reports cannot publish unless approved.")
 
         await record_workflow_audit(
             self.session,
@@ -999,13 +994,10 @@ class WorkflowService:
             next_status = status
         else:
             next_enum = assert_report_approval_transition(previous, status)
-            if (
-                next_enum is ReportApprovalStatus.PUBLISHED
-                and not can_publish_report(previous)
+            if next_enum is ReportApprovalStatus.PUBLISHED and not can_publish_report(
+                previous
             ):
-                raise ReportNotApprovedError(
-                    "Reports cannot publish unless approved."
-                )
+                raise ReportNotApprovedError("Reports cannot publish unless approved.")
             next_status = next_enum.value
 
         now = datetime.now(UTC)
@@ -1016,9 +1008,9 @@ class WorkflowService:
                 "reviewer_id": str(actor_id) if actor_id else None,
                 "comments": comments,
                 "reason": reason,
-                "timestamp": now.replace(microsecond=0).isoformat().replace(
-                    "+00:00", "Z"
-                ),
+                "timestamp": now.replace(microsecond=0)
+                .isoformat()
+                .replace("+00:00", "Z"),
                 "previous_status": previous,
             }
         )
@@ -1080,7 +1072,9 @@ class WorkflowService:
         return self._review_response(row)
 
     async def list_milestones(
-        self, case_id: UUID, principal: AuthenticatedPrincipal | None = None,
+        self,
+        case_id: UUID,
+        principal: AuthenticatedPrincipal | None = None,
     ) -> MilestoneListResponse:
         workflow = await self.ensure_workflow(case_id, principal)
         actor_id, actor_username = _actor(principal)
@@ -1095,7 +1089,8 @@ class WorkflowService:
         return MilestoneListResponse(items=items, total=len(items))
 
     async def list_notifications(
-        self, case_id: UUID,
+        self,
+        case_id: UUID,
     ) -> NotificationListResponse:
         await self.ensure_workflow(case_id)
         rows = await self.repository.list_notifications(case_id)

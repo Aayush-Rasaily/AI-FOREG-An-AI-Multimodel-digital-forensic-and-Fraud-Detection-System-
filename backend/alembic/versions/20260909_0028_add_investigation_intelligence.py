@@ -6,15 +6,16 @@ Revises: 20260908_0027
 
 from __future__ import annotations
 
-from typing import Sequence, Union
+from collections.abc import Sequence
 
 import sqlalchemy as sa
+
 from alembic import op
 
 revision: str = "20260909_0028"
-down_revision: Union[str, Sequence[str], None] = "20260908_0027"
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | Sequence[str] | None = "20260908_0027"
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
@@ -114,10 +115,14 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index(
-        "ix_evidence_gap_records_run_id", "evidence_gap_records", ["run_id"],
+        "ix_evidence_gap_records_run_id",
+        "evidence_gap_records",
+        ["run_id"],
     )
     op.create_index(
-        "ix_evidence_gap_records_case_id", "evidence_gap_records", ["case_id"],
+        "ix_evidence_gap_records_case_id",
+        "evidence_gap_records",
+        ["case_id"],
     )
     op.create_index(
         "ix_evidence_gap_records_gap_type",

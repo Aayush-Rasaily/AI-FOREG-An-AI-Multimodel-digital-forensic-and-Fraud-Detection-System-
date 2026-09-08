@@ -1,0 +1,7 @@
+{
+  "title": "Synthetic training case",
+  "description": "Public demo only. No real parties, accounts, or exhibits.",
+  "priority": "MEDIUM",
+  "status": "OPEN",
+  "notes": "Create this case via POST /api/v1/cases after signing in. The server assigns case_number."
+}

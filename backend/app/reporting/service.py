@@ -131,8 +131,8 @@ class ReportService:
             report.report_checksum = result.content.get(
                 "report_checksum",
             )
-            report.included_analysis_run_ids_json = (
-                result.metadata.get("included_analysis_run_ids")
+            report.included_analysis_run_ids_json = result.metadata.get(
+                "included_analysis_run_ids"
             )
             report.pdf_storage_key = storage_key
             report.pdf_sha256 = pdf_sha256
@@ -229,10 +229,7 @@ class ReportService:
             raise ResourceNotFoundError(
                 "The requested forensic report was not found.",
             )
-        if (
-            report.status != ReportStatus.COMPLETED
-            or not report.pdf_storage_key
-        ):
+        if report.status != ReportStatus.COMPLETED or not report.pdf_storage_key:
             raise ResourceNotFoundError(
                 "The report PDF is not available.",
             )
@@ -280,20 +277,14 @@ class ReportService:
             report_version=report.report_version,
             engine_version=report.engine_version,
             fusion_policy_version=report.fusion_policy_version,
-            case_intelligence_policy_version=(
-                report.case_intelligence_policy_version
-            ),
-            case_intelligence_run_id=(
-                report.case_intelligence_run_id
-            ),
+            case_intelligence_policy_version=(report.case_intelligence_policy_version),
+            case_intelligence_run_id=(report.case_intelligence_run_id),
             evidence_count=len(report.evidence_hashes_json),
             evidence_hashes=list(report.evidence_hashes_json),
             pdf_sha256=report.pdf_sha256,
             has_pdf=bool(report.pdf_storage_key),
             report_checksum=report.report_checksum,
-            included_analysis_run_ids=(
-                report.included_analysis_run_ids_json or {}
-            ),
+            included_analysis_run_ids=(report.included_analysis_run_ids_json or {}),
             created_at=report.created_at,
             started_at=report.started_at,
             completed_at=report.completed_at,
@@ -310,13 +301,23 @@ class ReportService:
         base = self._report_response(report)
         content = report.content_json or {}
         sections = content.get("sections", {})
+        case_summary = sections.get("case_summary") or {}
+        overall = sections.get("overall_confidence") or {}
+        executive = sections.get("executive_summary")
+        if not isinstance(executive, dict) or not executive:
+            nested = case_summary.get("executive_summary")
+            executive = nested if isinstance(nested, dict) else {}
+        explainability = sections.get("explainability")
+        if not isinstance(explainability, dict) or not explainability:
+            explainability = {
+                "confidence_note": overall.get("confidence_note"),
+                "jury_note": overall.get("jury_note"),
+            }
         return ForensicReportDetailResponse(
             **base.model_dump(),
             content=content,
-            executive_summary=sections.get(
-                "executive_summary", {},
-            ),
-            explainability=sections.get("explainability", {}),
+            executive_summary=executive,
+            explainability=explainability,
             section_order=list(
                 content.get("section_order", []),
             ),

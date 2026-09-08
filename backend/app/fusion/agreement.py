@@ -28,9 +28,7 @@ def compute_agreement(
     """Calculate auditable agreement metrics."""
 
     actionable = [
-        item
-        for item in findings
-        if item.verdict != FindingVerdict.UNAVAILABLE
+        item for item in findings if item.verdict != FindingVerdict.UNAVAILABLE
     ]
     supporting_modalities: set[Modality] = set()
     contradictory_modalities: set[Modality] = set()

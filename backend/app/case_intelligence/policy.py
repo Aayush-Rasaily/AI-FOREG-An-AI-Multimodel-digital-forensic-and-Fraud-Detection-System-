@@ -168,9 +168,7 @@ def _case_verdict(
 ) -> FusionVerdict:
     if coverage.total_evidence == 0:
         return FusionVerdict.INSUFFICIENT_EVIDENCE
-    analyzed = [
-        item for item in participations if item.fusion_verdict is not None
-    ]
+    analyzed = [item for item in participations if item.fusion_verdict is not None]
     if not analyzed:
         return FusionVerdict.INSUFFICIENT_EVIDENCE
     if all(
@@ -210,9 +208,7 @@ def _build_explanation(
     supporting_ids: tuple[UUID, ...],
 ) -> str:
     conflict_note = (
-        f" {len(conflicts)} open case conflict(s) recorded."
-        if conflicts
-        else ""
+        f" {len(conflicts)} open case conflict(s) recorded." if conflicts else ""
     )
     return (
         f"Case verdict: {verdict.value}.{conflict_note} "

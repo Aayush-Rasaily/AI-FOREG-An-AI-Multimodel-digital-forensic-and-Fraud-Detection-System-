@@ -17,7 +17,8 @@ class AuditRepository:
         self.session = session
 
     async def get_event(
-        self, event_id: UUID,
+        self,
+        event_id: UUID,
     ) -> AuditEvent | None:
         return await self.session.get(AuditEvent, event_id)
 
@@ -44,9 +45,7 @@ class AuditRepository:
         if user is not None:
             filters.append(AuditEvent.user == user)
         total = await self.session.scalar(
-            select(func.count())
-            .select_from(AuditEvent)
-            .where(*filters)
+            select(func.count()).select_from(AuditEvent).where(*filters)
             if filters
             else select(func.count()).select_from(AuditEvent)
         )
@@ -69,7 +68,9 @@ class AuditRepository:
         offset: int = 0,
     ) -> tuple[list[AuditEvent], int]:
         return await self.list_events(
-            case_id=case_id, limit=limit, offset=offset,
+            case_id=case_id,
+            limit=limit,
+            offset=offset,
         )
 
     async def list_for_evidence(
@@ -80,5 +81,7 @@ class AuditRepository:
         offset: int = 0,
     ) -> tuple[list[AuditEvent], int]:
         return await self.list_events(
-            evidence_id=evidence_id, limit=limit, offset=offset,
+            evidence_id=evidence_id,
+            limit=limit,
+            offset=offset,
         )

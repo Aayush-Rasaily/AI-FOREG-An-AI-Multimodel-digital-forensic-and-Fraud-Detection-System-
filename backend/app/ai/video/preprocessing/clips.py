@@ -14,7 +14,5 @@ def clip_frame_range(
     """Return frames within an inclusive frame-number range."""
 
     return tuple(
-        frame
-        for frame in frames
-        if start_frame <= frame.frame_number <= end_frame
+        frame for frame in frames if start_frame <= frame.frame_number <= end_frame
     )

@@ -113,10 +113,7 @@ class AuthService:
 
         await self.ensure_rbac_seeded()
         bootstrap_password = self.settings.auth_bootstrap_password
-        if (
-            bootstrap_password is not None
-            and await self.repository.count_users() == 0
-        ):
+        if bootstrap_password is not None and await self.repository.count_users() == 0:
             await self._create_user_record(
                 username=self.settings.auth_bootstrap_username,
                 password=bootstrap_password.get_secret_value(),
@@ -158,7 +155,9 @@ class AuthService:
         return user
 
     def _principal_from_user(
-        self, user: User, session_id: UUID,
+        self,
+        user: User,
+        session_id: UUID,
     ) -> AuthenticatedPrincipal:
         roles = tuple(sorted(role.name for role in user.roles))
         permissions: set[str] = set()
@@ -191,7 +190,10 @@ class AuthService:
         )
 
     def _issue_tokens(
-        self, user: User, session_row: UserSession, remember_me: bool,
+        self,
+        user: User,
+        session_row: UserSession,
+        remember_me: bool,
     ) -> TokenResponse:
         secret = self._jwt_secret()
         algorithm = self.settings.jwt_algorithm
@@ -329,7 +331,8 @@ class AuthService:
         return tokens
 
     async def resolve_access_token(
-        self, token: str,
+        self,
+        token: str,
     ) -> AuthenticatedPrincipal:
         """Validate an access token and return the active principal."""
 
@@ -545,7 +548,9 @@ class AuthService:
         return SessionListResponse(items=items, total=len(items))
 
     async def revoke_session(
-        self, principal: AuthenticatedPrincipal, session_id: UUID,
+        self,
+        principal: AuthenticatedPrincipal,
+        session_id: UUID,
     ) -> None:
         session_row = await self.repository.get_session(session_id)
         if session_row is None:
@@ -563,7 +568,8 @@ class AuthService:
         await self.session.commit()
 
     async def _revoke_other_sessions(
-        self, principal: AuthenticatedPrincipal,
+        self,
+        principal: AuthenticatedPrincipal,
     ) -> None:
         now = datetime.now(UTC)
         now = datetime.now(UTC)

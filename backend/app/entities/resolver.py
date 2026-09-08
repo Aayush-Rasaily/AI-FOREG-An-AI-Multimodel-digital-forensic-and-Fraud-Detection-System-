@@ -1,4 +1,4 @@
-﻿"""Deterministic entity resolution from existing Phase 1-7B outputs."""
+"""Deterministic entity resolution from existing Phase 1-7B outputs."""
 
 from __future__ import annotations
 
@@ -764,9 +764,7 @@ class EntityResolver:
             if media_key is None:
                 continue
             meta = (
-                finding.metadata_json
-                if isinstance(finding.metadata_json, dict)
-                else {}
+                finding.metadata_json if isinstance(finding.metadata_json, dict) else {}
             )
             label = str(
                 meta.get("logo_label")

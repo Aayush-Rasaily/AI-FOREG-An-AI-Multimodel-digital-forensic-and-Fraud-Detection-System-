@@ -72,7 +72,8 @@ async def phase9d_client(
     app.dependency_overrides[get_db_session] = _override_db
     transport = httpx.ASGITransport(app=app)
     async with httpx.AsyncClient(
-        transport=transport, base_url="http://test",
+        transport=transport,
+        base_url="http://test",
     ) as client:
         yield client, session_factory
     await engine.dispose()
@@ -98,7 +99,9 @@ class TestScoringAndTasks:
     def test_task_priority_boost(self) -> None:
         base = task_priority_score("REVIEW_AI_CONFLICT", support_count=1)
         boosted = task_priority_score(
-            "REVIEW_AI_CONFLICT", support_count=4, severity_boost=0.1,
+            "REVIEW_AI_CONFLICT",
+            support_count=4,
+            severity_boost=0.1,
         )
         assert boosted >= base
 
@@ -162,9 +165,7 @@ class TestScoringAndTasks:
         }
         first = build_review_queue(snapshot)
         second = build_review_queue(snapshot)
-        assert [item.queue_key for item in first] == [
-            item.queue_key for item in second
-        ]
+        assert [item.queue_key for item in first] == [item.queue_key for item in second]
         assert first[0].priority_score >= first[-1].priority_score
 
     def test_plan_metrics(self) -> None:
@@ -218,9 +219,7 @@ class TestApiAndService:
     @pytest.mark.asyncio
     async def test_preview_empty_case(
         self,
-        phase9d_client: tuple[
-            httpx.AsyncClient, async_sessionmaker[AsyncSession]
-        ],
+        phase9d_client: tuple[httpx.AsyncClient, async_sessionmaker[AsyncSession]],
     ) -> None:
         client, _ = phase9d_client
         case = await create_case(client)
@@ -236,9 +235,7 @@ class TestApiAndService:
     @pytest.mark.asyncio
     async def test_preview_does_not_persist(
         self,
-        phase9d_client: tuple[
-            httpx.AsyncClient, async_sessionmaker[AsyncSession]
-        ],
+        phase9d_client: tuple[httpx.AsyncClient, async_sessionmaker[AsyncSession]],
     ) -> None:
         client, _ = phase9d_client
         case = await create_case(client)
@@ -253,9 +250,7 @@ class TestApiAndService:
     @pytest.mark.asyncio
     async def test_generate_get_tasks_queue_metrics_decision(
         self,
-        phase9d_client: tuple[
-            httpx.AsyncClient, async_sessionmaker[AsyncSession]
-        ],
+        phase9d_client: tuple[httpx.AsyncClient, async_sessionmaker[AsyncSession]],
     ) -> None:
         client, _ = phase9d_client
         case = await create_case(client)
@@ -326,9 +321,7 @@ class TestApiAndService:
     @pytest.mark.asyncio
     async def test_repeat_generate_new_runs(
         self,
-        phase9d_client: tuple[
-            httpx.AsyncClient, async_sessionmaker[AsyncSession]
-        ],
+        phase9d_client: tuple[httpx.AsyncClient, async_sessionmaker[AsyncSession]],
     ) -> None:
         client, _ = phase9d_client
         case = await create_case(client)
@@ -343,9 +336,7 @@ class TestApiAndService:
     @pytest.mark.asyncio
     async def test_service_preview(
         self,
-        phase9d_client: tuple[
-            httpx.AsyncClient, async_sessionmaker[AsyncSession]
-        ],
+        phase9d_client: tuple[httpx.AsyncClient, async_sessionmaker[AsyncSession]],
     ) -> None:
         client, session_factory = phase9d_client
         case = await create_case(client)
@@ -358,14 +349,11 @@ class TestApiAndService:
     @pytest.mark.asyncio
     async def test_missing_run_404(
         self,
-        phase9d_client: tuple[
-            httpx.AsyncClient, async_sessionmaker[AsyncSession]
-        ],
+        phase9d_client: tuple[httpx.AsyncClient, async_sessionmaker[AsyncSession]],
     ) -> None:
         client, _ = phase9d_client
         missing = await client.get(
-            "/api/v1/decision-support/"
-            "00000000-0000-0000-0000-000000000099",
+            "/api/v1/decision-support/00000000-0000-0000-0000-000000000099",
         )
         assert missing.status_code == 404
 
@@ -415,9 +403,7 @@ class TestApiAndService:
                 ],
             }
         )
-        assert any(
-            item.task_type.value == "REVIEW_TIMELINE_CONFLICT" for item in tasks
-        )
+        assert any(item.task_type.value == "REVIEW_TIMELINE_CONFLICT" for item in tasks)
 
     def test_close_investigation_when_complete(self) -> None:
         tasks = generate_tasks(
@@ -429,6 +415,4 @@ class TestApiAndService:
                 "open_conflicts": [],
             }
         )
-        assert any(
-            item.task_type.value == "CLOSE_INVESTIGATION" for item in tasks
-        )
+        assert any(item.task_type.value == "CLOSE_INVESTIGATION" for item in tasks)

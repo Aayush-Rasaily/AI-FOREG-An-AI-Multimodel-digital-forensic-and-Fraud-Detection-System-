@@ -1,13 +1,17 @@
 """Contracts and context objects for deterministic evidence processors."""
 
+from __future__ import annotations
+
 from dataclasses import dataclass, field
-from typing import Protocol
+from typing import TYPE_CHECKING, Protocol
 
 from backend.app.domain.processing import (
     ArtifactType,
     EvidenceClassification,
 )
-from backend.app.models.evidence import Evidence
+
+if TYPE_CHECKING:
+    from backend.app.models.evidence import Evidence
 
 
 @dataclass(frozen=True, slots=True)

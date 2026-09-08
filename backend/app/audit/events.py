@@ -13,7 +13,10 @@ from backend.app.audit.policy import ENGINE_VERSION, POLICY_VERSION
 
 def _canonical(data: Any) -> str:
     return json.dumps(
-        data, sort_keys=True, separators=(",", ":"), default=str,
+        data,
+        sort_keys=True,
+        separators=(",", ":"),
+        default=str,
     )
 
 
@@ -29,16 +32,18 @@ def compute_integrity_hash(
     new_state: Any,
 ) -> str:
     """Deterministic integrity hash for one audit record."""
-    payload = _canonical({
-        "audit_id": audit_id,
-        "timestamp": timestamp,
-        "operation": operation,
-        "case_id": case_id,
-        "evidence_id": evidence_id,
-        "sha256_checksum": sha256_checksum,
-        "previous_state": previous_state,
-        "new_state": new_state,
-    })
+    payload = _canonical(
+        {
+            "audit_id": audit_id,
+            "timestamp": timestamp,
+            "operation": operation,
+            "case_id": case_id,
+            "evidence_id": evidence_id,
+            "sha256_checksum": sha256_checksum,
+            "previous_state": previous_state,
+            "new_state": new_state,
+        }
+    )
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 
@@ -76,9 +81,7 @@ def build_audit_event(
         "operation": operation,
         "category": category,
         "case_id": str(case_id) if case_id else None,
-        "evidence_id": (
-            str(evidence_id) if evidence_id else None
-        ),
+        "evidence_id": (str(evidence_id) if evidence_id else None),
         "previous_state": previous_state,
         "new_state": new_state,
         "client_ip": client_ip,

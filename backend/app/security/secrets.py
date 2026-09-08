@@ -102,9 +102,7 @@ def validate_runtime_secrets(settings: Settings) -> list[dict[str, Any]]:
             )
         )
     else:
-        findings.append(
-            _status("secret_jwt_secret", "PASS", "JWT_SECRET is present.")
-        )
+        findings.append(_status("secret_jwt_secret", "PASS", "JWT_SECRET is present."))
 
     if not settings.database_url:
         findings.append(
@@ -136,9 +134,7 @@ def validate_runtime_secrets(settings: Settings) -> list[dict[str, Any]]:
             )
         )
     else:
-        findings.append(
-            _status("secret_redis_url", "PASS", "REDIS_URL is present.")
-        )
+        findings.append(_status("secret_redis_url", "PASS", "REDIS_URL is present."))
 
     for key in (
         "ENCRYPTION_KEY",
@@ -207,12 +203,8 @@ def assert_production_secrets(settings: Settings) -> None:
     if settings.app_env != "production":
         return
     failures = [
-        item
-        for item in validate_runtime_secrets(settings)
-        if item["status"] == "FAIL"
+        item for item in validate_runtime_secrets(settings) if item["status"] == "FAIL"
     ]
     if failures:
         messages = "; ".join(item["message"] for item in failures)
-        raise RuntimeError(
-            "Production secret validation failed: " + messages
-        )
+        raise RuntimeError("Production secret validation failed: " + messages)

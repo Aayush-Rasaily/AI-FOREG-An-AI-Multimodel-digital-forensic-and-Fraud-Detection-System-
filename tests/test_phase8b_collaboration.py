@@ -73,7 +73,8 @@ async def collab_client(
     app.dependency_overrides[get_db_session] = _override_db
     transport = httpx.ASGITransport(app=app)
     async with httpx.AsyncClient(
-        transport=transport, base_url="http://test",
+        transport=transport,
+        base_url="http://test",
     ) as client:
         yield client, session_factory, settings
     await engine.dispose()
@@ -102,7 +103,8 @@ async def auth_headers(client: httpx.AsyncClient) -> dict[str, str]:
 
 
 async def create_case(
-    client: httpx.AsyncClient, headers: dict[str, str],
+    client: httpx.AsyncClient,
+    headers: dict[str, str],
 ) -> str:
     response = await client.post(
         "/api/v1/cases",
@@ -143,7 +145,8 @@ class TestMembers:
         )
         assert member.status_code == 201
         listed = await client.get(
-            f"/api/v1/cases/{case_id}/members", headers=headers,
+            f"/api/v1/cases/{case_id}/members",
+            headers=headers,
         )
         assert listed.status_code == 200
         assert listed.json()["data"]["total"] == 1
@@ -188,13 +191,15 @@ class TestTasksCommentsWorkflow:
         )
         assert comment.status_code == 201
         comments = await client.get(
-            f"/api/v1/comments/case/{case_id}", headers=headers,
+            f"/api/v1/comments/case/{case_id}",
+            headers=headers,
         )
         assert comments.status_code == 200
         assert comments.json()["data"]["total"] >= 1
 
         workflow = await client.get(
-            f"/api/v1/cases/{case_id}/workflow", headers=headers,
+            f"/api/v1/cases/{case_id}/workflow",
+            headers=headers,
         )
         assert workflow.status_code == 200
         assert workflow.json()["data"]["stage"] == "open"
@@ -244,7 +249,8 @@ class TestReviewsNotificationsActivity:
         assert decided.json()["data"]["state"] == "approved"
 
         activity = await client.get(
-            f"/api/v1/cases/{case_id}/activity", headers=headers,
+            f"/api/v1/cases/{case_id}/activity",
+            headers=headers,
         )
         assert activity.status_code == 200
         assert activity.json()["data"]["total"] >= 1
@@ -252,7 +258,8 @@ class TestReviewsNotificationsActivity:
         assert "review.completed" in actions
 
         notifications = await client.get(
-            "/api/v1/notifications", headers=headers,
+            "/api/v1/notifications",
+            headers=headers,
         )
         assert notifications.status_code == 200
 
@@ -320,9 +327,7 @@ class TestAssignmentsThreadsAuth:
         )
         assert parent.status_code == 201
         parent_id = parent.json()["data"]["id"]
-        assert viewer_id in [
-            str(item) for item in parent.json()["data"]["mentions"]
-        ]
+        assert viewer_id in [str(item) for item in parent.json()["data"]["mentions"]]
 
         reply = await client.post(
             "/api/v1/comments",
@@ -353,7 +358,8 @@ class TestAssignmentsThreadsAuth:
 class TestMigration:
     def test_migration_file_loads(self) -> None:
         spec = importlib.util.spec_from_file_location(
-            "phase8b_migration", MIGRATION_PATH,
+            "phase8b_migration",
+            MIGRATION_PATH,
         )
         assert spec is not None and spec.loader is not None
         module = importlib.util.module_from_spec(spec)

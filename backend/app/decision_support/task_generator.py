@@ -93,9 +93,7 @@ def generate_tasks(snapshot: dict[str, Any]) -> list[WorkflowTaskDraft]:
             }.get(str(rec.get("priority") or "MEDIUM"), 0.05),
             intelligence={"recommendation_key": rec.get("recommendation_key")},
             provenance=ProvenanceBundle(
-                evidence_ids=tuple(
-                    sorted(rec.get("affected_evidence_ids") or [])
-                ),
+                evidence_ids=tuple(sorted(rec.get("affected_evidence_ids") or [])),
                 recommendation_ids=tuple(
                     sorted(
                         filter(
@@ -123,12 +121,8 @@ def generate_tasks(snapshot: dict[str, Any]) -> list[WorkflowTaskDraft]:
             }.get(str(gap.get("severity") or "MEDIUM"), 0.06),
             intelligence={"gap_key": gap.get("gap_key")},
             provenance=ProvenanceBundle(
-                evidence_ids=tuple(
-                    sorted(gap.get("affected_evidence_ids") or [])
-                ),
-                gap_ids=tuple(
-                    sorted(filter(None, [str(gap.get("gap_key") or "")]))
-                ),
+                evidence_ids=tuple(sorted(gap.get("affected_evidence_ids") or [])),
+                gap_ids=tuple(sorted(filter(None, [str(gap.get("gap_key") or "")]))),
                 detail=str(gap.get("gap_type") or ""),
             ),
         )
@@ -146,9 +140,7 @@ def generate_tasks(snapshot: dict[str, Any]) -> list[WorkflowTaskDraft]:
                 provenance=ProvenanceBundle(
                     evidence_ids=tuple(sorted(eids)),
                     hypothesis_ids=tuple(
-                        sorted(
-                            filter(None, [str(hyp.get("hypothesis_key") or "")])
-                        )
+                        sorted(filter(None, [str(hyp.get("hypothesis_key") or "")]))
                     ),
                     timeline_ids=tuple(
                         (hyp.get("provenance") or {}).get("timeline_ids") or ()

@@ -75,16 +75,15 @@ class DecisionSupportService:
             estimated_effort_hours=row.estimated_effort_hours,
             priority_score=row.priority_score,
             required_evidence_ids=list(row.required_evidence_ids_json or []),
-            supporting_intelligence=dict(
-                row.supporting_intelligence_json or {}
-            ),
+            supporting_intelligence=dict(row.supporting_intelligence_json or {}),
             provenance=dict(row.provenance_json or {}),
             created_at=row.created_at,
             updated_at=row.updated_at,
         )
 
     def _review_response(
-        self, row: DecisionSupportReviewItem,
+        self,
+        row: DecisionSupportReviewItem,
     ) -> ReviewQueueItemResponse:
         return ReviewQueueItemResponse(
             id=row.id,
@@ -99,7 +98,9 @@ class DecisionSupportService:
         )
 
     def _plan_to_drafts(
-        self, case_id: UUID, plan: WorkflowPlan,
+        self,
+        case_id: UUID,
+        plan: WorkflowPlan,
     ) -> tuple[list[WorkflowTaskResponse], list[ReviewQueueItemResponse]]:
         tasks = [
             WorkflowTaskResponse(
@@ -257,7 +258,8 @@ class DecisionSupportService:
         return await self._hydrate(run)
 
     async def list_tasks(
-        self, case_id: UUID,
+        self,
+        case_id: UUID,
     ) -> WorkflowTaskListResponse:
         if await self.repository.get_case(case_id) is None:
             raise ResourceNotFoundError("Case not found.")
@@ -271,7 +273,9 @@ class DecisionSupportService:
         )
 
     async def update_task(
-        self, task_id: UUID, payload: TaskUpdateRequest,
+        self,
+        task_id: UUID,
+        payload: TaskUpdateRequest,
     ) -> WorkflowTaskResponse:
         task = await self.repository.get_task(task_id)
         if task is None:
@@ -291,9 +295,7 @@ class DecisionSupportService:
         if payload.priority is not None:
             priority = payload.priority.strip().upper()
             if priority not in {"HIGH", "MEDIUM", "LOW"}:
-                raise DecisionSupportError(
-                    f"Invalid task priority: {payload.priority}"
-                )
+                raise DecisionSupportError(f"Invalid task priority: {payload.priority}")
             task.priority = priority
         task.updated_at = datetime.now(UTC)
         await self.session.commit()
@@ -301,7 +303,8 @@ class DecisionSupportService:
         return self._task_response(task)
 
     async def list_review_queue(
-        self, case_id: UUID,
+        self,
+        case_id: UUID,
     ) -> ReviewQueueListResponse:
         if await self.repository.get_case(case_id) is None:
             raise ResourceNotFoundError("Case not found.")
@@ -315,7 +318,8 @@ class DecisionSupportService:
         )
 
     async def record_decision(
-        self, payload: DecisionCreateRequest,
+        self,
+        payload: DecisionCreateRequest,
     ) -> DecisionLogResponse:
         if await self.repository.get_case(payload.case_id) is None:
             raise ResourceNotFoundError("Case not found.")
@@ -360,12 +364,18 @@ class DecisionSupportService:
         )
 
     async def list_decisions(
-        self, case_id: UUID, *, limit: int = 100, offset: int = 0,
+        self,
+        case_id: UUID,
+        *,
+        limit: int = 100,
+        offset: int = 0,
     ) -> DecisionLogListResponse:
         if await self.repository.get_case(case_id) is None:
             raise ResourceNotFoundError("Case not found.")
         rows, total = await self.repository.list_decisions(
-            case_id, limit=limit, offset=offset,
+            case_id,
+            limit=limit,
+            offset=offset,
         )
         return DecisionLogListResponse(
             items=[

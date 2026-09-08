@@ -24,6 +24,10 @@ jobs:
     name: Frontend
     uses: ./.github/workflows/frontend.yml
 
+  docs:
+    name: Documentation
+    uses: ./.github/workflows/docs.yml
+
   security:
     name: Security
     uses: ./.github/workflows/security.yml
@@ -42,8 +46,8 @@ jobs:
 
   quality-gate:
     name: Quality gate
-    needs: [backend, frontend, security, docker]
+    needs: [backend, frontend, docs, security, docker]
     runs-on: ubuntu-latest
     steps:
       - name: All required jobs succeeded
-        run: echo "Ruff, MyPy, pytest, Vitest, production build, security scans, Alembic, OpenAPI, and container builds passed."
+        run: echo "Ruff, MyPy, pytest, Vitest, production build, docs, security scans, Alembic, OpenAPI, and container builds passed."

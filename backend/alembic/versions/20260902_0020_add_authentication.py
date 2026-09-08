@@ -96,7 +96,9 @@ def upgrade() -> None:
         sa.Column("permission_id", sa.Uuid(), nullable=False),
         sa.ForeignKeyConstraint(["role_id"], ["roles.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(
-            ["permission_id"], ["permissions.id"], ondelete="CASCADE",
+            ["permission_id"],
+            ["permissions.id"],
+            ondelete="CASCADE",
         ),
         sa.PrimaryKeyConstraint("role_id", "permission_id"),
     )

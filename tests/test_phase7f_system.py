@@ -198,7 +198,9 @@ class TestDiagnostics:
         data = resp.json()["data"]
         assert "id" in data
         assert data["overall_status"] in (
-            "healthy", "degraded", "unhealthy",
+            "healthy",
+            "degraded",
+            "unhealthy",
         )
 
 
@@ -208,7 +210,8 @@ class TestMigration:
 
     def test_migration_chain(self) -> None:
         spec = importlib.util.spec_from_file_location(
-            "m0019", MIGRATION_PATH,
+            "m0019",
+            MIGRATION_PATH,
         )
         assert spec and spec.loader
         mod = importlib.util.module_from_spec(spec)

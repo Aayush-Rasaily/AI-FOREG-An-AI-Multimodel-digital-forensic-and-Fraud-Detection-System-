@@ -78,8 +78,7 @@ def verify_backup_bundle(bundle_dir: Path | str) -> dict[str, Any]:
             "check": "schema_version",
             "status": "PASS" if schema == EXPECTED_MIGRATION_HEAD else "WARN",
             "message": (
-                f"Schema version {schema} "
-                f"(expected head {EXPECTED_MIGRATION_HEAD})."
+                f"Schema version {schema} (expected head {EXPECTED_MIGRATION_HEAD})."
             ),
         }
     )
@@ -110,9 +109,7 @@ def verify_backup_bundle(bundle_dir: Path | str) -> dict[str, Any]:
             {
                 "check": f"file:{relative}",
                 "status": "PASS" if ok else "FAIL",
-                "message": (
-                    "Checksum matches." if ok else "Checksum mismatch."
-                ),
+                "message": ("Checksum matches." if ok else "Checksum mismatch."),
             }
         )
 

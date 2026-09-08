@@ -21,14 +21,20 @@ def upgrade() -> None:
         "system_diagnostics_runs",
         sa.Column("id", sa.Uuid(), nullable=False),
         sa.Column(
-            "overall_status", sa.String(length=32), nullable=False,
+            "overall_status",
+            sa.String(length=32),
+            nullable=False,
         ),
         sa.Column("results", sa.JSON(), nullable=False),
         sa.Column(
-            "engine_version", sa.String(length=32), nullable=False,
+            "engine_version",
+            sa.String(length=32),
+            nullable=False,
         ),
         sa.Column(
-            "policy_version", sa.String(length=32), nullable=False,
+            "policy_version",
+            sa.String(length=32),
+            nullable=False,
         ),
         sa.Column(
             "created_at",

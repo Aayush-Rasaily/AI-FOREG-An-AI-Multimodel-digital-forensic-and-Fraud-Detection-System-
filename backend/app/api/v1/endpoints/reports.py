@@ -121,9 +121,7 @@ async def download_forensic_report(
     report_id: UUID,
     service: ReportServiceDependency,
     storage: StorageServiceDependency,
-    fmt: Annotated[
-        str | None, Query(alias="format")
-    ] = None,
+    fmt: Annotated[str | None, Query(alias="format")] = None,
 ) -> Response:
     """Download a report in JSON, Markdown, HTML, or PDF."""
 
@@ -136,9 +134,7 @@ async def download_forensic_report(
             content=payload,
             media_type=media_type,
             headers={
-                "Content-Disposition": (
-                    f'attachment; filename="{suffix}"'
-                ),
+                "Content-Disposition": (f'attachment; filename="{suffix}"'),
             },
         )
 
@@ -158,8 +154,6 @@ async def download_forensic_report(
         stream(),
         media_type="application/pdf",
         headers={
-            "Content-Disposition": (
-                f'attachment; filename="{filename}"'
-            ),
+            "Content-Disposition": (f'attachment; filename="{filename}"'),
         },
     )

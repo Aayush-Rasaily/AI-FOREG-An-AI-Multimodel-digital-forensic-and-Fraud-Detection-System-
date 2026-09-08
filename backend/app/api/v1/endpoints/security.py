@@ -25,7 +25,8 @@ from backend.app.security.service import SecurityService
 
 router = APIRouter(tags=["security-governance"])
 SecurityServiceDependency = Annotated[
-    SecurityService, Depends(get_security_service),
+    SecurityService,
+    Depends(get_security_service),
 ]
 
 

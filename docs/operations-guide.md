@@ -52,6 +52,16 @@ artifacts.
 
 See [monitoring.md](monitoring.md) and [system-monitoring.md](system-monitoring.md).
 
+## Maintenance
+
+- Rotate `JWT_SECRET` and database passwords on a schedule; revoke sessions after JWT rotation.
+- Apply OS and base-image updates via rebuilds of `deployment/docker/*`.
+- Prune old backup stamps with `deployment/scripts/cleanup.sh`.
+- Scale API and worker replicas independently ([scalability.md](scalability.md)).
+- Weekly Dependabot PRs must pass **CI / Quality gate** before merge.
+
+Production sign-off: [production-readiness.md](production-readiness.md).
+
 ## Troubleshooting
 
 | Symptom | Check |

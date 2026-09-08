@@ -39,7 +39,8 @@ from backend.app.core.responses import ApiResponse
 
 router = APIRouter(tags=["collaboration"])
 CollaborationServiceDependency = Annotated[
-    CollaborationService, Depends(get_collaboration_service),
+    CollaborationService,
+    Depends(get_collaboration_service),
 ]
 
 
@@ -170,7 +171,9 @@ async def update_task(
     updates = payload.model_dump(exclude_unset=True)
     return ApiResponse(
         data=await service.update_task(
-            task_id, updates=updates, principal=principal,
+            task_id,
+            updates=updates,
+            principal=principal,
         ),
         request_id=get_request_id(),
     )
@@ -277,7 +280,9 @@ async def update_comment(
 ) -> ApiResponse[CommentResponse]:
     return ApiResponse(
         data=await service.update_comment(
-            comment_id, body=payload.body, principal=principal,
+            comment_id,
+            body=payload.body,
+            principal=principal,
         ),
         request_id=get_request_id(),
     )
@@ -369,7 +374,9 @@ async def update_notification(
 ) -> ApiResponse[NotificationResponse]:
     return ApiResponse(
         data=await service.update_notification(
-            notification_id, status=payload.status, principal=principal,
+            notification_id,
+            status=payload.status,
+            principal=principal,
         ),
         request_id=get_request_id(),
     )
@@ -415,7 +422,9 @@ async def update_case_workflow(
 ) -> ApiResponse[WorkflowResponse]:
     return ApiResponse(
         data=await service.transition_workflow(
-            case_id, stage=payload.stage, principal=principal,
+            case_id,
+            stage=payload.stage,
+            principal=principal,
         ),
         request_id=get_request_id(),
     )

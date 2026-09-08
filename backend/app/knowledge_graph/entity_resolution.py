@@ -113,7 +113,8 @@ def resolve_entities(candidates: list[CandidateEntity]) -> list[ResolvedEntity]:
         )
         entity = ResolvedEntity(
             entity_id=_stable_entity_id(
-                primary.entity_type.value, primary.normalized_key,
+                primary.entity_type.value,
+                primary.normalized_key,
             ),
             entity_type=primary.entity_type,
             display_name=display_name,

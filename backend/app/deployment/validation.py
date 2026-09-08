@@ -110,9 +110,7 @@ def _env_vars_status(settings: Settings) -> dict[str, str]:
         name
         for name in REQUIRED_PRODUCTION_ENV_VARS
         if not os.environ.get(name)
-        and not (
-            name == "JWT_SECRET" and settings.jwt_secret is not None
-        )
+        and not (name == "JWT_SECRET" and settings.jwt_secret is not None)
         and not (name == "DATABASE_URL" and settings.database_url)
         and not (name == "REDIS_URL" and settings.redis_url)
         and not (name == "STORAGE_ROOT" and settings.storage_root)
@@ -193,8 +191,7 @@ async def _migration_status(session: AsyncSession) -> dict[str, str]:
             "check": "migration_status",
             "status": "WARN",
             "message": (
-                f"Current revision {current}; "
-                f"expected head {EXPECTED_MIGRATION_HEAD}."
+                f"Current revision {current}; expected head {EXPECTED_MIGRATION_HEAD}."
             ),
         }
     except Exception as exc:  # noqa: BLE001
@@ -214,7 +211,8 @@ async def run_operational_validation(
     """Run deterministic operational validation checks."""
 
     db_ok = await check_database_health(
-        session, timeout_seconds=settings.db_health_timeout_seconds,
+        session,
+        timeout_seconds=settings.db_health_timeout_seconds,
     )
     checks: list[dict[str, str]] = [
         {

@@ -73,7 +73,8 @@ class AuditService:
         return event_id
 
     async def get_event(
-        self, event_id: UUID,
+        self,
+        event_id: UUID,
     ) -> AuditEventResponse:
         event = await self.repository.get_event(event_id)
         if event is None:
@@ -118,33 +119,27 @@ class AuditService:
         if evidence_id:
             results.append(
                 await verify_evidence_integrity(
-                    self.session, evidence_id,
+                    self.session,
+                    evidence_id,
                 ),
             )
         if report_id:
             results.append(
                 await verify_report_checksum(
-                    self.session, report_id,
+                    self.session,
+                    report_id,
                 ),
             )
         if case_id:
             results.extend(
                 await verify_case_integrity(
-                    self.session, case_id,
+                    self.session,
+                    case_id,
                 ),
             )
-        verified = sum(
-            1 for r in results
-            if r.status == IntegrityStatus.VERIFIED
-        )
-        mismatched = sum(
-            1 for r in results
-            if r.status == IntegrityStatus.MISMATCH
-        )
-        unavailable = sum(
-            1 for r in results
-            if r.status == IntegrityStatus.UNAVAILABLE
-        )
+        verified = sum(1 for r in results if r.status == IntegrityStatus.VERIFIED)
+        mismatched = sum(1 for r in results if r.status == IntegrityStatus.MISMATCH)
+        unavailable = sum(1 for r in results if r.status == IntegrityStatus.UNAVAILABLE)
         overall = "VERIFIED"
         if mismatched > 0:
             overall = "MISMATCH"
@@ -175,7 +170,9 @@ class AuditService:
         limit: int = 10000,
     ) -> AuditExportResult:
         events, _ = await self.repository.list_events(
-            case_id=case_id, limit=limit, offset=0,
+            case_id=case_id,
+            limit=limit,
+            offset=0,
         )
         return export_json(events)
 

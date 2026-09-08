@@ -53,6 +53,14 @@ jobs:
           fi
           echo "version=${version}" >> "$GITHUB_OUTPUT"
 
+      - name: Validate Compose production file
+        if: ${{ !inputs.push }}
+        run: |
+          docker compose -f deployment/compose/docker-compose.production.yml \
+            --env-file .env.production.example \
+            config >/dev/null
+          echo "compose_config_ok"
+
       - name: Set up QEMU
         if: ${{ inputs.push }}
         uses: docker/setup-qemu-action@v3
@@ -96,6 +104,20 @@ jobs:
             ${{ steps.meta.outputs.web }}:${{ steps.meta.outputs.sha }}
             ${{ steps.meta.outputs.web }}:${{ steps.meta.outputs.version }}
             ${{ steps.meta.outputs.web }}:latest
+          provenance: false
+
+      - name: Build worker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: deployment/docker/worker.Dockerfile
+          push: ${{ inputs.push }}
+          load: ${{ !inputs.push }}
+          platforms: ${{ inputs.push && 'linux/amd64,linux/arm64' || 'linux/amd64' }}
+          tags: |
+            ${{ steps.meta.outputs.api }}-worker:${{ steps.meta.outputs.sha }}
+            ${{ steps.meta.outputs.api }}-worker:${{ steps.meta.outputs.version }}
+            ${{ steps.meta.outputs.api }}-worker:latest
           provenance: false
 
       - name: Container vulnerability scan (API)

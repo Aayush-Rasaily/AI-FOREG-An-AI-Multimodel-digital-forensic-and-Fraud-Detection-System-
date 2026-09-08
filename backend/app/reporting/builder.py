@@ -26,12 +26,8 @@ def _executive_summary(snapshot: dict[str, Any]) -> dict[str, Any]:
         "unavailable_evidence": coverage.get("unavailable", 0),
         "inconclusive_evidence": coverage.get("inconclusive", 0),
         "not_analyzed_evidence": coverage.get("not_analyzed", 0),
-        "major_supporting_findings": (
-            explainability["supporting_findings"][:10]
-        ),
-        "major_contradictions": (
-            explainability["contradictory_findings"][:10]
-        ),
+        "major_supporting_findings": (explainability["supporting_findings"][:10]),
+        "major_contradictions": (explainability["contradictory_findings"][:10]),
         "open_conflicts": len(explainability["conflicts"]),
         "limitations": explainability["limitations"][:10],
     }
@@ -55,14 +51,16 @@ def _build_metadata_summary(
 ) -> dict[str, Any]:
     items = []
     for ev in evidence:
-        items.append({
-            "evidence_id": ev["evidence_id"],
-            "evidence_number": ev["evidence_number"],
-            "mime_type": ev.get("mime_type"),
-            "file_size": ev.get("file_size"),
-            "sha256_hash": ev.get("sha256_hash"),
-            "ingested_at": ev.get("ingested_at"),
-        })
+        items.append(
+            {
+                "evidence_id": ev["evidence_id"],
+                "evidence_number": ev["evidence_number"],
+                "mime_type": ev.get("mime_type"),
+                "file_size": ev.get("file_size"),
+                "sha256_hash": ev.get("sha256_hash"),
+                "ingested_at": ev.get("ingested_at"),
+            }
+        )
     return {"count": len(items), "items": items}
 
 
@@ -72,12 +70,14 @@ def _build_ocr_summary(
     items = []
     for s in summaries:
         processing = s.get("processing_status")
-        items.append({
-            "evidence_id": s["evidence_id"],
-            "evidence_number": s["evidence_number"],
-            "processing_status": processing,
-            "has_text_extraction": processing is not None,
-        })
+        items.append(
+            {
+                "evidence_id": s["evidence_id"],
+                "evidence_number": s["evidence_number"],
+                "processing_status": processing,
+                "has_text_extraction": processing is not None,
+            }
+        )
     return {"count": len(items), "items": items}
 
 
@@ -87,11 +87,13 @@ def _build_pattern_summary(
     items = []
     for s in summaries:
         findings = s.get("forensic_findings", [])
-        items.append({
-            "evidence_id": s["evidence_id"],
-            "evidence_number": s["evidence_number"],
-            "pattern_count": len(findings),
-        })
+        items.append(
+            {
+                "evidence_id": s["evidence_id"],
+                "evidence_number": s["evidence_number"],
+                "pattern_count": len(findings),
+            }
+        )
     return {"count": len(items), "items": items}
 
 
@@ -104,11 +106,13 @@ def _build_modality_section(
     for s in summaries:
         value = s.get(key)
         if value is not None:
-            items.append({
-                "evidence_id": s["evidence_id"],
-                "evidence_number": s["evidence_number"],
-                "data": value,
-            })
+            items.append(
+                {
+                    "evidence_id": s["evidence_id"],
+                    "evidence_number": s["evidence_number"],
+                    "data": value,
+                }
+            )
     if not items:
         return {
             "available": False,
@@ -124,11 +128,13 @@ def _build_comparison_section(
     for s in summaries:
         value = s.get("comparison")
         if value is not None:
-            items.append({
-                "evidence_id": s["evidence_id"],
-                "evidence_number": s["evidence_number"],
-                "data": value,
-            })
+            items.append(
+                {
+                    "evidence_id": s["evidence_id"],
+                    "evidence_number": s["evidence_number"],
+                    "data": value,
+                }
+            )
     if not items:
         return {
             "available": False,
@@ -145,8 +151,7 @@ def _collect_analysis_run_ids(
     if ci:
         ids["case_intelligence_run_id"] = ci.get("analysis_run_id")
     ids["fusion_run_ids"] = [
-        item["fusion_run_id"]
-        for item in snapshot.get("fusion_snapshots", [])
+        item["fusion_run_id"] for item in snapshot.get("fusion_snapshots", [])
     ]
     corr = snapshot.get("correlation")
     if corr:
@@ -200,9 +205,7 @@ def build_report_content(
     sections["ocr_summary"] = _build_ocr_summary(summaries)
 
     # 5. pattern_extraction_summary
-    sections["pattern_extraction_summary"] = (
-        _build_pattern_summary(summaries)
-    )
+    sections["pattern_extraction_summary"] = _build_pattern_summary(summaries)
 
     # 6. timeline
     sections["timeline"] = _section_or_unavailable(
@@ -214,11 +217,13 @@ def build_report_content(
     all_findings: list[dict[str, Any]] = []
     for s in summaries:
         for f in s.get("forensic_findings", []):
-            all_findings.append({
-                "evidence_id": s["evidence_id"],
-                "evidence_number": s["evidence_number"],
-                **f,
-            })
+            all_findings.append(
+                {
+                    "evidence_id": s["evidence_id"],
+                    "evidence_number": s["evidence_number"],
+                    **f,
+                }
+            )
     sections["forensic_findings"] = {
         "available": bool(all_findings),
         "count": len(all_findings),
@@ -226,25 +231,33 @@ def build_report_content(
     }
 
     # 8. evidence_comparison
-    sections["evidence_comparison"] = (
-        _build_comparison_section(summaries)
-    )
+    sections["evidence_comparison"] = _build_comparison_section(summaries)
 
     # 9-13. AI modality sections
     sections["image_ai"] = _build_modality_section(
-        summaries, "image_ai", "Image AI",
+        summaries,
+        "image_ai",
+        "Image AI",
     )
     sections["document_ai"] = _build_modality_section(
-        summaries, "document_ai", "Document AI",
+        summaries,
+        "document_ai",
+        "Document AI",
     )
     sections["signature_ai"] = _build_modality_section(
-        summaries, "signature_ai", "Signature AI",
+        summaries,
+        "signature_ai",
+        "Signature AI",
     )
     sections["video_ai"] = _build_modality_section(
-        summaries, "video_ai", "Video AI",
+        summaries,
+        "video_ai",
+        "Video AI",
     )
     sections["audio_ai"] = _build_modality_section(
-        summaries, "audio_ai", "Audio AI",
+        summaries,
+        "audio_ai",
+        "Audio AI",
     )
 
     # 14. fusion_assessment
@@ -272,28 +285,20 @@ def build_report_content(
         "confidence_note": explainability["confidence_note"],
         "jury_note": explainability["jury_note"],
         "case_confidence": (
-            case_intelligence.get("confidence")
-            if case_intelligence
-            else None
+            case_intelligence.get("confidence") if case_intelligence else None
         ),
     }
 
     # 18. risk_assessment
     sections["risk_assessment"] = {
         "case_risk_score": (
-            case_intelligence.get("risk_score")
-            if case_intelligence
-            else None
+            case_intelligence.get("risk_score") if case_intelligence else None
         ),
         "case_confidence": (
-            case_intelligence.get("confidence")
-            if case_intelligence
-            else None
+            case_intelligence.get("confidence") if case_intelligence else None
         ),
         "case_verdict": (
-            case_intelligence.get("verdict")
-            if case_intelligence
-            else None
+            case_intelligence.get("verdict") if case_intelligence else None
         ),
         "note": explainability["confidence_note"],
     }
@@ -317,11 +322,13 @@ def build_report_content(
     custody_items: list[dict[str, Any]] = []
     for ev in evidence:
         for ce in ev.get("custody_events", []):
-            custody_items.append({
-                "evidence_id": ev["evidence_id"],
-                "evidence_number": ev["evidence_number"],
-                **ce,
-            })
+            custody_items.append(
+                {
+                    "evidence_id": ev["evidence_id"],
+                    "evidence_number": ev["evidence_number"],
+                    **ce,
+                }
+            )
     sections["chain_of_custody_summary"] = {
         "available": bool(custody_items),
         "count": len(custody_items),
@@ -339,9 +346,7 @@ def build_report_content(
         "report_version": REPORT_VERSION,
         "engine_version": ENGINE_VERSION,
         "generated_at": generated_at,
-        "title": (
-            f"Forensic Investigation Report — {case['case_number']}"
-        ),
+        "title": (f"Forensic Investigation Report — {case['case_number']}"),
         "section_order": list(SECTION_ORDER),
         "sections": sections,
     }

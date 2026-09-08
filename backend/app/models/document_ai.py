@@ -170,9 +170,7 @@ class DocumentAIFindingRegion(Base):
     """Localized region attached to one document AI finding."""
 
     __tablename__ = "document_ai_finding_regions"
-    __table_args__ = (
-        Index("ix_document_ai_finding_regions_finding_id", "finding_id"),
-    )
+    __table_args__ = (Index("ix_document_ai_finding_regions_finding_id", "finding_id"),)
 
     id: Mapped[UUID] = mapped_column(
         Uuid(as_uuid=True), primary_key=True, default=uuid4

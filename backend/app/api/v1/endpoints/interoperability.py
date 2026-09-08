@@ -22,7 +22,8 @@ from backend.app.interoperability.service import InteroperabilityService
 
 router = APIRouter(tags=["interoperability"])
 InteropServiceDependency = Annotated[
-    InteroperabilityService, Depends(get_interoperability_service),
+    InteroperabilityService,
+    Depends(get_interoperability_service),
 ]
 
 

@@ -78,8 +78,8 @@ services:
   worker:
     build:
       context: ../..
-      dockerfile: deployment/docker/backend.Dockerfile
-    image: ai-forge-api:prod
+      dockerfile: deployment/docker/worker.Dockerfile
+    image: ai-forge-worker:prod
     env_file:
       - ../../.env.production
     environment:

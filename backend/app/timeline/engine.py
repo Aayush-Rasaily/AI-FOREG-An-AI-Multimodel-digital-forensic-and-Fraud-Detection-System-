@@ -193,8 +193,7 @@ class TimelineEngine:
                         event_type=TimelineEventType.METADATA_TIMESTAMP,
                         normalized=normalized,
                         description=(
-                            "EXIF timestamp extracted for "
-                            f"{evidence.evidence_number}."
+                            f"EXIF timestamp extracted for {evidence.evidence_number}."
                         ),
                         source="metadata",
                         source_id=f"metadata:exif:{evidence.id}",

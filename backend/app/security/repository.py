@@ -155,7 +155,8 @@ class SecurityRepository:
         return int(result.scalar_one())
 
     async def get_investigation_workflow(
-        self, case_id: UUID,
+        self,
+        case_id: UUID,
     ) -> InvestigationWorkflow | None:
         result = await self.session.execute(
             select(InvestigationWorkflow).where(
@@ -165,12 +166,11 @@ class SecurityRepository:
         return result.scalar_one_or_none()
 
     async def get_collab_workflow(
-        self, case_id: UUID,
+        self,
+        case_id: UUID,
     ) -> CaseWorkflowState | None:
         result = await self.session.execute(
-            select(CaseWorkflowState).where(
-                CaseWorkflowState.case_id == case_id
-            )
+            select(CaseWorkflowState).where(CaseWorkflowState.case_id == case_id)
         )
         return result.scalar_one_or_none()
 
@@ -223,10 +223,14 @@ class SecurityRepository:
 
     async def count_fusion(self, case_id: UUID) -> tuple[int, int]:
         evidence_ids = (
-            await self.session.execute(
-                select(Evidence.id).where(Evidence.case_id == case_id)
+            (
+                await self.session.execute(
+                    select(Evidence.id).where(Evidence.case_id == case_id)
+                )
             )
-        ).scalars().all()
+            .scalars()
+            .all()
+        )
         if not evidence_ids:
             return 0, 0
         rows = await self.session.execute(
@@ -267,7 +271,8 @@ class SecurityRepository:
         return result.scalar_one_or_none() is not None
 
     async def list_compliance_reports(
-        self, case_id: UUID | None = None,
+        self,
+        case_id: UUID | None = None,
     ) -> list[ComplianceReport]:
         stmt = select(ComplianceReport)
         if case_id is not None:

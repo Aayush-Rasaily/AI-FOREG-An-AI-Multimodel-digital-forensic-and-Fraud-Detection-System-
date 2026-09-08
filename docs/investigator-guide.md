@@ -1,7 +1,8 @@
 # Investigator guide
 
 How to work a case in the AI-Forge workspace. The UI never invents hashes,
-findings, or legal conclusions.
+findings, or legal conclusions. Full user manual: [user-guide.md](user-guide.md).
+Methodology: [forensic-methodology.md](forensic-methodology.md).
 
 ```mermaid
 flowchart TD

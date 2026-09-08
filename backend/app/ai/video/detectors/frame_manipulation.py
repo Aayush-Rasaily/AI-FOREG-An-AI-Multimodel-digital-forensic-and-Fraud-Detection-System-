@@ -87,9 +87,7 @@ class FrameManipulationDetector(VideoAIDetector):
         context: VideoAnalysisContext,
     ) -> tuple[VideoAIFindingItem, ...]:
         decoded = [
-            frame
-            for frame in context.sampled_frames
-            if frame.image_array is not None
+            frame for frame in context.sampled_frames if frame.image_array is not None
         ]
         if len(decoded) < 2:
             return ()

@@ -17,9 +17,7 @@ def _infer_stage(tasks: list) -> WorkflowStage:
     # Prefer earliest unfinished stage in pipeline order
     order = [item.value for item in WorkflowStage]
     open_stages = {
-        item.stage.value
-        for item in tasks
-        if item.status.value != "COMPLETED"
+        item.stage.value for item in tasks if item.status.value != "COMPLETED"
     }
     if not open_stages:
         return WorkflowStage.COMPLETE
@@ -39,9 +37,7 @@ def plan_workflow(snapshot: dict[str, Any]) -> WorkflowPlan:
     metrics = compute_workload(
         tasks,
         queue,
-        evidence_total=int(
-            coverage.get("evidence_total") or len(evidence_rows)
-        ),
+        evidence_total=int(coverage.get("evidence_total") or len(evidence_rows)),
         overall_completeness=float(coverage.get("overall_completeness") or 0),
     )
     return WorkflowPlan(

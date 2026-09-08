@@ -17,19 +17,27 @@ class SystemDiagnosticsRun(Base):
     __tablename__ = "system_diagnostics_runs"
 
     id: Mapped[UUID] = mapped_column(
-        Uuid(as_uuid=True), primary_key=True, default=uuid4,
+        Uuid(as_uuid=True),
+        primary_key=True,
+        default=uuid4,
     )
     overall_status: Mapped[str] = mapped_column(
-        String(32), nullable=False,
+        String(32),
+        nullable=False,
     )
     results_json: Mapped[dict[str, Any]] = mapped_column(
-        "results", JSON, nullable=False, default=dict,
+        "results",
+        JSON,
+        nullable=False,
+        default=dict,
     )
     engine_version: Mapped[str] = mapped_column(
-        String(32), nullable=False,
+        String(32),
+        nullable=False,
     )
     policy_version: Mapped[str] = mapped_column(
-        String(32), nullable=False,
+        String(32),
+        nullable=False,
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

@@ -1,0 +1,18 @@
+# Gitleaks allowlist for documented placeholders (not live secrets).
+title = "AI-Forge"
+
+[allowlist]
+description = "Example and documentation placeholders"
+paths = [
+  '''\.env\.example$''',
+  '''\.env\.production\.example$''',
+  '''docs/.*''',
+  '''tests/.*''',
+  '''CHANGELOG\.md$''',
+  '''RELEASE_NOTES\.md$''',
+]
+regexes = [
+  '''replace-in-local-environment''',
+  '''replace-with-long-random-secret''',
+  '''change-me''',
+]

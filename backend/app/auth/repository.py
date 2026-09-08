@@ -56,9 +56,7 @@ class AuthRepository:
 
     async def list_roles(self) -> list[Role]:
         result = await self.session.execute(
-            select(Role)
-            .options(selectinload(Role.permissions))
-            .order_by(Role.name)
+            select(Role).options(selectinload(Role.permissions)).order_by(Role.name)
         )
         return list(result.scalars().all())
 

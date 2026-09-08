@@ -90,9 +90,7 @@ class InvestigationIntelligenceEngine:
         ai_findings = await self._ai_findings(evidence_ids)
         signatures = await self._signatures(evidence_ids)
         correlations = await self._correlations(case_id)
-        timeline_events, timeline_conflicts, clusters = await self._timeline(
-            case_id
-        )
+        timeline_events, timeline_conflicts, clusters = await self._timeline(case_id)
         fusion_runs, fusion_conflicts = await self._fusion(evidence_ids)
         graph_entities, graph_relationships = await self._graph(case_id)
         custody = await self._custody(evidence_ids)
@@ -174,11 +172,7 @@ class InvestigationIntelligenceEngine:
 
         timeline_cov = 1.0 if snapshot.get("timeline_events") else 0.0
         graph_cov = 1.0 if snapshot.get("graph_entities") else 0.0
-        corr_cov = (
-            1.0
-            if snapshot.get("correlations")
-            else (0.0 if total >= 2 else 1.0)
-        )
+        corr_cov = 1.0 if snapshot.get("correlations") else (0.0 if total >= 2 else 1.0)
         fusion_cov = ratio(len(fusion_ids), total) if total else 0.0
         ai_cov = ratio(len(ai_ids), total) if total else 0.0
         meta_cov = ratio(with_meta + with_ts, total * 2) if total else 0.0
@@ -239,7 +233,8 @@ class InvestigationIntelligenceEngine:
         return out
 
     async def _extractions(
-        self, evidence_ids: list[UUID],
+        self,
+        evidence_ids: list[UUID],
     ) -> list[dict[str, Any]]:
         if not evidence_ids:
             return []
@@ -255,15 +250,14 @@ class InvestigationIntelligenceEngine:
         ]
 
     async def _ai_findings(
-        self, evidence_ids: list[UUID],
+        self,
+        evidence_ids: list[UUID],
     ) -> list[dict[str, Any]]:
         if not evidence_ids:
             return []
         out: list[dict[str, Any]] = []
         img = await self.session.execute(
-            select(ImageAIFinding).where(
-                ImageAIFinding.evidence_id.in_(evidence_ids)
-            )
+            select(ImageAIFinding).where(ImageAIFinding.evidence_id.in_(evidence_ids))
         )
         for row in img.scalars().all():
             category = str(getattr(row, "category", "") or "")
@@ -299,15 +293,14 @@ class InvestigationIntelligenceEngine:
         return sorted(out, key=lambda item: item["id"])
 
     async def _signatures(
-        self, evidence_ids: list[UUID],
+        self,
+        evidence_ids: list[UUID],
     ) -> list[dict[str, Any]]:
         if not evidence_ids:
             return []
         result = await self.session.execute(
             select(SignatureVerificationRun).where(
-                SignatureVerificationRun.questioned_evidence_id.in_(
-                    evidence_ids
-                )
+                SignatureVerificationRun.questioned_evidence_id.in_(evidence_ids)
             )
         )
         rows = list(result.scalars().all())
@@ -346,9 +339,7 @@ class InvestigationIntelligenceEngine:
                     "id": str(row.id),
                     "left_evidence_id": str(left) if left else None,
                     "right_evidence_id": str(right) if right else None,
-                    "correlation_type": str(
-                        getattr(row, "correlation_type", "") or ""
-                    ),
+                    "correlation_type": str(getattr(row, "correlation_type", "") or ""),
                     "confidence": float(
                         getattr(row, "confidence", None)
                         or getattr(row, "score", None)
@@ -359,7 +350,8 @@ class InvestigationIntelligenceEngine:
         return out
 
     async def _timeline(
-        self, case_id: UUID,
+        self,
+        case_id: UUID,
     ) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]]]:
         tl = await self.session.execute(
             select(InvestigationTimeline)
@@ -393,9 +385,7 @@ class InvestigationIntelligenceEngine:
             {
                 "id": str(row.id),
                 "conflict_type": str(getattr(row, "conflict_type", "")),
-                "evidence_ids": (
-                    [str(row.evidence_id)] if row.evidence_id else []
-                ),
+                "evidence_ids": ([str(row.evidence_id)] if row.evidence_id else []),
             }
             for row in sorted(
                 conflicts_result.scalars().all(), key=lambda item: str(item.id)
@@ -415,7 +405,8 @@ class InvestigationIntelligenceEngine:
         return event_rows, conflicts, clusters
 
     async def _fusion(
-        self, evidence_ids: list[UUID],
+        self,
+        evidence_ids: list[UUID],
     ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
         if not evidence_ids:
             return [], []
@@ -455,7 +446,8 @@ class InvestigationIntelligenceEngine:
         return run_rows, conflicts
 
     async def _graph(
-        self, case_id: UUID,
+        self,
+        case_id: UUID,
     ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
         run_result = await self.session.execute(
             select(KnowledgeGraphRun)
@@ -498,7 +490,8 @@ class InvestigationIntelligenceEngine:
         return entities, rels
 
     async def _custody(
-        self, evidence_ids: list[UUID],
+        self,
+        evidence_ids: list[UUID],
     ) -> dict[str, int]:
         if not evidence_ids:
             return {}
@@ -521,6 +514,5 @@ class InvestigationIntelligenceEngine:
         )
         rows = list(result.scalars().all())
         return [
-            {"id": str(row.id)}
-            for row in sorted(rows, key=lambda item: str(item.id))
+            {"id": str(row.id)} for row in sorted(rows, key=lambda item: str(item.id))
         ]

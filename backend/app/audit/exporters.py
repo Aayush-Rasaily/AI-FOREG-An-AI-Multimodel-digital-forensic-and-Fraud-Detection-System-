@@ -17,9 +17,7 @@ def _serialize_event(event: Any) -> dict[str, Any]:
         "operation": event.operation,
         "category": event.category,
         "case_id": str(event.case_id) if event.case_id else None,
-        "evidence_id": (
-            str(event.evidence_id) if event.evidence_id else None
-        ),
+        "evidence_id": (str(event.evidence_id) if event.evidence_id else None),
         "previous_state": event.previous_state_json,
         "new_state": event.new_state_json,
         "client_ip": event.client_ip,

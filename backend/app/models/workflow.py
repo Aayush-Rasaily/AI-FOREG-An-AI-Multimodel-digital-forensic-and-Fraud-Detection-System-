@@ -40,9 +40,7 @@ class InvestigationWorkflow(Base):
         ForeignKey("cases.id", ondelete="CASCADE"),
         nullable=False,
     )
-    status: Mapped[str] = mapped_column(
-        String(32), nullable=False, default="NEW"
-    )
+    status: Mapped[str] = mapped_column(String(32), nullable=False, default="NEW")
     assigned_analyst_id: Mapped[UUID | None] = mapped_column(
         Uuid(as_uuid=True),
         ForeignKey("users.id", ondelete="SET NULL"),
@@ -53,9 +51,7 @@ class InvestigationWorkflow(Base):
     )
     policy_version: Mapped[str] = mapped_column(String(32), nullable=False)
     engine_version: Mapped[str] = mapped_column(String(32), nullable=False)
-    created_by: Mapped[UUID | None] = mapped_column(
-        Uuid(as_uuid=True), nullable=True
-    )
+    created_by: Mapped[UUID | None] = mapped_column(Uuid(as_uuid=True), nullable=True)
     status_changed_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), nullable=True
     )
@@ -104,17 +100,13 @@ class WorkflowTask(Base):
     task_type: Mapped[str] = mapped_column(String(64), nullable=False)
     title: Mapped[str] = mapped_column(String(256), nullable=False)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
-    status: Mapped[str] = mapped_column(
-        String(32), nullable=False, default="OPEN"
-    )
+    status: Mapped[str] = mapped_column(String(32), nullable=False, default="OPEN")
     assignee_id: Mapped[UUID | None] = mapped_column(
         Uuid(as_uuid=True),
         ForeignKey("users.id", ondelete="SET NULL"),
         nullable=True,
     )
-    created_by: Mapped[UUID | None] = mapped_column(
-        Uuid(as_uuid=True), nullable=True
-    )
+    created_by: Mapped[UUID | None] = mapped_column(Uuid(as_uuid=True), nullable=True)
     linked_evidence_id: Mapped[UUID | None] = mapped_column(
         Uuid(as_uuid=True),
         ForeignKey("evidence.id", ondelete="SET NULL"),
@@ -243,9 +235,7 @@ class WorkflowReview(Base):
     history_json: Mapped[list[dict[str, Any]]] = mapped_column(
         "history", JSON, nullable=False, default=list
     )
-    created_by: Mapped[UUID | None] = mapped_column(
-        Uuid(as_uuid=True), nullable=True
-    )
+    created_by: Mapped[UUID | None] = mapped_column(Uuid(as_uuid=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,
@@ -295,12 +285,8 @@ class WorkflowMilestone(Base):
         nullable=False,
         default=lambda: datetime.now(UTC),
     )
-    reached_by: Mapped[UUID | None] = mapped_column(
-        Uuid(as_uuid=True), nullable=True
-    )
-    auto_derived: Mapped[bool] = mapped_column(
-        Boolean, nullable=False, default=False
-    )
+    reached_by: Mapped[UUID | None] = mapped_column(Uuid(as_uuid=True), nullable=True)
+    auto_derived: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     details_json: Mapped[dict[str, Any]] = mapped_column(
         "details", JSON, nullable=False, default=dict
     )
@@ -343,9 +329,7 @@ class WorkflowNotification(Base):
     kind: Mapped[str] = mapped_column(String(64), nullable=False)
     title: Mapped[str] = mapped_column(String(256), nullable=False)
     body: Mapped[str] = mapped_column(Text, nullable=False)
-    status: Mapped[str] = mapped_column(
-        String(16), nullable=False, default="unread"
-    )
+    status: Mapped[str] = mapped_column(String(16), nullable=False, default="unread")
     payload_json: Mapped[dict[str, Any]] = mapped_column(
         "payload", JSON, nullable=False, default=dict
     )

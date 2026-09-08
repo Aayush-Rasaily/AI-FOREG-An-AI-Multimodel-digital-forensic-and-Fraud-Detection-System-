@@ -94,10 +94,7 @@ class CaseIntelligenceService:
 
     async def run(self, analysis_id: UUID) -> None:
         run = await self.repository.get_run(analysis_id)
-        if (
-            run is None
-            or run.status != CaseIntelligenceRunStatus.QUEUED
-        ):
+        if run is None or run.status != CaseIntelligenceRunStatus.QUEUED:
             return
         case = await self.session.get(Case, run.case_id)
         if case is None:
@@ -221,9 +218,7 @@ class CaseIntelligenceService:
                 "supporting_evidence": assessment.coverage.supporting_evidence,
                 "contradictory_evidence": assessment.coverage.contradictory_evidence,
                 "open_conflicts": assessment.coverage.open_conflicts,
-                "supported_modalities": list(
-                    assessment.coverage.supported_modalities
-                ),
+                "supported_modalities": list(assessment.coverage.supported_modalities),
             }
             run.metadata_json = {
                 **run.metadata_json,

@@ -37,7 +37,8 @@ class DecisionSupportRepository:
         await self.session.flush()
 
     async def add_decision(
-        self, row: DecisionSupportDecision,
+        self,
+        row: DecisionSupportDecision,
     ) -> DecisionSupportDecision:
         self.session.add(row)
         await self.session.flush()
@@ -47,7 +48,8 @@ class DecisionSupportRepository:
         return await self.session.get(DecisionSupportRun, run_id)
 
     async def get_latest_run(
-        self, case_id: UUID,
+        self,
+        case_id: UUID,
     ) -> DecisionSupportRun | None:
         result = await self.session.execute(
             select(DecisionSupportRun)
@@ -61,12 +63,11 @@ class DecisionSupportRepository:
         return await self.session.get(DecisionSupportTask, task_id)
 
     async def tasks_for_run(
-        self, run_id: UUID,
+        self,
+        run_id: UUID,
     ) -> list[DecisionSupportTask]:
         result = await self.session.execute(
-            select(DecisionSupportTask).where(
-                DecisionSupportTask.run_id == run_id
-            )
+            select(DecisionSupportTask).where(DecisionSupportTask.run_id == run_id)
         )
         rows = list(result.scalars().all())
         rows.sort(
@@ -80,7 +81,8 @@ class DecisionSupportRepository:
         return rows
 
     async def reviews_for_run(
-        self, run_id: UUID,
+        self,
+        run_id: UUID,
     ) -> list[DecisionSupportReviewItem]:
         result = await self.session.execute(
             select(DecisionSupportReviewItem).where(
@@ -98,7 +100,11 @@ class DecisionSupportRepository:
         return rows
 
     async def list_decisions(
-        self, case_id: UUID, *, limit: int = 100, offset: int = 0,
+        self,
+        case_id: UUID,
+        *,
+        limit: int = 100,
+        offset: int = 0,
     ) -> tuple[list[DecisionSupportDecision], int]:
         total = await self.session.scalar(
             select(func.count())

@@ -85,7 +85,8 @@ async def phase9c_client(
     app.dependency_overrides[get_db_session] = _override_db
     transport = httpx.ASGITransport(app=app)
     async with httpx.AsyncClient(
-        transport=transport, base_url="http://test",
+        transport=transport,
+        base_url="http://test",
     ) as client:
         yield client, session_factory
     await engine.dispose()
@@ -147,10 +148,20 @@ class TestHypothesisAndGaps:
         coverage = CoverageMetrics(evidence_total=2, overall_completeness=0.4)
         snapshot = {
             "evidence": [
-                {"id": "e1", "mime_type": "image/jpeg", "has_metadata": True,
-                 "has_timestamp": True, "missing_original": False},
-                {"id": "e2", "mime_type": "image/jpeg", "has_metadata": True,
-                 "has_timestamp": True, "missing_original": False},
+                {
+                    "id": "e1",
+                    "mime_type": "image/jpeg",
+                    "has_metadata": True,
+                    "has_timestamp": True,
+                    "missing_original": False,
+                },
+                {
+                    "id": "e2",
+                    "mime_type": "image/jpeg",
+                    "has_metadata": True,
+                    "has_timestamp": True,
+                    "missing_original": False,
+                },
             ],
             "ai_findings": [],
             "correlations": [],
@@ -166,8 +177,7 @@ class TestHypothesisAndGaps:
         }
         hyps = generate_hypotheses(snapshot, coverage)
         assert any(
-            item.hypothesis_type == HypothesisType.TIMELINE_CONFLICT
-            for item in hyps
+            item.hypothesis_type == HypothesisType.TIMELINE_CONFLICT for item in hyps
         )
 
     def test_gap_detection_missing_custody(self) -> None:
@@ -233,10 +243,20 @@ class TestHypothesisAndGaps:
         coverage = CoverageMetrics(evidence_total=2, overall_completeness=0.5)
         snapshot = {
             "evidence": [
-                {"id": "e1", "mime_type": "image/jpeg", "has_metadata": True,
-                 "has_timestamp": True, "missing_original": False},
-                {"id": "e2", "mime_type": "image/jpeg", "has_metadata": True,
-                 "has_timestamp": True, "missing_original": False},
+                {
+                    "id": "e1",
+                    "mime_type": "image/jpeg",
+                    "has_metadata": True,
+                    "has_timestamp": True,
+                    "missing_original": False,
+                },
+                {
+                    "id": "e2",
+                    "mime_type": "image/jpeg",
+                    "has_metadata": True,
+                    "has_timestamp": True,
+                    "missing_original": False,
+                },
             ],
             "ai_findings": [],
             "correlations": [
@@ -265,9 +285,7 @@ class TestApiAndService:
     @pytest.mark.asyncio
     async def test_preview_empty_case(
         self,
-        phase9c_client: tuple[
-            httpx.AsyncClient, async_sessionmaker[AsyncSession]
-        ],
+        phase9c_client: tuple[httpx.AsyncClient, async_sessionmaker[AsyncSession]],
     ) -> None:
         client, _ = phase9c_client
         case = await create_case(client)
@@ -284,9 +302,7 @@ class TestApiAndService:
     @pytest.mark.asyncio
     async def test_preview_does_not_persist(
         self,
-        phase9c_client: tuple[
-            httpx.AsyncClient, async_sessionmaker[AsyncSession]
-        ],
+        phase9c_client: tuple[httpx.AsyncClient, async_sessionmaker[AsyncSession]],
     ) -> None:
         client, _ = phase9c_client
         case = await create_case(client)
@@ -301,9 +317,7 @@ class TestApiAndService:
     @pytest.mark.asyncio
     async def test_analyze_get_lists_summary(
         self,
-        phase9c_client: tuple[
-            httpx.AsyncClient, async_sessionmaker[AsyncSession]
-        ],
+        phase9c_client: tuple[httpx.AsyncClient, async_sessionmaker[AsyncSession]],
     ) -> None:
         client, _ = phase9c_client
         case = await create_case(client)
@@ -346,9 +360,7 @@ class TestApiAndService:
     @pytest.mark.asyncio
     async def test_repeat_analyze_new_runs(
         self,
-        phase9c_client: tuple[
-            httpx.AsyncClient, async_sessionmaker[AsyncSession]
-        ],
+        phase9c_client: tuple[httpx.AsyncClient, async_sessionmaker[AsyncSession]],
     ) -> None:
         client, _ = phase9c_client
         case = await create_case(client)
@@ -365,9 +377,7 @@ class TestApiAndService:
     @pytest.mark.asyncio
     async def test_service_coverage_metrics(
         self,
-        phase9c_client: tuple[
-            httpx.AsyncClient, async_sessionmaker[AsyncSession]
-        ],
+        phase9c_client: tuple[httpx.AsyncClient, async_sessionmaker[AsyncSession]],
     ) -> None:
         client, session_factory = phase9c_client
         case = await create_case(client)
@@ -382,14 +392,11 @@ class TestApiAndService:
     @pytest.mark.asyncio
     async def test_missing_run_404(
         self,
-        phase9c_client: tuple[
-            httpx.AsyncClient, async_sessionmaker[AsyncSession]
-        ],
+        phase9c_client: tuple[httpx.AsyncClient, async_sessionmaker[AsyncSession]],
     ) -> None:
         client, _ = phase9c_client
         missing = await client.get(
-            "/api/v1/investigation-intelligence/"
-            "00000000-0000-0000-0000-000000000099",
+            "/api/v1/investigation-intelligence/00000000-0000-0000-0000-000000000099",
         )
         assert missing.status_code == 404
 
@@ -440,9 +447,7 @@ class TestApiAndService:
             "custody_by_evidence": {"e1": 1},
         }
         gaps = detect_gaps(snapshot, coverage)
-        assert any(
-            item.gap_type.value == "MISSING_COMPARISON_TARGET" for item in gaps
-        )
+        assert any(item.gap_type.value == "MISSING_COMPARISON_TARGET" for item in gaps)
 
     def test_policy_versions(self) -> None:
         assert II_ENGINE_VERSION.startswith("9c.")
@@ -452,10 +457,20 @@ class TestApiAndService:
         coverage = CoverageMetrics(evidence_total=2, overall_completeness=0.5)
         snapshot = {
             "evidence": [
-                {"id": "e1", "mime_type": "text/plain", "has_metadata": True,
-                 "has_timestamp": True, "missing_original": False},
-                {"id": "e2", "mime_type": "text/plain", "has_metadata": True,
-                 "has_timestamp": True, "missing_original": False},
+                {
+                    "id": "e1",
+                    "mime_type": "text/plain",
+                    "has_metadata": True,
+                    "has_timestamp": True,
+                    "missing_original": False,
+                },
+                {
+                    "id": "e2",
+                    "mime_type": "text/plain",
+                    "has_metadata": True,
+                    "has_timestamp": True,
+                    "missing_original": False,
+                },
             ],
             "ai_findings": [],
             "correlations": [],

@@ -89,9 +89,7 @@ class InteropEngine:
             "title": case.title,
             "description": case.description,
             "status": (
-                case.status.value
-                if hasattr(case.status, "value")
-                else str(case.status)
+                case.status.value if hasattr(case.status, "value") else str(case.status)
             ),
             "priority": (
                 case.priority.value
@@ -139,7 +137,9 @@ class InteropEngine:
         )
 
     async def _evidence(
-        self, case_id: UUID, evidence_ids: list[UUID] | None,
+        self,
+        case_id: UUID,
+        evidence_ids: list[UUID] | None,
     ) -> list[Evidence]:
         stmt = select(Evidence).where(Evidence.case_id == case_id)
         if evidence_ids:

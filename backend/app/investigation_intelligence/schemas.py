@@ -103,9 +103,7 @@ class InvestigationSummaryResponse(BaseModel):
     coverage: CoverageMetricsResponse
     top_hypotheses: list[HypothesisResponse] = Field(default_factory=list)
     critical_gaps: list[EvidenceGapResponse] = Field(default_factory=list)
-    top_recommendations: list[RecommendationResponse] = Field(
-        default_factory=list
-    )
+    top_recommendations: list[RecommendationResponse] = Field(default_factory=list)
     open_conflicts: list[dict[str, Any]] = Field(default_factory=list)
     engine_version: str
     policy_version: str

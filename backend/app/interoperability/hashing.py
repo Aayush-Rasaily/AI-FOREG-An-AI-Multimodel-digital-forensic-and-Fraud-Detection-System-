@@ -48,8 +48,5 @@ def canonical_json_bytes(payload: Any) -> bytes:
 def package_checksum_from_files(file_checksums: dict[str, str]) -> str:
     """Compute overall package checksum from sorted path→sha256 map."""
 
-    lines = [
-        f"{path}:{file_checksums[path]}"
-        for path in sorted(file_checksums.keys())
-    ]
+    lines = [f"{path}:{file_checksums[path]}" for path in sorted(file_checksums.keys())]
     return sha256_text("\n".join(lines) + ("\n" if lines else ""))

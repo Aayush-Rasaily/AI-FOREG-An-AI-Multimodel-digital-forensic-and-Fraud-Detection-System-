@@ -2,6 +2,7 @@
 
 import asyncio
 import json
+from io import BytesIO
 from typing import Any
 
 from pypdf import PdfReader
@@ -36,12 +37,13 @@ class DocumentExtractor:
 
         try:
             async with context.storage.open(context.storage_key) as stream:
-                pages, text_by_page = await asyncio.to_thread(
-                    _extract_pdf,
-                    stream,
-                    context.settings.extraction_max_pages,
-                    context.settings.extraction_max_text_chars,
-                )
+                payload = await asyncio.to_thread(stream.read)
+            pages, text_by_page = await asyncio.to_thread(
+                _extract_pdf,
+                BytesIO(payload),
+                context.settings.extraction_max_pages,
+                context.settings.extraction_max_text_chars,
+            )
         except ExtractionError:
             raise
         except Exception as exc:

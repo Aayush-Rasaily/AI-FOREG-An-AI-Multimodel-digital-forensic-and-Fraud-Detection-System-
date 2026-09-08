@@ -32,7 +32,9 @@ class DecisionSupportRun(Base):
     )
 
     id: Mapped[UUID] = mapped_column(
-        Uuid(as_uuid=True), primary_key=True, default=uuid4,
+        Uuid(as_uuid=True),
+        primary_key=True,
+        default=uuid4,
     )
     case_id: Mapped[UUID] = mapped_column(
         Uuid(as_uuid=True),
@@ -44,13 +46,22 @@ class DecisionSupportRun(Base):
     task_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     review_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     metrics_json: Mapped[dict[str, Any]] = mapped_column(
-        "metrics", JSON, nullable=False, default=dict,
+        "metrics",
+        JSON,
+        nullable=False,
+        default=dict,
     )
     open_conflicts_json: Mapped[list] = mapped_column(
-        "open_conflicts", JSON, nullable=False, default=list,
+        "open_conflicts",
+        JSON,
+        nullable=False,
+        default=list,
     )
     provenance_json: Mapped[dict[str, Any]] = mapped_column(
-        "provenance", JSON, nullable=False, default=dict,
+        "provenance",
+        JSON,
+        nullable=False,
+        default=dict,
     )
     engine_version: Mapped[str] = mapped_column(String(32), nullable=False)
     policy_version: Mapped[str] = mapped_column(String(32), nullable=False)
@@ -61,7 +72,8 @@ class DecisionSupportRun(Base):
         default=lambda: datetime.now(UTC),
     )
     completed_at: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=True), nullable=True,
+        DateTime(timezone=True),
+        nullable=True,
     )
 
 
@@ -77,7 +89,9 @@ class DecisionSupportTask(Base):
     )
 
     id: Mapped[UUID] = mapped_column(
-        Uuid(as_uuid=True), primary_key=True, default=uuid4,
+        Uuid(as_uuid=True),
+        primary_key=True,
+        default=uuid4,
     )
     run_id: Mapped[UUID] = mapped_column(
         Uuid(as_uuid=True),
@@ -99,13 +113,22 @@ class DecisionSupportTask(Base):
     estimated_effort_hours: Mapped[float] = mapped_column(Float, nullable=False)
     priority_score: Mapped[float] = mapped_column(Float, nullable=False)
     required_evidence_ids_json: Mapped[list] = mapped_column(
-        "required_evidence_ids", JSON, nullable=False, default=list,
+        "required_evidence_ids",
+        JSON,
+        nullable=False,
+        default=list,
     )
     supporting_intelligence_json: Mapped[dict[str, Any]] = mapped_column(
-        "supporting_intelligence", JSON, nullable=False, default=dict,
+        "supporting_intelligence",
+        JSON,
+        nullable=False,
+        default=dict,
     )
     provenance_json: Mapped[dict[str, Any]] = mapped_column(
-        "provenance", JSON, nullable=False, default=dict,
+        "provenance",
+        JSON,
+        nullable=False,
+        default=dict,
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
@@ -129,7 +152,9 @@ class DecisionSupportReviewItem(Base):
     )
 
     id: Mapped[UUID] = mapped_column(
-        Uuid(as_uuid=True), primary_key=True, default=uuid4,
+        Uuid(as_uuid=True),
+        primary_key=True,
+        default=uuid4,
     )
     run_id: Mapped[UUID] = mapped_column(
         Uuid(as_uuid=True),
@@ -146,10 +171,16 @@ class DecisionSupportReviewItem(Base):
     priority: Mapped[str] = mapped_column(String(16), nullable=False)
     priority_score: Mapped[float] = mapped_column(Float, nullable=False)
     reasons_json: Mapped[list] = mapped_column(
-        "reasons", JSON, nullable=False, default=list,
+        "reasons",
+        JSON,
+        nullable=False,
+        default=list,
     )
     provenance_json: Mapped[dict[str, Any]] = mapped_column(
-        "provenance", JSON, nullable=False, default=dict,
+        "provenance",
+        JSON,
+        nullable=False,
+        default=dict,
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
@@ -168,7 +199,9 @@ class DecisionSupportDecision(Base):
     )
 
     id: Mapped[UUID] = mapped_column(
-        Uuid(as_uuid=True), primary_key=True, default=uuid4,
+        Uuid(as_uuid=True),
+        primary_key=True,
+        default=uuid4,
     )
     case_id: Mapped[UUID] = mapped_column(
         Uuid(as_uuid=True),
@@ -189,7 +222,10 @@ class DecisionSupportDecision(Base):
     investigator: Mapped[str] = mapped_column(String(256), nullable=False)
     justification: Mapped[str] = mapped_column(Text, nullable=False)
     provenance_json: Mapped[dict[str, Any]] = mapped_column(
-        "provenance", JSON, nullable=False, default=dict,
+        "provenance",
+        JSON,
+        nullable=False,
+        default=dict,
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

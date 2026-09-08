@@ -19,6 +19,9 @@ htmlcov/
 .env
 .env.*
 !.env.example
+!.env.production.example
+!frontend/.env.development
+!frontend/.env.production
 *.pem
 *.key
 

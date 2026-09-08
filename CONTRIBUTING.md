@@ -1,4 +1,5 @@
 # Contributing
 
-See [docs/contributing.md](docs/contributing.md) for the contribution process,
-quality gates, and review rules.
+Conduct: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
+Security reports: [SECURITY.md](SECURITY.md).
+Roadmap: [ROADMAP.md](ROADMAP.md).

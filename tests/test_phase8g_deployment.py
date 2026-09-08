@@ -79,7 +79,8 @@ async def phase8g_client(
     app.dependency_overrides[get_db_session] = _override_db
     transport = httpx.ASGITransport(app=app)
     async with httpx.AsyncClient(
-        transport=transport, base_url="http://test",
+        transport=transport,
+        base_url="http://test",
     ) as client:
         yield client, settings
     await engine.dispose()
@@ -217,9 +218,9 @@ class TestSystemReleaseApi:
         assert validation.status_code == 200, validation.text
         body = validation.json()["data"]
         assert body["status"] in {"PASSED", "DEGRADED", "FAILED"}
-        assert body["fail_count"] + body["warn_count"] + body[
-            "pass_count"
-        ] == len(body["checks"])
+        assert body["fail_count"] + body["warn_count"] + body["pass_count"] == len(
+            body["checks"]
+        )
         names = [item["check"] for item in body["checks"]]
         assert names == sorted(names)
         assert "database" in names

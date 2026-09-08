@@ -37,7 +37,9 @@ def upgrade() -> None:
         sa.Column("updated_at", sa.DateTime(timezone=True), nullable=False),
         sa.ForeignKeyConstraint(["case_id"], ["cases.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(
-            ["assigned_analyst_id"], ["users.id"], ondelete="SET NULL",
+            ["assigned_analyst_id"],
+            ["users.id"],
+            ondelete="SET NULL",
         ),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("case_id", name="uq_investigation_workflows_case"),
@@ -77,10 +79,14 @@ def upgrade() -> None:
         ),
         sa.ForeignKeyConstraint(["case_id"], ["cases.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(
-            ["assignee_id"], ["users.id"], ondelete="SET NULL",
+            ["assignee_id"],
+            ["users.id"],
+            ondelete="SET NULL",
         ),
         sa.ForeignKeyConstraint(
-            ["linked_evidence_id"], ["evidence.id"], ondelete="SET NULL",
+            ["linked_evidence_id"],
+            ["evidence.id"],
+            ondelete="SET NULL",
         ),
         sa.ForeignKeyConstraint(
             ["linked_report_id"],
@@ -91,11 +97,15 @@ def upgrade() -> None:
     )
     op.create_index("ix_workflow_tasks_case_id", "workflow_tasks", ["case_id"])
     op.create_index(
-        "ix_workflow_tasks_workflow_id", "workflow_tasks", ["workflow_id"],
+        "ix_workflow_tasks_workflow_id",
+        "workflow_tasks",
+        ["workflow_id"],
     )
     op.create_index("ix_workflow_tasks_status", "workflow_tasks", ["status"])
     op.create_index(
-        "ix_workflow_tasks_assignee_id", "workflow_tasks", ["assignee_id"],
+        "ix_workflow_tasks_assignee_id",
+        "workflow_tasks",
+        ["assignee_id"],
     )
 
     op.create_table(
@@ -117,13 +127,17 @@ def upgrade() -> None:
         ),
         sa.ForeignKeyConstraint(["case_id"], ["cases.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(
-            ["author_id"], ["users.id"], ondelete="SET NULL",
+            ["author_id"],
+            ["users.id"],
+            ondelete="SET NULL",
         ),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index("ix_workflow_notes_case_id", "workflow_notes", ["case_id"])
     op.create_index(
-        "ix_workflow_notes_workflow_id", "workflow_notes", ["workflow_id"],
+        "ix_workflow_notes_workflow_id",
+        "workflow_notes",
+        ["workflow_id"],
     )
 
     op.create_table(
@@ -150,27 +164,41 @@ def upgrade() -> None:
         ),
         sa.ForeignKeyConstraint(["case_id"], ["cases.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(
-            ["evidence_id"], ["evidence.id"], ondelete="SET NULL",
+            ["evidence_id"],
+            ["evidence.id"],
+            ondelete="SET NULL",
         ),
         sa.ForeignKeyConstraint(
-            ["report_id"], ["forensic_reports.id"], ondelete="SET NULL",
+            ["report_id"],
+            ["forensic_reports.id"],
+            ondelete="SET NULL",
         ),
         sa.ForeignKeyConstraint(
-            ["reviewer_id"], ["users.id"], ondelete="SET NULL",
+            ["reviewer_id"],
+            ["users.id"],
+            ondelete="SET NULL",
         ),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index(
-        "ix_workflow_reviews_case_id", "workflow_reviews", ["case_id"],
+        "ix_workflow_reviews_case_id",
+        "workflow_reviews",
+        ["case_id"],
     )
     op.create_index(
-        "ix_workflow_reviews_workflow_id", "workflow_reviews", ["workflow_id"],
+        "ix_workflow_reviews_workflow_id",
+        "workflow_reviews",
+        ["workflow_id"],
     )
     op.create_index(
-        "ix_workflow_reviews_kind", "workflow_reviews", ["review_kind"],
+        "ix_workflow_reviews_kind",
+        "workflow_reviews",
+        ["review_kind"],
     )
     op.create_index(
-        "ix_workflow_reviews_status", "workflow_reviews", ["status"],
+        "ix_workflow_reviews_status",
+        "workflow_reviews",
+        ["status"],
     )
 
     op.create_table(
@@ -199,7 +227,9 @@ def upgrade() -> None:
         ),
     )
     op.create_index(
-        "ix_workflow_milestones_case_id", "workflow_milestones", ["case_id"],
+        "ix_workflow_milestones_case_id",
+        "workflow_milestones",
+        ["case_id"],
     )
     op.create_index(
         "ix_workflow_milestones_workflow_id",
@@ -267,34 +297,41 @@ def downgrade() -> None:
         table_name="workflow_milestones",
     )
     op.drop_index(
-        "ix_workflow_milestones_case_id", table_name="workflow_milestones",
+        "ix_workflow_milestones_case_id",
+        table_name="workflow_milestones",
     )
     op.drop_table("workflow_milestones")
 
     op.drop_index(
-        "ix_workflow_reviews_status", table_name="workflow_reviews",
+        "ix_workflow_reviews_status",
+        table_name="workflow_reviews",
     )
     op.drop_index("ix_workflow_reviews_kind", table_name="workflow_reviews")
     op.drop_index(
-        "ix_workflow_reviews_workflow_id", table_name="workflow_reviews",
+        "ix_workflow_reviews_workflow_id",
+        table_name="workflow_reviews",
     )
     op.drop_index(
-        "ix_workflow_reviews_case_id", table_name="workflow_reviews",
+        "ix_workflow_reviews_case_id",
+        table_name="workflow_reviews",
     )
     op.drop_table("workflow_reviews")
 
     op.drop_index(
-        "ix_workflow_notes_workflow_id", table_name="workflow_notes",
+        "ix_workflow_notes_workflow_id",
+        table_name="workflow_notes",
     )
     op.drop_index("ix_workflow_notes_case_id", table_name="workflow_notes")
     op.drop_table("workflow_notes")
 
     op.drop_index(
-        "ix_workflow_tasks_assignee_id", table_name="workflow_tasks",
+        "ix_workflow_tasks_assignee_id",
+        table_name="workflow_tasks",
     )
     op.drop_index("ix_workflow_tasks_status", table_name="workflow_tasks")
     op.drop_index(
-        "ix_workflow_tasks_workflow_id", table_name="workflow_tasks",
+        "ix_workflow_tasks_workflow_id",
+        table_name="workflow_tasks",
     )
     op.drop_index("ix_workflow_tasks_case_id", table_name="workflow_tasks")
     op.drop_table("workflow_tasks")

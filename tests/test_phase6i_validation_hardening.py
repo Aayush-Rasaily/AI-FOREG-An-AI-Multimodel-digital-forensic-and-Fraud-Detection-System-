@@ -107,6 +107,8 @@ async def phase6i_client(
         database_url="sqlite+aiosqlite://",
         storage_root=tmp_path / "data",
         log_config_path=tmp_path / "missing-logging.json",
+        rate_limit_enabled=False,
+        rate_limit_use_redis=False,
     )
     engine = create_async_engine(
         settings.database_url,
@@ -290,7 +292,10 @@ async def test_report_snapshot_stable_excluding_timestamps(phase6i_client) -> No
     second = await _run_full_pipeline(client)
     first_sections = _strip_nondeterministic(first["report"]["content"]["sections"])
     second_sections = _strip_nondeterministic(second["report"]["content"]["sections"])
-    assert first_sections["executive_summary"] == second_sections["executive_summary"]
+    assert (
+        first_sections["case_summary"]["executive_summary"]
+        == second_sections["case_summary"]["executive_summary"]
+    )
 
 
 def test_version_constants_documented() -> None:
@@ -402,7 +407,7 @@ async def test_report_without_intelligence_still_generates(phase6i_client) -> No
     await client.post(f"/api/v1/cases/{case['id']}/reports")
     report = await _poll_report(client, case["id"])
     sections = report["content"]["sections"]
-    limitations = sections["confidence_and_limitations"]["limitations"]
+    limitations = sections["case_summary"]["executive_summary"]["limitations"]
     assert any("Phase 6G" in item for item in limitations)
 
 
@@ -428,8 +433,16 @@ def test_alembic_migration_chain_is_linear() -> None:
         if path.name.startswith("__"):
             continue
         text = path.read_text(encoding="utf-8")
-        revision_match = re.search(r'^revision = "([^"]+)"', text, re.MULTILINE)
-        down_match = re.search(r'^down_revision = ("[^"]+"|None)', text, re.MULTILINE)
+        revision_match = re.search(
+            r'^revision(?::[^\n=]+)? = "([^"]+)"',
+            text,
+            re.MULTILINE,
+        )
+        down_match = re.search(
+            r'^down_revision(?::[^\n=]+)? = ("[^"]+"|None)',
+            text,
+            re.MULTILINE,
+        )
         assert revision_match and down_match, f"Invalid migration file: {path.name}"
         down = down_match.group(1)
         revisions[revision_match.group(1)] = None if down == "None" else down.strip('"')

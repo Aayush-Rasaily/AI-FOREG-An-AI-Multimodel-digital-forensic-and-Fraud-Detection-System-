@@ -9,15 +9,16 @@ these tables use the case_review_* prefix.
 
 from __future__ import annotations
 
-from typing import Sequence, Union
+from collections.abc import Sequence
 
 import sqlalchemy as sa
+
 from alembic import op
 
 revision: str = "20260911_0030"
-down_revision: Union[str, Sequence[str], None] = "20260910_0029"
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | Sequence[str] | None = "20260910_0029"
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
@@ -43,10 +44,14 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index(
-        "ix_case_review_runs_case_id", "case_review_runs", ["case_id"],
+        "ix_case_review_runs_case_id",
+        "case_review_runs",
+        ["case_id"],
     )
     op.create_index(
-        "ix_case_review_runs_stage", "case_review_runs", ["stage"],
+        "ix_case_review_runs_stage",
+        "case_review_runs",
+        ["stage"],
     )
 
     op.create_table(
@@ -58,7 +63,9 @@ def upgrade() -> None:
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
         sa.ForeignKeyConstraint(["case_id"], ["cases.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(
-            ["run_id"], ["case_review_runs.id"], ondelete="CASCADE",
+            ["run_id"],
+            ["case_review_runs.id"],
+            ondelete="CASCADE",
         ),
         sa.PrimaryKeyConstraint("id"),
     )
@@ -98,7 +105,9 @@ def upgrade() -> None:
             ondelete="CASCADE",
         ),
         sa.ForeignKeyConstraint(
-            ["run_id"], ["case_review_runs.id"], ondelete="CASCADE",
+            ["run_id"],
+            ["case_review_runs.id"],
+            ondelete="CASCADE",
         ),
         sa.PrimaryKeyConstraint("id"),
     )
@@ -148,7 +157,9 @@ def upgrade() -> None:
             ondelete="SET NULL",
         ),
         sa.ForeignKeyConstraint(
-            ["run_id"], ["case_review_runs.id"], ondelete="CASCADE",
+            ["run_id"],
+            ["case_review_runs.id"],
+            ondelete="CASCADE",
         ),
         sa.PrimaryKeyConstraint("id"),
     )
@@ -184,7 +195,9 @@ def upgrade() -> None:
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
         sa.ForeignKeyConstraint(["case_id"], ["cases.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(
-            ["run_id"], ["case_review_runs.id"], ondelete="CASCADE",
+            ["run_id"],
+            ["case_review_runs.id"],
+            ondelete="CASCADE",
         ),
         sa.PrimaryKeyConstraint("id"),
     )
@@ -211,7 +224,8 @@ def downgrade() -> None:
     )
     op.drop_table("case_review_validation_records")
     op.drop_index(
-        "ix_case_review_approvals_role", table_name="case_review_approvals",
+        "ix_case_review_approvals_role",
+        table_name="case_review_approvals",
     )
     op.drop_index(
         "ix_case_review_approvals_case_id",

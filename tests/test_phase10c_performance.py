@@ -71,9 +71,7 @@ class TestCacheHelpers:
 class TestPagination:
     def test_apply_pagination_bounds(self) -> None:
         stmt = apply_pagination(select(Case.id), limit=9999, offset=-5)
-        compiled = str(
-            stmt.compile(compile_kwargs={"literal_binds": True})
-        ).upper()
+        compiled = str(stmt.compile(compile_kwargs={"literal_binds": True})).upper()
         assert "LIMIT 500" in compiled
         assert "OFFSET 0" in compiled
 

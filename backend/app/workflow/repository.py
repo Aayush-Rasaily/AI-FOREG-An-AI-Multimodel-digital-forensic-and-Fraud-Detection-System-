@@ -43,7 +43,8 @@ class WorkflowRepository:
         return await self.session.get(ForensicReport, report_id)
 
     async def get_workflow_by_case(
-        self, case_id: UUID,
+        self,
+        case_id: UUID,
     ) -> InvestigationWorkflow | None:
         result = await self.session.execute(
             select(InvestigationWorkflow).where(
@@ -53,7 +54,8 @@ class WorkflowRepository:
         return result.scalar_one_or_none()
 
     async def get_workflow(
-        self, workflow_id: UUID,
+        self,
+        workflow_id: UUID,
     ) -> InvestigationWorkflow | None:
         return await self.session.get(InvestigationWorkflow, workflow_id)
 
@@ -85,7 +87,8 @@ class WorkflowRepository:
         return list(result.scalars().all())
 
     async def list_milestones(
-        self, case_id: UUID,
+        self,
+        case_id: UUID,
     ) -> list[WorkflowMilestone]:
         result = await self.session.execute(
             select(WorkflowMilestone)
@@ -111,7 +114,8 @@ class WorkflowRepository:
         return result.scalar_one_or_none()
 
     async def list_notifications(
-        self, case_id: UUID,
+        self,
+        case_id: UUID,
     ) -> list[WorkflowNotification]:
         result = await self.session.execute(
             select(WorkflowNotification)

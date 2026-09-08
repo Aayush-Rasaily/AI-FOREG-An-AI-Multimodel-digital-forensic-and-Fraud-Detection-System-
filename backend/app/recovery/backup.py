@@ -106,10 +106,10 @@ def create_backup_bundle(
     # Application / AI configuration (sanitized export)
     config_payload = {
         "configuration": export_configuration(runtime),
-            "release": build_release_metadata(
-                app_version=runtime.app_version,
-                environment=runtime.app_env,
-            ),
+        "release": build_release_metadata(
+            app_version=runtime.app_version,
+            environment=runtime.app_env,
+        ),
         "ai": {
             "model_root": Path(runtime.ai_model_root).as_posix(),
             "model_root_exists": Path(runtime.ai_model_root).exists(),

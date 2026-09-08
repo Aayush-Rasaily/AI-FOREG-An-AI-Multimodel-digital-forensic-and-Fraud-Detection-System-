@@ -147,9 +147,7 @@ class InteroperabilityService:
         principal: AuthenticatedPrincipal | None,
     ) -> ExportJobResponse:
         if format_name not in SUPPORTED_EXPORT_FORMATS:
-            raise UnsupportedFormatError(
-                f"Unsupported export format: {format_name}"
-            )
+            raise UnsupportedFormatError(f"Unsupported export format: {format_name}")
         case = await self.engine.load_case(case_id)
         if case is None:
             raise ResourceNotFoundError("Case not found.")
@@ -180,7 +178,8 @@ class InteroperabilityService:
 
         try:
             snapshot = await self.engine.build_snapshot(
-                case, evidence_ids=evidence_ids,
+                case,
+                evidence_ids=evidence_ids,
             )
             evidence_blobs: dict[str, bytes] = {}
             if include_binaries or format_name in {
@@ -208,11 +207,14 @@ class InteroperabilityService:
                 )
             elif format_name == ExportFormat.CSV.value:
                 files, manifest = export_csv_package(
-                    snapshot, created_at=created_at,
+                    snapshot,
+                    created_at=created_at,
                 )
             elif format_name == ExportFormat.PDF_BUNDLE.value:
                 files, manifest = export_pdf_bundle(
-                    snapshot, created_at=created_at, pdf_blobs=pdf_blobs,
+                    snapshot,
+                    created_at=created_at,
+                    pdf_blobs=pdf_blobs,
                 )
             elif format_name == ExportFormat.ZIP_EVIDENCE.value:
                 files, manifest = export_zip_evidence(
@@ -222,7 +224,8 @@ class InteroperabilityService:
                 )
             else:
                 files, manifest = export_manifest_only(
-                    snapshot, created_at=created_at,
+                    snapshot,
+                    created_at=created_at,
                 )
 
             archive_name = f"{job.id}.zip"
@@ -261,7 +264,9 @@ class InteroperabilityService:
             return self._export_response(job)
 
     async def list_exports(
-        self, *, case_id: UUID | None = None,
+        self,
+        *,
+        case_id: UUID | None = None,
     ) -> ExportJobListResponse:
         rows = await self.repository.list_exports(case_id=case_id)
         items = [self._export_response(row) for row in rows]

@@ -30,7 +30,10 @@ class InteropRepository:
         return await self.session.get(ImportJob, import_id)
 
     async def list_exports(
-        self, *, case_id: UUID | None = None, limit: int = 100,
+        self,
+        *,
+        case_id: UUID | None = None,
+        limit: int = 100,
     ) -> list[ExportJob]:
         stmt = select(ExportJob).order_by(ExportJob.created_at.desc()).limit(limit)
         if case_id is not None:
@@ -49,7 +52,8 @@ class InteropRepository:
         return list(result.scalars().all())
 
     async def get_manifest_for_export(
-        self, export_id: UUID,
+        self,
+        export_id: UUID,
     ) -> PackageManifestRecord | None:
         stmt = select(PackageManifestRecord).where(
             PackageManifestRecord.export_job_id == export_id,

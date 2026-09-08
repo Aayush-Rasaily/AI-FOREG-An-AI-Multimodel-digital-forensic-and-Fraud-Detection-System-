@@ -29,6 +29,7 @@ Version files: `VERSION`, `pyproject.toml`, `frontend/package.json`,
 - [ ] Upload allow-list and size caps confirmed
 - [ ] Rate limits enabled with Redis in production
 - [ ] pip-audit / npm audit / Trivy criticals resolved or waived
+- [ ] RC3 review recorded in [security-rc3.md](security-rc3.md)
 - [ ] Audit log retention meets policy
 
 ## Testing

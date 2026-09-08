@@ -53,11 +53,7 @@ def _modality_verdict_conflicts(
             genuine_modalities.add(modality)
     overlap = suspicious_modalities & genuine_modalities
     if overlap:
-        involved = [
-            item.finding_id
-            for item in findings
-            if item.modality in overlap
-        ]
+        involved = [item.finding_id for item in findings if item.modality in overlap]
         conflicts.append(
             FusionConflict(
                 conflict_id=(
@@ -105,11 +101,7 @@ def _modality_verdict_conflicts(
 def _jury_verdict_conflicts(
     assessments: tuple[JuryAssessment, ...],
 ) -> list[FusionConflict]:
-    available = [
-        item
-        for item in assessments
-        if item.availability.value == "available"
-    ]
+    available = [item for item in assessments if item.availability.value == "available"]
     if len(available) < 2:
         return []
     verdicts = {item.verdict for item in available}
@@ -137,8 +129,7 @@ def _confidence_spread_conflicts(
     values = [
         item.confidence
         for item in findings
-        if item.confidence is not None
-        and item.verdict != FindingVerdict.UNAVAILABLE
+        if item.confidence is not None and item.verdict != FindingVerdict.UNAVAILABLE
     ]
     if len(values) < 2:
         return []
@@ -147,9 +138,7 @@ def _confidence_spread_conflicts(
         return []
     high = [item for item in findings if item.confidence == max(values)]
     low = [item for item in findings if item.confidence == min(values)]
-    involved = tuple(
-        {item.finding_id for item in high + low}
-    )
+    involved = tuple({item.finding_id for item in high + low})
     return [
         FusionConflict(
             conflict_id="confidence_disagreement",

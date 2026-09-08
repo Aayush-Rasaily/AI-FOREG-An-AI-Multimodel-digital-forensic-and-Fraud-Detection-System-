@@ -37,9 +37,14 @@ def collect_storage_stats(
         usage = shutil.disk_usage(root)
         disk_total = usage.total
         disk_free = usage.free
-        disk_percent = round(
-            (usage.used / usage.total) * 100, 2,
-        ) if usage.total else None
+        disk_percent = (
+            round(
+                (usage.used / usage.total) * 100,
+                2,
+            )
+            if usage.total
+            else None
+        )
     except OSError:
         pass
     return {

@@ -127,8 +127,10 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         call_next: RequestResponseEndpoint,
     ) -> Response:
         settings = getattr(request.app.state, "settings", None)
-        enabled = True if settings is None else bool(
-            getattr(settings, "rate_limit_enabled", True)
+        enabled = (
+            True
+            if settings is None
+            else bool(getattr(settings, "rate_limit_enabled", True))
         )
         if not enabled:
             return await call_next(request)
@@ -138,8 +140,10 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             return await call_next(request)
 
         ip, user_key = identity_keys(request)
-        use_redis = True if settings is None else bool(
-            getattr(settings, "rate_limit_use_redis", True)
+        use_redis = (
+            True
+            if settings is None
+            else bool(getattr(settings, "rate_limit_use_redis", True))
         )
         allowed = await allow_request(
             category=category,

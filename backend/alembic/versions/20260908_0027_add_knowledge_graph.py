@@ -39,10 +39,14 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index(
-        "ix_knowledge_graph_runs_case_id", "knowledge_graph_runs", ["case_id"],
+        "ix_knowledge_graph_runs_case_id",
+        "knowledge_graph_runs",
+        ["case_id"],
     )
     op.create_index(
-        "ix_knowledge_graph_runs_status", "knowledge_graph_runs", ["status"],
+        "ix_knowledge_graph_runs_status",
+        "knowledge_graph_runs",
+        ["status"],
     )
 
     op.create_table(
@@ -59,7 +63,9 @@ def upgrade() -> None:
         sa.Column("evidence_ids", sa.JSON(), nullable=False),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
         sa.ForeignKeyConstraint(
-            ["graph_id"], ["knowledge_graph_runs.id"], ondelete="CASCADE",
+            ["graph_id"],
+            ["knowledge_graph_runs.id"],
+            ondelete="CASCADE",
         ),
         sa.ForeignKeyConstraint(["case_id"], ["cases.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),
@@ -67,10 +73,14 @@ def upgrade() -> None:
     op.create_index("ix_graph_entities_graph_id", "graph_entities", ["graph_id"])
     op.create_index("ix_graph_entities_case_id", "graph_entities", ["case_id"])
     op.create_index(
-        "ix_graph_entities_entity_type", "graph_entities", ["entity_type"],
+        "ix_graph_entities_entity_type",
+        "graph_entities",
+        ["entity_type"],
     )
     op.create_index(
-        "ix_graph_entities_normalized_key", "graph_entities", ["normalized_key"],
+        "ix_graph_entities_normalized_key",
+        "graph_entities",
+        ["normalized_key"],
     )
 
     op.create_table(
@@ -91,16 +101,22 @@ def upgrade() -> None:
         sa.Column("attributes", sa.JSON(), nullable=False),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
         sa.ForeignKeyConstraint(
-            ["graph_id"], ["knowledge_graph_runs.id"], ondelete="CASCADE",
+            ["graph_id"],
+            ["knowledge_graph_runs.id"],
+            ondelete="CASCADE",
         ),
         sa.ForeignKeyConstraint(["case_id"], ["cases.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index(
-        "ix_graph_relationships_graph_id", "graph_relationships", ["graph_id"],
+        "ix_graph_relationships_graph_id",
+        "graph_relationships",
+        ["graph_id"],
     )
     op.create_index(
-        "ix_graph_relationships_case_id", "graph_relationships", ["case_id"],
+        "ix_graph_relationships_case_id",
+        "graph_relationships",
+        ["case_id"],
     )
     op.create_index(
         "ix_graph_relationships_type",
@@ -116,12 +132,16 @@ def upgrade() -> None:
         sa.Column("alias", sa.String(length=512), nullable=False),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
         sa.ForeignKeyConstraint(
-            ["graph_id"], ["knowledge_graph_runs.id"], ondelete="CASCADE",
+            ["graph_id"],
+            ["knowledge_graph_runs.id"],
+            ondelete="CASCADE",
         ),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index(
-        "ix_graph_entity_aliases_graph_id", "graph_entity_aliases", ["graph_id"],
+        "ix_graph_entity_aliases_graph_id",
+        "graph_entity_aliases",
+        ["graph_id"],
     )
     op.create_index(
         "ix_graph_entity_aliases_entity_key",
@@ -129,7 +149,9 @@ def upgrade() -> None:
         ["entity_key"],
     )
     op.create_index(
-        "ix_graph_entity_aliases_alias", "graph_entity_aliases", ["alias"],
+        "ix_graph_entity_aliases_alias",
+        "graph_entity_aliases",
+        ["alias"],
     )
 
     op.create_table(
@@ -153,15 +175,21 @@ def upgrade() -> None:
         sa.Column("policy_version", sa.String(length=32), nullable=False),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
         sa.ForeignKeyConstraint(
-            ["graph_id"], ["knowledge_graph_runs.id"], ondelete="CASCADE",
+            ["graph_id"],
+            ["knowledge_graph_runs.id"],
+            ondelete="CASCADE",
         ),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index(
-        "ix_graph_provenance_graph_id", "graph_provenance", ["graph_id"],
+        "ix_graph_provenance_graph_id",
+        "graph_provenance",
+        ["graph_id"],
     )
     op.create_index(
-        "ix_graph_provenance_target_key", "graph_provenance", ["target_key"],
+        "ix_graph_provenance_target_key",
+        "graph_provenance",
+        ["target_key"],
     )
 
 
@@ -173,10 +201,12 @@ def downgrade() -> None:
     op.drop_table("graph_provenance")
     op.drop_index("ix_graph_entity_aliases_alias", table_name="graph_entity_aliases")
     op.drop_index(
-        "ix_graph_entity_aliases_entity_key", table_name="graph_entity_aliases",
+        "ix_graph_entity_aliases_entity_key",
+        table_name="graph_entity_aliases",
     )
     op.drop_index(
-        "ix_graph_entity_aliases_graph_id", table_name="graph_entity_aliases",
+        "ix_graph_entity_aliases_graph_id",
+        table_name="graph_entity_aliases",
     )
     op.drop_table("graph_entity_aliases")
     op.drop_index("ix_graph_relationships_type", table_name="graph_relationships")
@@ -190,6 +220,7 @@ def downgrade() -> None:
     op.drop_table("graph_entities")
     op.drop_index("ix_knowledge_graph_runs_status", table_name="knowledge_graph_runs")
     op.drop_index(
-        "ix_knowledge_graph_runs_case_id", table_name="knowledge_graph_runs",
+        "ix_knowledge_graph_runs_case_id",
+        table_name="knowledge_graph_runs",
     )
     op.drop_table("knowledge_graph_runs")

@@ -120,9 +120,7 @@ def summarize_timeline(snapshot: dict[str, Any]) -> dict[str, Any]:
             timeline_ids=[str(timeline.get("run_id") or "")]
             + [str(item.get("event_id") or "") for item in items],
             evidence_ids=[
-                str(item["evidence_id"])
-                for item in items
-                if item.get("evidence_id")
+                str(item["evidence_id"]) for item in items if item.get("evidence_id")
             ],
         ),
     }
@@ -255,8 +253,6 @@ def summarize_ai(snapshot: dict[str, Any]) -> dict[str, Any]:
                 str(item.get("evidence_id") or "")
                 for item in snapshot.get("analysis_summaries", [])
             ],
-            fusion_ids=[
-                str(item.get("fusion_run_id") or "") for item in fusion_rows
-            ],
+            fusion_ids=[str(item.get("fusion_run_id") or "") for item in fusion_rows],
         ),
     }

@@ -56,7 +56,8 @@ class InvestigationIntelligenceEngineService:
         self.engine = InvestigationIntelligenceEngine(session)
 
     def _coverage_response(
-        self, coverage: CoverageMetrics | dict,
+        self,
+        coverage: CoverageMetrics | dict,
     ) -> CoverageMetricsResponse:
         if isinstance(coverage, CoverageMetrics):
             data = coverage
@@ -70,9 +71,7 @@ class InvestigationIntelligenceEngineService:
                 fusion_coverage=data.fusion_coverage,
                 ai_coverage=data.ai_coverage,
                 metadata_completeness=data.metadata_completeness,
-                chain_of_custody_completeness=(
-                    data.chain_of_custody_completeness
-                ),
+                chain_of_custody_completeness=(data.chain_of_custody_completeness),
                 overall_completeness=data.overall_completeness,
                 open_conflicts=data.open_conflicts,
             )
@@ -98,12 +97,8 @@ class InvestigationIntelligenceEngineService:
             confidence=row.confidence,
             priority=row.priority,
             status=row.status,
-            supporting_evidence_ids=list(
-                row.supporting_evidence_ids_json or []
-            ),
-            contradicting_evidence_ids=list(
-                row.contradicting_evidence_ids_json or []
-            ),
+            supporting_evidence_ids=list(row.supporting_evidence_ids_json or []),
+            contradicting_evidence_ids=list(row.contradicting_evidence_ids_json or []),
             provenance=dict(row.provenance_json or {}),
             attributes=dict(row.attributes_json or {}),
         )
@@ -147,16 +142,16 @@ class InvestigationIntelligenceEngineService:
             code=row.code,
             action_text=row.action_text,
             priority=row.priority,
-            related_hypothesis_keys=list(
-                row.related_hypothesis_keys_json or []
-            ),
+            related_hypothesis_keys=list(row.related_hypothesis_keys_json or []),
             related_gap_keys=list(row.related_gap_keys_json or []),
             affected_evidence_ids=list(row.affected_evidence_ids_json or []),
             provenance=dict(row.provenance_json or {}),
         )
 
     def _result_to_drafts(
-        self, case_id: UUID, result: IntelligenceResult,
+        self,
+        case_id: UUID,
+        result: IntelligenceResult,
     ) -> tuple[
         list[HypothesisResponse],
         list[EvidenceGapResponse],
@@ -240,7 +235,8 @@ class InvestigationIntelligenceEngineService:
         )
 
     async def _hydrate(
-        self, run: InvestigationIntelligenceRun,
+        self,
+        run: InvestigationIntelligenceRun,
     ) -> IntelligenceRunResponse:
         hyp_rows = await self.repository.hypotheses_for_run(run.id)
         gap_rows = await self.repository.gaps_for_run(run.id)
@@ -249,9 +245,7 @@ class InvestigationIntelligenceEngineService:
             run,
             hypotheses=[self._hypothesis_response(row) for row in hyp_rows],
             gaps=[self._gap_response(row) for row in gap_rows],
-            recommendations=[
-                self._recommendation_response(row) for row in rec_rows
-            ],
+            recommendations=[self._recommendation_response(row) for row in rec_rows],
         )
 
     async def analyze(self, case_id: UUID) -> IntelligenceRunResponse:
@@ -290,9 +284,7 @@ class InvestigationIntelligenceEngineService:
                 priority=item.priority.value,
                 status=item.status.value,
                 supporting_evidence_ids_json=item.supporting_evidence_ids,
-                contradicting_evidence_ids_json=(
-                    item.contradicting_evidence_ids
-                ),
+                contradicting_evidence_ids_json=(item.contradicting_evidence_ids),
                 provenance_json=provenance_to_dict(item.provenance),
                 attributes_json=item.attributes,
             )
@@ -340,7 +332,8 @@ class InvestigationIntelligenceEngineService:
             raise ResourceNotFoundError("Case not found.")
         result = await self.engine.analyze(case)
         hypotheses, gaps, recommendations = self._result_to_drafts(
-            case_id, result,
+            case_id,
+            result,
         )
         return IntelligencePreviewResponse(
             case_id=case_id,
@@ -381,7 +374,11 @@ class InvestigationIntelligenceEngineService:
         return await self._hydrate(run)
 
     async def list_hypotheses(
-        self, case_id: UUID, *, limit: int = 100, offset: int = 0,
+        self,
+        case_id: UUID,
+        *,
+        limit: int = 100,
+        offset: int = 0,
     ) -> HypothesisListResponse:
         if await self.repository.get_case(case_id) is None:
             raise ResourceNotFoundError("Case not found.")
@@ -389,7 +386,10 @@ class InvestigationIntelligenceEngineService:
         if run is None:
             return HypothesisListResponse(items=[], total=0)
         rows, total = await self.repository.list_hypotheses(
-            case_id, run_id=run.id, limit=limit, offset=offset,
+            case_id,
+            run_id=run.id,
+            limit=limit,
+            offset=offset,
         )
         return HypothesisListResponse(
             items=[self._hypothesis_response(row) for row in rows],
@@ -397,7 +397,11 @@ class InvestigationIntelligenceEngineService:
         )
 
     async def list_gaps(
-        self, case_id: UUID, *, limit: int = 100, offset: int = 0,
+        self,
+        case_id: UUID,
+        *,
+        limit: int = 100,
+        offset: int = 0,
     ) -> EvidenceGapListResponse:
         if await self.repository.get_case(case_id) is None:
             raise ResourceNotFoundError("Case not found.")
@@ -405,7 +409,10 @@ class InvestigationIntelligenceEngineService:
         if run is None:
             return EvidenceGapListResponse(items=[], total=0)
         rows, total = await self.repository.list_gaps(
-            case_id, run_id=run.id, limit=limit, offset=offset,
+            case_id,
+            run_id=run.id,
+            limit=limit,
+            offset=offset,
         )
         return EvidenceGapListResponse(
             items=[self._gap_response(row) for row in rows],
@@ -413,7 +420,11 @@ class InvestigationIntelligenceEngineService:
         )
 
     async def list_recommendations(
-        self, case_id: UUID, *, limit: int = 100, offset: int = 0,
+        self,
+        case_id: UUID,
+        *,
+        limit: int = 100,
+        offset: int = 0,
     ) -> RecommendationListResponse:
         if await self.repository.get_case(case_id) is None:
             raise ResourceNotFoundError("Case not found.")
@@ -421,7 +432,10 @@ class InvestigationIntelligenceEngineService:
         if run is None:
             return RecommendationListResponse(items=[], total=0)
         rows, total = await self.repository.list_recommendations(
-            case_id, run_id=run.id, limit=limit, offset=offset,
+            case_id,
+            run_id=run.id,
+            limit=limit,
+            offset=offset,
         )
         return RecommendationListResponse(
             items=[self._recommendation_response(row) for row in rows],
@@ -429,7 +443,8 @@ class InvestigationIntelligenceEngineService:
         )
 
     async def investigation_summary(
-        self, case_id: UUID,
+        self,
+        case_id: UUID,
     ) -> InvestigationSummaryResponse:
         if await self.repository.get_case(case_id) is None:
             raise ResourceNotFoundError("Case not found.")
@@ -444,11 +459,9 @@ class InvestigationIntelligenceEngineService:
                 overall_completeness=preview.overall_completeness,
                 coverage=preview.coverage,
                 top_hypotheses=preview.hypotheses[:5],
-                critical_gaps=[
-                    gap
-                    for gap in preview.gaps
-                    if gap.severity == "HIGH"
-                ][:5],
+                critical_gaps=[gap for gap in preview.gaps if gap.severity == "HIGH"][
+                    :5
+                ],
                 top_recommendations=preview.recommendations[:5],
                 open_conflicts=preview.open_conflicts,
                 engine_version=preview.engine_version,
@@ -462,9 +475,7 @@ class InvestigationIntelligenceEngineService:
             overall_completeness=hydrated.overall_completeness,
             coverage=hydrated.coverage,
             top_hypotheses=hydrated.hypotheses[:5],
-            critical_gaps=[
-                gap for gap in hydrated.gaps if gap.severity == "HIGH"
-            ][:5],
+            critical_gaps=[gap for gap in hydrated.gaps if gap.severity == "HIGH"][:5],
             top_recommendations=hydrated.recommendations[:5],
             open_conflicts=hydrated.open_conflicts,
             engine_version=hydrated.engine_version,

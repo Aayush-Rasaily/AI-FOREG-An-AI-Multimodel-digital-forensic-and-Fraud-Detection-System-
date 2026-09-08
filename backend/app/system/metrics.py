@@ -34,14 +34,17 @@ async def collect_metrics(
     case_count = await _count(session, Case)
     report_count = await _count(session, ForensicReport)
     timeline_count = await _count(
-        session, InvestigationTimeline,
+        session,
+        InvestigationTimeline,
     )
     fusion_count = await _count(session, FusionAnalysisRun)
     entity_count = await _count(
-        session, EntityResolutionRun,
+        session,
+        EntityResolutionRun,
     )
     correlation_count = await _count(
-        session, CorrelationAnalysisRun,
+        session,
+        CorrelationAnalysisRun,
     )
     ai_count = await _count(session, InferenceJob)
     processing_count = await _count(session, ProcessingJob)
@@ -55,7 +58,8 @@ async def collect_metrics(
     )
     total_jobs = processing_count or 1
     failure_rate = round(
-        int(failed_jobs or 0) / total_jobs, 4,
+        int(failed_jobs or 0) / total_jobs,
+        4,
     )
 
     return {

@@ -62,12 +62,15 @@ jobs:
           uv run python - <<'PY'
           import os
           import subprocess
-          from datetime import UTC, datetime
           from pathlib import Path
 
-          from backend.app.cicd.gates import parse_semver, read_project_version
+          from backend.app.cicd.gates import (
+              extract_changelog_section,
+              parse_semver,
+              read_project_version,
+          )
           from backend.app.cicd.packaging import build_version_metadata, write_version_metadata
-          from backend.app.cicd.release_notes import generate_changelog_section, prepend_changelog
+          from backend.app.cicd.release_notes import generate_changelog_section
 
           version = os.environ["RELEASE_VERSION"]
           parse_semver(version)
@@ -80,25 +83,22 @@ jobs:
           artifact_dir = Path("dist/release")
           artifact_dir.mkdir(parents=True, exist_ok=True)
 
-          log = subprocess.run(
-              ["git", "log", "-n", "40", "--pretty=format:%s"],
-              capture_output=True,
-              text=True,
-              check=False,
-          )
-          commits = [line for line in (log.stdout or "").splitlines() if line.strip()]
-          section = generate_changelog_section(
-              version,
-              commits,
-              released_at=datetime.now(UTC),
-          )
           changelog_path = Path("CHANGELOG.md")
           existing = (
               changelog_path.read_text(encoding="utf-8")
               if changelog_path.is_file()
               else "# Changelog\n"
           )
-          changelog_path.write_text(prepend_changelog(existing, section), encoding="utf-8")
+          section = extract_changelog_section(existing, version)
+          if not section.strip():
+              log = subprocess.run(
+                  ["git", "log", "-n", "40", "--pretty=format:%s"],
+                  capture_output=True,
+                  text=True,
+                  check=False,
+              )
+              commits = [line for line in (log.stdout or "").splitlines() if line.strip()]
+              section = generate_changelog_section(version, commits)
           notes = artifact_dir / "RELEASE_NOTES.md"
           notes.write_text(section, encoding="utf-8")
           sha = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()

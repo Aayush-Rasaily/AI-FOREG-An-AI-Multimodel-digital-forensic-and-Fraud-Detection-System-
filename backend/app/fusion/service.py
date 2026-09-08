@@ -166,9 +166,7 @@ class FusionService:
                         verdict=jury_item.verdict,
                         confidence=jury_item.confidence,
                         availability=jury_item.availability,
-                        supporting_finding_ids=list(
-                            jury_item.supporting_finding_ids
-                        ),
+                        supporting_finding_ids=list(jury_item.supporting_finding_ids),
                         contradictory_finding_ids=list(
                             jury_item.contradictory_finding_ids
                         ),
@@ -217,9 +215,7 @@ class FusionService:
                 "explanation": assessment.explanation,
                 "limitations": assessment.limitations,
                 "supporting_finding_ids": list(assessment.supporting_finding_ids),
-                "contradictory_finding_ids": list(
-                    assessment.contradictory_finding_ids
-                ),
+                "contradictory_finding_ids": list(assessment.contradictory_finding_ids),
                 "participating_modalities": [
                     modality.value for modality in assessment.participating_modalities
                 ],

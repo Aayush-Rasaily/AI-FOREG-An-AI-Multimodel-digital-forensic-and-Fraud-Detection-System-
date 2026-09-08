@@ -179,3 +179,43 @@ def fail_on_critical_advisories(payload: dict[str, Any]) -> dict[str, Any]:
         "critical": critical,
         "count": len(critical),
     }
+
+
+def validate_declared_versions(repo_root: Path | None = None) -> dict[str, Any]:
+    """Require pyproject.toml, VERSION, and frontend package.json to match."""
+
+    root = repo_root or Path(__file__).resolve().parents[3]
+    pyproject = read_project_version(root)
+    file_version = (root / "VERSION").read_text(encoding="utf-8").strip()
+    package = json.loads(
+        (root / "frontend" / "package.json").read_text(encoding="utf-8")
+    )
+    npm_version = str(package.get("version", ""))
+    ok = pyproject == file_version == npm_version
+    return {
+        "status": "PASSED" if ok else "FAILED",
+        "pyproject": pyproject,
+        "VERSION": file_version,
+        "frontend": npm_version,
+    }
+
+
+def extract_changelog_section(changelog: str, version: str) -> str:
+    """Return the markdown section for one SemVer heading from CHANGELOG.md."""
+
+    marker = f"## {version}"
+    lines = changelog.splitlines()
+    start: int | None = None
+    for index, line in enumerate(lines):
+        if line.startswith(marker):
+            start = index
+            break
+    if start is None:
+        return ""
+    end = len(lines)
+    for index in range(start + 1, len(lines)):
+        if lines[index].startswith("## "):
+            end = index
+            break
+    section = "\n".join(lines[start:end]).strip()
+    return f"{section}\n" if section else ""

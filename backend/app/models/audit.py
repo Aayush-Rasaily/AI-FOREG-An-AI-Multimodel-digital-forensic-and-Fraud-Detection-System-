@@ -31,7 +31,9 @@ class AuditEvent(Base):
     )
 
     id: Mapped[UUID] = mapped_column(
-        Uuid(as_uuid=True), primary_key=True, default=uuid4,
+        Uuid(as_uuid=True),
+        primary_key=True,
+        default=uuid4,
     )
     timestamp: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
@@ -40,44 +42,63 @@ class AuditEvent(Base):
         server_default=func.now(),
     )
     user: Mapped[str] = mapped_column(
-        String(256), nullable=False, default="system",
+        String(256),
+        nullable=False,
+        default="system",
     )
     operation: Mapped[str] = mapped_column(
-        String(128), nullable=False,
+        String(128),
+        nullable=False,
     )
     category: Mapped[str] = mapped_column(
-        String(64), nullable=False,
+        String(64),
+        nullable=False,
     )
     case_id: Mapped[UUID | None] = mapped_column(
-        Uuid(as_uuid=True), nullable=True,
+        Uuid(as_uuid=True),
+        nullable=True,
     )
     evidence_id: Mapped[UUID | None] = mapped_column(
-        Uuid(as_uuid=True), nullable=True,
+        Uuid(as_uuid=True),
+        nullable=True,
     )
     previous_state_json: Mapped[Any | None] = mapped_column(
-        "previous_state", JSON, nullable=True,
+        "previous_state",
+        JSON,
+        nullable=True,
     )
     new_state_json: Mapped[Any | None] = mapped_column(
-        "new_state", JSON, nullable=True,
+        "new_state",
+        JSON,
+        nullable=True,
     )
     client_ip: Mapped[str | None] = mapped_column(
-        String(64), nullable=True,
+        String(64),
+        nullable=True,
     )
     user_agent: Mapped[str | None] = mapped_column(
-        String(512), nullable=True,
+        String(512),
+        nullable=True,
     )
     engine_version: Mapped[str] = mapped_column(
-        String(32), nullable=False,
+        String(32),
+        nullable=False,
     )
     policy_version: Mapped[str] = mapped_column(
-        String(32), nullable=False,
+        String(32),
+        nullable=False,
     )
     sha256_checksum: Mapped[str | None] = mapped_column(
-        String(64), nullable=True,
+        String(64),
+        nullable=True,
     )
     integrity_hash: Mapped[str] = mapped_column(
-        String(64), nullable=False,
+        String(64),
+        nullable=False,
     )
     metadata_json: Mapped[dict[str, Any]] = mapped_column(
-        "metadata", JSON, nullable=False, default=dict,
+        "metadata",
+        JSON,
+        nullable=False,
+        default=dict,
     )

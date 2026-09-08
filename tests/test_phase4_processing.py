@@ -58,6 +58,8 @@ async def phase4_client(
         database_url="sqlite+aiosqlite://",
         storage_root=tmp_path / "data",
         log_config_path=tmp_path / "missing-logging.json",
+        rate_limit_enabled=False,
+        rate_limit_use_redis=False,
     )
     engine = create_async_engine(
         settings.database_url,

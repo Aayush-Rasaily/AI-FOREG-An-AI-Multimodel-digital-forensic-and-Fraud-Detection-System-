@@ -27,7 +27,9 @@ class TrackedFace:
 class FaceTracker(Protocol):
     """Interface for temporal face tracking."""
 
-    def detect(self, rgb: np.ndarray, *, width: int, height: int) -> tuple[
+    def detect(
+        self, rgb: np.ndarray, *, width: int, height: int
+    ) -> tuple[
         tuple[float, float, float, float],
         ...,
     ]:

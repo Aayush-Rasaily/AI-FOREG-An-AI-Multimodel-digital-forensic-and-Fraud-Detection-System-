@@ -13,11 +13,13 @@ contracts, and schemas change only when a phase explicitly requires it.
    ([release-engineering.md](release-engineering.md)).
 5. Do not commit secrets, `.env` files, real evidence, or model weights that
    are not licensed for this repository.
+6. Follow the [Code of Conduct](../CODE_OF_CONDUCT.md).
 
 ## Local checks
 
 Follow [development.md](development.md) and
-[coding-standards.md](coding-standards.md).
+[coding-standards.md](coding-standards.md). Contributor map:
+[developer-guide.md](developer-guide.md).
 
 ## Review expectations
 

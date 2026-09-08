@@ -31,6 +31,7 @@ class TestInfrastructureArtifacts:
         required = [
             DEPLOYMENT / "docker" / "backend.Dockerfile",
             DEPLOYMENT / "docker" / "frontend.Dockerfile",
+            DEPLOYMENT / "docker" / "worker.Dockerfile",
             DEPLOYMENT / "compose" / "docker-compose.production.yml",
             DEPLOYMENT / "compose" / "docker-compose.monitoring.yml",
             DEPLOYMENT / "k8s" / "namespace.yaml",
@@ -56,12 +57,12 @@ class TestInfrastructureArtifacts:
         assert missing == []
 
     def test_dockerfiles_are_multi_stage(self) -> None:
-        backend = (
-            DEPLOYMENT / "docker" / "backend.Dockerfile"
-        ).read_text(encoding="utf-8")
-        frontend = (
-            DEPLOYMENT / "docker" / "frontend.Dockerfile"
-        ).read_text(encoding="utf-8")
+        backend = (DEPLOYMENT / "docker" / "backend.Dockerfile").read_text(
+            encoding="utf-8"
+        )
+        frontend = (DEPLOYMENT / "docker" / "frontend.Dockerfile").read_text(
+            encoding="utf-8"
+        )
         assert "AS builder" in backend or "AS build" in backend
         assert "AS runtime" in backend
         assert "AS build" in frontend

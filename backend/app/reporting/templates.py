@@ -7,12 +7,7 @@ from typing import Any
 
 
 def _section_html(title: str, body: str) -> str:
-    return (
-        f'<section class="report-section">'
-        f"<h2>{escape(title)}</h2>"
-        f"{body}"
-        f"</section>"
-    )
+    return f'<section class="report-section"><h2>{escape(title)}</h2>{body}</section>'
 
 
 def _kv_table(data: dict[str, Any]) -> str:
@@ -92,11 +87,7 @@ def render_html_document(content: dict[str, Any]) -> str:
         elif isinstance(value, dict):
             body = _kv_table(
                 {
-                    k: (
-                        len(v)
-                        if isinstance(v, list)
-                        else v
-                    )
+                    k: (len(v) if isinstance(v, list) else v)
                     for k, v in value.items()
                     if k != "items"
                 }

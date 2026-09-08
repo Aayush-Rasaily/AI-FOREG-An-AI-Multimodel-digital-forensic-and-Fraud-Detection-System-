@@ -6,15 +6,16 @@ Revises: 20260912_0031
 
 from __future__ import annotations
 
-from typing import Sequence, Union
+from collections.abc import Sequence
 
 import sqlalchemy as sa
+
 from alembic import op
 
 revision: str = "20260913_0032"
-down_revision: Union[str, Sequence[str], None] = "20260912_0031"
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | Sequence[str] | None = "20260912_0031"
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
@@ -40,12 +41,16 @@ def upgrade() -> None:
         sa.Column("payload", sa.JSON(), nullable=False),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
         sa.ForeignKeyConstraint(
-            ["run_id"], ["analytics_runs.id"], ondelete="CASCADE",
+            ["run_id"],
+            ["analytics_runs.id"],
+            ondelete="CASCADE",
         ),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index(
-        "ix_analytics_snapshots_run_id", "analytics_snapshots", ["run_id"],
+        "ix_analytics_snapshots_run_id",
+        "analytics_snapshots",
+        ["run_id"],
     )
 
     op.create_table(
@@ -60,15 +65,21 @@ def upgrade() -> None:
         sa.Column("provenance", sa.JSON(), nullable=False),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
         sa.ForeignKeyConstraint(
-            ["run_id"], ["analytics_runs.id"], ondelete="CASCADE",
+            ["run_id"],
+            ["analytics_runs.id"],
+            ondelete="CASCADE",
         ),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index(
-        "ix_analytics_metrics_run_id", "analytics_metrics", ["run_id"],
+        "ix_analytics_metrics_run_id",
+        "analytics_metrics",
+        ["run_id"],
     )
     op.create_index(
-        "ix_analytics_metrics_key", "analytics_metrics", ["metric_key"],
+        "ix_analytics_metrics_key",
+        "analytics_metrics",
+        ["metric_key"],
     )
 
     op.create_table(
@@ -79,25 +90,31 @@ def upgrade() -> None:
         sa.Column("layout", sa.JSON(), nullable=False),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
         sa.ForeignKeyConstraint(
-            ["run_id"], ["analytics_runs.id"], ondelete="CASCADE",
+            ["run_id"],
+            ["analytics_runs.id"],
+            ondelete="CASCADE",
         ),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index(
-        "ix_analytics_dashboards_run_id", "analytics_dashboards", ["run_id"],
+        "ix_analytics_dashboards_run_id",
+        "analytics_dashboards",
+        ["run_id"],
     )
 
 
 def downgrade() -> None:
     op.drop_index(
-        "ix_analytics_dashboards_run_id", table_name="analytics_dashboards",
+        "ix_analytics_dashboards_run_id",
+        table_name="analytics_dashboards",
     )
     op.drop_table("analytics_dashboards")
     op.drop_index("ix_analytics_metrics_key", table_name="analytics_metrics")
     op.drop_index("ix_analytics_metrics_run_id", table_name="analytics_metrics")
     op.drop_table("analytics_metrics")
     op.drop_index(
-        "ix_analytics_snapshots_run_id", table_name="analytics_snapshots",
+        "ix_analytics_snapshots_run_id",
+        table_name="analytics_snapshots",
     )
     op.drop_table("analytics_snapshots")
     op.drop_index("ix_analytics_runs_status", table_name="analytics_runs")

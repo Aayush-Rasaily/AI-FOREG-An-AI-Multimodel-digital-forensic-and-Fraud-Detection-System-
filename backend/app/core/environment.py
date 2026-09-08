@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import os
 import tempfile
 from pathlib import Path
@@ -344,15 +345,19 @@ async def verify_startup_dependencies(settings: Settings) -> dict[str, Any]:
     try:
         import redis.asyncio as aioredis
 
-        client = aioredis.from_url(
-            settings.redis_url,
-            socket_connect_timeout=1,
-        )
-        try:
-            await client.ping()
-            checks.append(_status("redis", "PASS", "Redis is reachable."))
-        finally:
-            await client.aclose()
+        async def _ping_redis() -> None:
+            client = aioredis.from_url(
+                settings.redis_url,
+                socket_connect_timeout=1,
+                socket_timeout=1,
+            )
+            try:
+                await client.ping()
+            finally:
+                await client.aclose()
+
+        await asyncio.wait_for(_ping_redis(), timeout=2.0)
+        checks.append(_status("redis", "PASS", "Redis is reachable."))
     except Exception as exc:  # noqa: BLE001
         severity_redis: Literal["PASS", "WARN", "FAIL"] = (
             "FAIL" if settings.app_env == "production" else "WARN"

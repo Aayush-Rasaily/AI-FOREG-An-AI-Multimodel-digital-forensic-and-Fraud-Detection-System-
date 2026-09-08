@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   frontend:
-    name: Vitest and production build
+    name: Typecheck, Vitest, production build
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -28,6 +28,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: TypeScript
+        run: npm run lint
+
       - name: Vitest
         run: npm test
 
@@ -36,3 +39,23 @@ jobs:
         env:
           NODE_ENV: production
           VITE_API_BASE_URL: /api/v1
+
+      - name: Bundle verification
+        run: |
+          test -f dist/index.html
+          test -d dist/assets
+          python - <<'PY'
+          from pathlib import Path
+          dist = Path("dist")
+          assets = list(dist.glob("assets/*"))
+          if not assets:
+              raise SystemExit("Frontend production bundle has no assets.")
+          print(f"bundle_ok files={len(assets)}")
+          PY
+
+      - name: Upload frontend bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist/
+          retention-days: 14

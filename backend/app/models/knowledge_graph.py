@@ -29,7 +29,9 @@ class KnowledgeGraphRun(Base):
     )
 
     id: Mapped[UUID] = mapped_column(
-        Uuid(as_uuid=True), primary_key=True, default=uuid4,
+        Uuid(as_uuid=True),
+        primary_key=True,
+        default=uuid4,
     )
     case_id: Mapped[UUID] = mapped_column(
         Uuid(as_uuid=True),
@@ -39,15 +41,23 @@ class KnowledgeGraphRun(Base):
     status: Mapped[str] = mapped_column(String(32), nullable=False)
     entity_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     relationship_count: Mapped[int] = mapped_column(
-        Integer, nullable=False, default=0,
+        Integer,
+        nullable=False,
+        default=0,
     )
     engine_version: Mapped[str] = mapped_column(String(32), nullable=False)
     policy_version: Mapped[str] = mapped_column(String(32), nullable=False)
     metadata_json: Mapped[dict[str, Any]] = mapped_column(
-        "metadata", JSON, nullable=False, default=dict,
+        "metadata",
+        JSON,
+        nullable=False,
+        default=dict,
     )
     provenance_json: Mapped[dict[str, Any]] = mapped_column(
-        "provenance", JSON, nullable=False, default=dict,
+        "provenance",
+        JSON,
+        nullable=False,
+        default=dict,
     )
     error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
@@ -56,7 +66,8 @@ class KnowledgeGraphRun(Base):
         default=lambda: datetime.now(UTC),
     )
     completed_at: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=True), nullable=True,
+        DateTime(timezone=True),
+        nullable=True,
     )
 
 
@@ -72,7 +83,9 @@ class GraphEntity(Base):
     )
 
     id: Mapped[UUID] = mapped_column(
-        Uuid(as_uuid=True), primary_key=True, default=uuid4,
+        Uuid(as_uuid=True),
+        primary_key=True,
+        default=uuid4,
     )
     graph_id: Mapped[UUID] = mapped_column(
         Uuid(as_uuid=True),
@@ -90,10 +103,16 @@ class GraphEntity(Base):
     normalized_key: Mapped[str] = mapped_column(String(512), nullable=False)
     confidence: Mapped[float] = mapped_column(Float, nullable=False)
     attributes_json: Mapped[dict[str, Any]] = mapped_column(
-        "attributes", JSON, nullable=False, default=dict,
+        "attributes",
+        JSON,
+        nullable=False,
+        default=dict,
     )
     evidence_ids_json: Mapped[list] = mapped_column(
-        "evidence_ids", JSON, nullable=False, default=list,
+        "evidence_ids",
+        JSON,
+        nullable=False,
+        default=list,
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
@@ -113,7 +132,9 @@ class GraphRelationship(Base):
     )
 
     id: Mapped[UUID] = mapped_column(
-        Uuid(as_uuid=True), primary_key=True, default=uuid4,
+        Uuid(as_uuid=True),
+        primary_key=True,
+        default=uuid4,
     )
     graph_id: Mapped[UUID] = mapped_column(
         Uuid(as_uuid=True),
@@ -135,10 +156,16 @@ class GraphRelationship(Base):
     relationship_weight: Mapped[float] = mapped_column(Float, nullable=False)
     creation_source: Mapped[str] = mapped_column(String(64), nullable=False)
     evidence_ids_json: Mapped[list] = mapped_column(
-        "evidence_ids", JSON, nullable=False, default=list,
+        "evidence_ids",
+        JSON,
+        nullable=False,
+        default=list,
     )
     attributes_json: Mapped[dict[str, Any]] = mapped_column(
-        "attributes", JSON, nullable=False, default=dict,
+        "attributes",
+        JSON,
+        nullable=False,
+        default=dict,
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
@@ -158,7 +185,9 @@ class GraphEntityAlias(Base):
     )
 
     id: Mapped[UUID] = mapped_column(
-        Uuid(as_uuid=True), primary_key=True, default=uuid4,
+        Uuid(as_uuid=True),
+        primary_key=True,
+        default=uuid4,
     )
     graph_id: Mapped[UUID] = mapped_column(
         Uuid(as_uuid=True),
@@ -184,7 +213,9 @@ class GraphProvenance(Base):
     )
 
     id: Mapped[UUID] = mapped_column(
-        Uuid(as_uuid=True), primary_key=True, default=uuid4,
+        Uuid(as_uuid=True),
+        primary_key=True,
+        default=uuid4,
     )
     graph_id: Mapped[UUID] = mapped_column(
         Uuid(as_uuid=True),

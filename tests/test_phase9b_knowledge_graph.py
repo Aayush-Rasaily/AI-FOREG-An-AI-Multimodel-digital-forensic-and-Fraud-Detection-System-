@@ -82,7 +82,8 @@ async def phase9b_client(
     app.dependency_overrides[get_db_session] = _override_db
     transport = httpx.ASGITransport(app=app)
     async with httpx.AsyncClient(
-        transport=transport, base_url="http://test",
+        transport=transport,
+        base_url="http://test",
     ) as client:
         yield client, session_factory
     await engine.dispose()
@@ -133,9 +134,7 @@ class TestNormalizationAndResolution:
             normalized_key=make_identity_key("EMAIL", "A@B.COM"),
             identity_keys=(make_identity_key("EMAIL", "A@B.COM"),),
             evidence_ids=("e2",),
-            provenance=(
-                GraphProvenanceRef(source_kind="extraction", source_id="2"),
-            ),
+            provenance=(GraphProvenanceRef(source_kind="extraction", source_id="2"),),
         )
         resolved = resolve_entities([left, right])
         assert len(resolved) == 1
@@ -206,9 +205,7 @@ class TestNormalizationAndResolution:
         )
         first = resolve_entities([c1, c2])
         second = resolve_entities([c2, c1])
-        assert [item.entity_id for item in first] == [
-            item.entity_id for item in second
-        ]
+        assert [item.entity_id for item in first] == [item.entity_id for item in second]
 
 
 class TestRelationshipsAndScoring:
@@ -266,9 +263,7 @@ class TestApiAndService:
     @pytest.mark.asyncio
     async def test_preview_empty_graph(
         self,
-        phase9b_client: tuple[
-            httpx.AsyncClient, async_sessionmaker[AsyncSession]
-        ],
+        phase9b_client: tuple[httpx.AsyncClient, async_sessionmaker[AsyncSession]],
     ) -> None:
         client, _ = phase9b_client
         case = await create_case(client)
@@ -285,9 +280,7 @@ class TestApiAndService:
     @pytest.mark.asyncio
     async def test_build_get_search_neighbors(
         self,
-        phase9b_client: tuple[
-            httpx.AsyncClient, async_sessionmaker[AsyncSession]
-        ],
+        phase9b_client: tuple[httpx.AsyncClient, async_sessionmaker[AsyncSession]],
     ) -> None:
         client, _ = phase9b_client
         case = await create_case(client)
@@ -354,9 +347,7 @@ class TestApiAndService:
     @pytest.mark.asyncio
     async def test_service_repository_large_graph(
         self,
-        phase9b_client: tuple[
-            httpx.AsyncClient, async_sessionmaker[AsyncSession]
-        ],
+        phase9b_client: tuple[httpx.AsyncClient, async_sessionmaker[AsyncSession]],
     ) -> None:
         client, session_factory = phase9b_client
         case = await create_case(client)
@@ -395,9 +386,7 @@ class TestApiAndService:
     @pytest.mark.asyncio
     async def test_edge_deduplication_api_metadata(
         self,
-        phase9b_client: tuple[
-            httpx.AsyncClient, async_sessionmaker[AsyncSession]
-        ],
+        phase9b_client: tuple[httpx.AsyncClient, async_sessionmaker[AsyncSession]],
     ) -> None:
         client, _ = phase9b_client
         case = await create_case(client)
@@ -407,9 +396,7 @@ class TestApiAndService:
         assert built.status_code == 200
         data = built.json()["data"]
         assert data["engine_version"] == KG_ENGINE_VERSION
-        rel_keys = [
-            item["relationship_key"] for item in data["relationships"]
-        ]
+        rel_keys = [item["relationship_key"] for item in data["relationships"]]
         assert len(rel_keys) == len(set(rel_keys))
 
 
@@ -431,18 +418,14 @@ class TestProvenanceAndPolicy:
             display_name="+1 (555) 999-0000",
             normalized_key=phone_key,
             identity_keys=(phone_key,),
-            provenance=(
-                GraphProvenanceRef(source_kind="extraction", source_id="p1"),
-            ),
+            provenance=(GraphProvenanceRef(source_kind="extraction", source_id="p1"),),
         )
         right = CandidateEntity(
             entity_type=GraphEntityType.PHONE,
             display_name="+1-555-999-0000",
             normalized_key=phone_key,
             identity_keys=(phone_key,),
-            provenance=(
-                GraphProvenanceRef(source_kind="ocr", source_id="p2"),
-            ),
+            provenance=(GraphProvenanceRef(source_kind="ocr", source_id="p2"),),
         )
         resolved = resolve_entities([left, right])
         assert len(resolved) == 1
@@ -497,9 +480,7 @@ class TestProvenanceAndPolicy:
     @pytest.mark.asyncio
     async def test_repository_get_entity_missing(
         self,
-        phase9b_client: tuple[
-            httpx.AsyncClient, async_sessionmaker[AsyncSession]
-        ],
+        phase9b_client: tuple[httpx.AsyncClient, async_sessionmaker[AsyncSession]],
     ) -> None:
         client, _ = phase9b_client
         missing = await client.get(
@@ -510,9 +491,7 @@ class TestProvenanceAndPolicy:
     @pytest.mark.asyncio
     async def test_preview_does_not_persist(
         self,
-        phase9b_client: tuple[
-            httpx.AsyncClient, async_sessionmaker[AsyncSession]
-        ],
+        phase9b_client: tuple[httpx.AsyncClient, async_sessionmaker[AsyncSession]],
     ) -> None:
         client, _ = phase9b_client
         case = await create_case(client)

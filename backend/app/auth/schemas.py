@@ -5,11 +5,13 @@ from __future__ import annotations
 from datetime import datetime
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class LoginRequest(BaseModel):
     """Username and password login payload."""
+
+    model_config = ConfigDict(extra="forbid")
 
     username: str = Field(min_length=1, max_length=64)
     password: str = Field(min_length=1, max_length=128)
@@ -29,11 +31,15 @@ class TokenResponse(BaseModel):
 class RefreshRequest(BaseModel):
     """Refresh token exchange payload."""
 
+    model_config = ConfigDict(extra="forbid")
+
     refresh_token: str = Field(min_length=1)
 
 
 class LogoutRequest(BaseModel):
     """Optional refresh token to revoke on logout."""
+
+    model_config = ConfigDict(extra="forbid")
 
     refresh_token: str | None = None
 
@@ -41,12 +47,16 @@ class LogoutRequest(BaseModel):
 class PasswordChangeRequest(BaseModel):
     """Authenticated password change payload."""
 
+    model_config = ConfigDict(extra="forbid")
+
     current_password: str = Field(min_length=1, max_length=128)
     new_password: str = Field(min_length=12, max_length=128)
 
 
 class UserCreateRequest(BaseModel):
     """Administrator user creation payload."""
+
+    model_config = ConfigDict(extra="forbid")
 
     username: str = Field(min_length=3, max_length=64)
     password: str = Field(min_length=12, max_length=128)
@@ -58,6 +68,8 @@ class UserCreateRequest(BaseModel):
 
 class UserUpdateRequest(BaseModel):
     """Partial user update payload."""
+
+    model_config = ConfigDict(extra="forbid")
 
     display_name: str | None = Field(default=None, max_length=128)
     email: str | None = Field(default=None, max_length=256)

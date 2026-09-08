@@ -166,9 +166,7 @@ def build_feature_summary(
         window_seconds=window_seconds,
         hop_seconds=hop_seconds,
     )
-    mfcc_values = [
-        simplified_mfcc(frame, loaded.sample_rate) for frame in frames[:32]
-    ]
+    mfcc_values = [simplified_mfcc(frame, loaded.sample_rate) for frame in frames[:32]]
     mfcc_mean = (
         tuple(float(value) for value in np.mean(mfcc_values, axis=0))
         if mfcc_values

@@ -2,6 +2,8 @@
 
 All version-one HTTP endpoints. Base path: `/api/v1`.
 Interactive OpenAPI is served at `/docs` when `DEBUG=true`.
+Write payloads reject unknown fields (`extra="forbid"`) on login, user
+administration, and case create/update.
 This catalog is generated from route decorators in
 `backend/app/api/v1/endpoints/` (259 operations).
 

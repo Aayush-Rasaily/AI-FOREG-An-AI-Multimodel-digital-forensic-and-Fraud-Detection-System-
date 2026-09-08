@@ -26,7 +26,8 @@ class InvestigationIntelligenceService:
         self.engine = InvestigationIntelligenceEngine(session)
 
     def _to_response(
-        self, row: InvestigationSummary,
+        self,
+        row: InvestigationSummary,
     ) -> InvestigationSummaryResponse:
         return InvestigationSummaryResponse(
             id=row.id,
@@ -68,7 +69,9 @@ class InvestigationIntelligenceService:
         if await self.repository.get_case(case_id) is None:
             raise ResourceNotFoundError("The case was not found.")
         rows, total = await self.repository.list_for_case(
-            case_id, limit=limit, offset=offset,
+            case_id,
+            limit=limit,
+            offset=offset,
         )
         return InvestigationSummaryListResponse(
             items=[self._to_response(row) for row in rows],
@@ -88,7 +91,8 @@ class InvestigationIntelligenceService:
         return self._to_response(row)
 
     async def get_summary(
-        self, summary_id: UUID,
+        self,
+        summary_id: UUID,
     ) -> InvestigationSummaryResponse:
         row = await self.repository.get(summary_id)
         if row is None:

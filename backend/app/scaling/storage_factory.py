@@ -36,6 +36,4 @@ def create_storage_service(settings: Settings) -> StorageService:
         from backend.app.infrastructure.storage.gcs import GCSStorageConfig
 
         return GCSStorageConfig.from_settings(settings).as_adapter()
-    raise StorageError(
-        f"The configured storage backend '{backend}' is not available."
-    )
+    raise StorageError(f"The configured storage backend '{backend}' is not available.")

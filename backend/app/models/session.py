@@ -22,7 +22,9 @@ class UserSession(Base):
     __tablename__ = "sessions"
 
     id: Mapped[UUID] = mapped_column(
-        Uuid(as_uuid=True), primary_key=True, default=uuid4,
+        Uuid(as_uuid=True),
+        primary_key=True,
+        default=uuid4,
     )
     user_id: Mapped[UUID] = mapped_column(
         Uuid(as_uuid=True),
@@ -42,7 +44,8 @@ class UserSession(Base):
         default=lambda: datetime.now(UTC),
     )
     expires_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), nullable=False,
+        DateTime(timezone=True),
+        nullable=False,
     )
     device_name: Mapped[str | None] = mapped_column(String(128), nullable=True)
     browser: Mapped[str | None] = mapped_column(String(128), nullable=True)
@@ -50,7 +53,8 @@ class UserSession(Base):
     user_agent: Mapped[str | None] = mapped_column(String(512), nullable=True)
     remember_me: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     revoked_at: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=True), nullable=True,
+        DateTime(timezone=True),
+        nullable=True,
     )
 
     user: Mapped[User] = relationship("User", back_populates="sessions")
@@ -67,7 +71,9 @@ class RefreshToken(Base):
     __tablename__ = "refresh_tokens"
 
     id: Mapped[UUID] = mapped_column(
-        Uuid(as_uuid=True), primary_key=True, default=uuid4,
+        Uuid(as_uuid=True),
+        primary_key=True,
+        default=uuid4,
     )
     user_id: Mapped[UUID] = mapped_column(
         Uuid(as_uuid=True),
@@ -82,7 +88,10 @@ class RefreshToken(Base):
         index=True,
     )
     token_hash: Mapped[str] = mapped_column(
-        String(64), nullable=False, unique=True, index=True,
+        String(64),
+        nullable=False,
+        unique=True,
+        index=True,
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
@@ -91,12 +100,15 @@ class RefreshToken(Base):
         server_default=func.now(),
     )
     expires_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), nullable=False,
+        DateTime(timezone=True),
+        nullable=False,
     )
     revoked_at: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=True), nullable=True,
+        DateTime(timezone=True),
+        nullable=True,
     )
 
     session: Mapped[UserSession] = relationship(
-        "UserSession", back_populates="refresh_tokens",
+        "UserSession",
+        back_populates="refresh_tokens",
     )

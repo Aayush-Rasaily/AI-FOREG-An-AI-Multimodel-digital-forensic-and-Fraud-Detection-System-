@@ -36,7 +36,8 @@ from backend.app.workflow.service import WorkflowService
 
 router = APIRouter(tags=["investigation-workflow"])
 WorkflowServiceDependency = Annotated[
-    WorkflowService, Depends(get_workflow_service),
+    WorkflowService,
+    Depends(get_workflow_service),
 ]
 
 

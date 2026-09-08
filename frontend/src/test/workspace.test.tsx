@@ -69,7 +69,9 @@ describe("investigation workspace", () => {
       await screen.findByRole("tab", { name: "AI Jury" }, { timeout: 10000 }),
     );
 
-    expect(screen.getByText("No evidence selected")).toBeInTheDocument();
+    expect(
+      await screen.findByRole("heading", { name: "No evidence selected" }, { timeout: 10000 }),
+    ).toBeInTheDocument();
   });
 });
 

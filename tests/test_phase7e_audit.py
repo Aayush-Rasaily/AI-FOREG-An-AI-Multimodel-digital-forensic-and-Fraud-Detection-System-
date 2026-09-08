@@ -255,9 +255,7 @@ class TestFiltering:
         )
         assert resp.status_code == 200
         items = resp.json()["data"]["items"]
-        assert all(
-            i["operation"] == "case.created" for i in items
-        )
+        assert all(i["operation"] == "case.created" for i in items)
 
 
 class TestExport:
@@ -312,7 +310,8 @@ class TestMigration:
 
     def test_migration_chain(self) -> None:
         spec = importlib.util.spec_from_file_location(
-            "m0018", MIGRATION_PATH,
+            "m0018",
+            MIGRATION_PATH,
         )
         assert spec and spec.loader
         mod = importlib.util.module_from_spec(spec)

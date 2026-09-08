@@ -56,9 +56,7 @@ class JsonFormatter(logging.Formatter):
         if request_id is not None:
             payload["request_id"] = str(request_id)
         if record.exc_info:
-            payload["exception"] = redact_secrets(
-                self.formatException(record.exc_info)
-            )
+            payload["exception"] = redact_secrets(self.formatException(record.exc_info))
         return json.dumps(payload, default=str)
 
 

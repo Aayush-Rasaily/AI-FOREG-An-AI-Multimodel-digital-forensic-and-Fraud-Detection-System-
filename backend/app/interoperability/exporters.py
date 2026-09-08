@@ -31,16 +31,18 @@ def _attach_manifest(
     case = snapshot.case
     evidence_ids = [str(item.get("id")) for item in snapshot.evidence]
     report_versions = [
-        str(item.get("report_version") or item.get("id"))
-        for item in snapshot.reports
+        str(item.get("report_version") or item.get("id")) for item in snapshot.reports
     ]
     timeline_version = None
     if snapshot.timeline:
-        timeline_version = str(
-            snapshot.timeline.get("id")
-            or snapshot.timeline.get("policy_version")
-            or ""
-        ) or None
+        timeline_version = (
+            str(
+                snapshot.timeline.get("id")
+                or snapshot.timeline.get("policy_version")
+                or ""
+            )
+            or None
+        )
     manifest = build_manifest(
         created_at=created_at,
         case_id=str(case.get("id")),
@@ -124,15 +126,13 @@ def export_csv_package(
     files["case.csv"] = case_buf.getvalue().encode("utf-8")
 
     evidence_fields = sorted(
-        {
-            key
-            for item in snapshot.evidence
-            for key in item.keys()
-        }
+        {key for item in snapshot.evidence for key in item.keys()}
     ) or ["id"]
     ev_buf = io.StringIO()
     ev_writer = csv.DictWriter(
-        ev_buf, fieldnames=evidence_fields, extrasaction="ignore",
+        ev_buf,
+        fieldnames=evidence_fields,
+        extrasaction="ignore",
     )
     ev_writer.writeheader()
     for item in sorted(snapshot.evidence, key=lambda row: str(row.get("id", ""))):

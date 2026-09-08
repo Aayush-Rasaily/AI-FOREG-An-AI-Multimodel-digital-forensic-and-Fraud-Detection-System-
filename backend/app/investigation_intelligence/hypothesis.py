@@ -172,9 +172,7 @@ def generate_hypotheses(
         )
 
     missing_meta = [
-        str(item["id"])
-        for item in evidence
-        if not item.get("has_metadata")
+        str(item["id"]) for item in evidence if not item.get("has_metadata")
     ]
     if missing_meta:
         add(
@@ -203,9 +201,7 @@ def generate_hypotheses(
             support=eids,
             provenance=ProvenanceBundle(
                 evidence_ids=tuple(eids),
-                correlation_ids=tuple(
-                    sorted(str(item["id"]) for item in correlations)
-                ),
+                correlation_ids=tuple(sorted(str(item["id"]) for item in correlations)),
             ),
         )
 
@@ -290,8 +286,7 @@ def generate_hypotheses(
                 evidence_ids=tuple(eids),
                 graph_node_ids=tuple(
                     sorted(
-                        str(item.get("entity_key") or "")
-                        for item in identity_entities
+                        str(item.get("entity_key") or "") for item in identity_entities
                     )
                 ),
             ),
@@ -333,9 +328,7 @@ def generate_hypotheses(
             ),
         )
 
-    custody_gaps = [
-        eid for eid, count in custody.items() if int(count or 0) == 0
-    ]
+    custody_gaps = [eid for eid, count in custody.items() if int(count or 0) == 0]
     if custody_gaps:
         add(
             HypothesisType.CHAIN_OF_CUSTODY_CONCERN,

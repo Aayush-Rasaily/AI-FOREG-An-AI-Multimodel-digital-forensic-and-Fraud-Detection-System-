@@ -284,14 +284,12 @@ class KnowledgeGraphService:
             raise GraphNotFoundError("Knowledge graph not found.")
         entities = await self.repository.list_entities(graph_id=graph_id)
         relationships = await self.repository.list_relationships(graph_id=graph_id)
-        entity_responses = [
-            self._entity_response(row) for row in entities
-        ]
-        rel_responses = [
-            self._relationship_response(row) for row in relationships
-        ]
+        entity_responses = [self._entity_response(row) for row in entities]
+        rel_responses = [self._relationship_response(row) for row in relationships]
         return self._run_response(
-            run, entities=entity_responses, relationships=rel_responses,
+            run,
+            entities=entity_responses,
+            relationships=rel_responses,
         )
 
     async def list_entities(
@@ -332,7 +330,8 @@ class KnowledgeGraphService:
             raise EntityNotFoundError("Graph entity not found.")
         aliases = await self.repository.aliases_for(row.graph_id, row.entity_key)
         prov_rows = await self.repository.provenance_for(
-            row.graph_id, row.entity_key,
+            row.graph_id,
+            row.entity_key,
         )
         return self._entity_response(
             row,
@@ -360,7 +359,8 @@ class KnowledgeGraphService:
     async def get_neighbors(self, entity_id: UUID) -> NeighborResponse:
         entity = await self.get_entity(entity_id)
         edges = await self.repository.neighbors(
-            entity.graph_id, entity.entity_key,
+            entity.graph_id,
+            entity.entity_key,
         )
         neighbor_keys = sorted(
             {
@@ -384,6 +384,9 @@ class KnowledgeGraphService:
         )
 
     async def search(
-        self, *, query: str, case_id: UUID | None = None,
+        self,
+        *,
+        query: str,
+        case_id: UUID | None = None,
     ) -> GraphEntityListResponse:
         return await self.list_entities(case_id=case_id, query=query)

@@ -81,9 +81,7 @@ class KnowledgeGraphRepository:
         if case_id is not None:
             stmt = stmt.where(GraphRelationship.case_id == case_id)
         if relationship_type:
-            stmt = stmt.where(
-                GraphRelationship.relationship_type == relationship_type
-            )
+            stmt = stmt.where(GraphRelationship.relationship_type == relationship_type)
         stmt = stmt.order_by(
             GraphRelationship.relationship_type.asc(),
             GraphRelationship.source_entity_key.asc(),
@@ -93,7 +91,9 @@ class KnowledgeGraphRepository:
         return list(result.scalars().all())
 
     async def get_entity_by_key(
-        self, graph_id: UUID, entity_key: str,
+        self,
+        graph_id: UUID,
+        entity_key: str,
     ) -> GraphEntity | None:
         result = await self.session.execute(
             select(GraphEntity).where(
@@ -107,21 +107,27 @@ class KnowledgeGraphRepository:
         return await self.session.get(GraphEntity, entity_id)
 
     async def neighbors(
-        self, graph_id: UUID, entity_key: str,
+        self,
+        graph_id: UUID,
+        entity_key: str,
     ) -> list[GraphRelationship]:
         result = await self.session.execute(
-            select(GraphRelationship).where(
+            select(GraphRelationship)
+            .where(
                 GraphRelationship.graph_id == graph_id,
                 or_(
                     GraphRelationship.source_entity_key == entity_key,
                     GraphRelationship.target_entity_key == entity_key,
                 ),
-            ).order_by(GraphRelationship.relationship_type.asc())
+            )
+            .order_by(GraphRelationship.relationship_type.asc())
         )
         return list(result.scalars().all())
 
     async def aliases_for(
-        self, graph_id: UUID, entity_key: str,
+        self,
+        graph_id: UUID,
+        entity_key: str,
     ) -> list[GraphEntityAlias]:
         result = await self.session.execute(
             select(GraphEntityAlias)
@@ -134,7 +140,9 @@ class KnowledgeGraphRepository:
         return list(result.scalars().all())
 
     async def provenance_for(
-        self, graph_id: UUID, target_key: str,
+        self,
+        graph_id: UUID,
+        target_key: str,
     ) -> list[GraphProvenance]:
         result = await self.session.execute(
             select(GraphProvenance)

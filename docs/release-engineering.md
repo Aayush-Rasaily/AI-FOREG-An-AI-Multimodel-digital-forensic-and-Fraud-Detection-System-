@@ -13,9 +13,12 @@ gate. This document covers GitHub Actions, SemVer, and image publishing.
 | CI | `.github/workflows/ci.yml` | push to `main`, pull requests |
 | Backend | `.github/workflows/backend.yml` | called by CI |
 | Frontend | `.github/workflows/frontend.yml` | called by CI |
+| Docs | `.github/workflows/docs.yml` | called by CI |
 | Security | `.github/workflows/security.yml` | called by CI |
 | Docker | `.github/workflows/docker.yml` | called by CI (build) and Release (publish) |
 | Release | `.github/workflows/release.yml` | tags `v*.*.*` or manual dispatch |
+
+Dependabot: `.github/dependabot.yml` (weekly pip, npm, Actions, Docker).
 
 CI fails immediately when any reusable job fails (`quality-gate` requires all).
 
@@ -23,15 +26,19 @@ CI fails immediately when any reusable job fails (`quality-gate` requires all).
 
 - Ruff lint + format
 - MyPy
-- Backend pytest
-- Frontend Vitest
-- Frontend production build
-- Alembic single-head verification
+- Backend pytest (JUnit artifact)
+- Frontend TypeScript (`npm run lint`), Vitest, production build
+- Documentation set present
+- Alembic single-head verification **and** upgrade / `downgrade -1` / upgrade on PostgreSQL 16
 - OpenAPI 3.x schema validation
+- Version consistency (`pyproject.toml`, `VERSION`, `frontend/package.json`)
+- `uv lock --check`
 - pip-audit / npm audit (critical)
+- Gitleaks secret detection
 - Dependency review on pull requests
 - Filesystem + container Trivy scans (critical, unfixed)
-- Backend and frontend Docker image builds
+- Docker Compose production `config`
+- Backend, frontend, and worker Docker image builds
 
 ## Branching strategy
 
@@ -44,7 +51,42 @@ hotfix/*        production emergency; merge to main and tag a patch
 
 - Pull requests are the only path onto `main`.
 - Do not rewrite forensic/AI/investigation engines in release PRs.
-- Protect `main` with required checks: `CI / Quality gate`.
+- Protect `main` with required checks: **CI / Quality gate**.
+
+## Artifact retention
+
+GitHub Actions artifacts (default **14 days**):
+
+| Artifact | Source |
+| --- | --- |
+| `backend-ci-reports` | pytest JUnit XML |
+| `frontend-dist` | production Vite bundle |
+| `pip-audit-report` | `reports/security/` |
+| `ai-forge-<version>` | release notes, `version.json`, container manifest |
+
+## Local pipeline reproduction
+
+```bash
+uv lock --check
+uv sync --locked --dev
+uv run ruff check backend tests
+uv run ruff format --check backend tests
+uv run mypy backend
+uv run pytest tests -q --tb=short
+uv run alembic -c backend/alembic.ini upgrade head
+cd frontend && npm ci && npm run lint && npm test && npm run build
+docker compose -f deployment/compose/docker-compose.production.yml --env-file .env.production.example config
+```
+
+## Troubleshooting CI
+
+| Symptom | Check |
+| --- | --- |
+| Quality gate skipped | A required job failed; open that job log |
+| Alembic round-trip failed | Migration `downgrade` on PostgreSQL 16; do not ship dual heads |
+| Gitleaks failed | Remove live secrets; placeholders belong in `*.example` files |
+| Docker job failed | Dockerfile path, Compose `:?` env vars, Trivy **critical** |
+| Release job failed | Tag `vX.Y.Z` must equal `pyproject.toml` version |
 
 ## Versioning policy (SemVer)
 
@@ -68,6 +110,7 @@ Image tags published to GHCR:
 Images:
 
 - `ghcr.io/<owner>/ai-forge-api`
+- `ghcr.io/<owner>/ai-forge-api-worker`
 - `ghcr.io/<owner>/ai-forge-frontend`
 
 Multi-platform (`linux/amd64,linux/arm64`) on publish; CI builds `linux/amd64`.
@@ -77,7 +120,7 @@ Multi-platform (`linux/amd64,linux/arm64`) on publish; CI builds `linux/amd64`.
 1. Merge to `main` with green CI.
 2. Bump `pyproject.toml` version (and keep `CHANGELOG.md` in the same PR when possible).
 3. Tag `vX.Y.Z` and push the tag.
-4. `release.yml` re-runs CI, generates notes/changelog artifacts, creates a GitHub Release, and publishes containers.
+4. `release.yml` re-runs CI, attaches notes **from CHANGELOG.md**, creates a GitHub Release, and publishes containers.
 5. Deploy using Phase 8G/10A runbooks (`docs/release.md`, `docs/deployment.md`).
 6. Run in-cluster `POST /api/v1/system/release-check`.
 
@@ -109,4 +152,5 @@ runtime behavior is unchanged.
 - [release.md](release.md) — in-cluster release identity
 - [deployment.md](deployment.md) — compose/k8s/nginx
 - [disaster-recovery.md](disaster-recovery.md) — restore/rollback
+- [production-readiness.md](production-readiness.md) — v1.0 ops sign-off
 - [security-hardening.md](security-hardening.md) — dependency scans

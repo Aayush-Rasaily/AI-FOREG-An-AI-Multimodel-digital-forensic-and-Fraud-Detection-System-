@@ -18,7 +18,8 @@ from backend.app.core.responses import ApiResponse
 
 router = APIRouter(tags=["audit"])
 AuditServiceDependency = Annotated[
-    AuditService, Depends(get_audit_service),
+    AuditService,
+    Depends(get_audit_service),
 ]
 
 
@@ -82,9 +83,7 @@ async def export_audit_log(
         content=result.payload,
         media_type="application/json",
         headers={
-            "Content-Disposition": (
-                'attachment; filename="audit-log.json"'
-            ),
+            "Content-Disposition": ('attachment; filename="audit-log.json"'),
             "X-Audit-Checksum": result.checksum,
         },
     )
@@ -120,7 +119,9 @@ async def list_case_audit_events(
     """Return audit events scoped to one case."""
     return ApiResponse(
         data=await service.list_events(
-            case_id=case_id, limit=limit, offset=offset,
+            case_id=case_id,
+            limit=limit,
+            offset=offset,
         ),
         request_id=get_request_id(),
     )

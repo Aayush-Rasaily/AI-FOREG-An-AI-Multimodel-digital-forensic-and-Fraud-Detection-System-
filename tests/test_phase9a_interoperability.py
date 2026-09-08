@@ -118,7 +118,8 @@ async def phase9a_client(
     app.dependency_overrides[get_db_session] = _override_db
     transport = httpx.ASGITransport(app=app)
     async with httpx.AsyncClient(
-        transport=transport, base_url="http://test",
+        transport=transport,
+        base_url="http://test",
     ) as client:
         yield client
     await engine.dispose()
@@ -128,7 +129,8 @@ class TestMigration:
     def test_migration_chain(self) -> None:
         assert MIGRATION_PATH.is_file()
         spec = importlib.util.spec_from_file_location(
-            "interop_migration", MIGRATION_PATH,
+            "interop_migration",
+            MIGRATION_PATH,
         )
         assert spec and spec.loader
         module = importlib.util.module_from_spec(spec)
@@ -142,7 +144,8 @@ class TestDeterministicPackage:
         case_id = str(uuid4())
         snapshot = _snapshot(case_id=case_id, case_number="CASE-9A-1")
         files, manifest = export_json_package(
-            snapshot, created_at="2026-01-01T00:00:00Z",
+            snapshot,
+            created_at="2026-01-01T00:00:00Z",
         )
         assert "manifest.json" in files
         assert manifest["schema_version"] == PACKAGE_SCHEMA_VERSION
@@ -155,13 +158,11 @@ class TestDeterministicPackage:
             for path, payload in files.items()
             if path != "manifest.json"
         }
-        assert package_checksum_from_files(checksums) == manifest[
-            "package_checksum"
-        ]
+        assert package_checksum_from_files(checksums) == manifest["package_checksum"]
         assert "manifest_checksum" in manifest
-        assert manifest["provenance"]["package_checksum"] == manifest[
-            "package_checksum"
-        ]
+        assert (
+            manifest["provenance"]["package_checksum"] == manifest["package_checksum"]
+        )
 
     def test_archive_deterministic(self) -> None:
         files = {"b.txt": b"b", "a.txt": b"a"}
@@ -174,7 +175,8 @@ class TestDeterministicPackage:
         case_id = str(uuid4())
         snapshot = _snapshot(case_id=case_id, case_number="CASE-DUP")
         files, _manifest = export_json_package(
-            snapshot, created_at="2026-01-01T00:00:00Z",
+            snapshot,
+            created_at="2026-01-01T00:00:00Z",
         )
         result = validate_package(
             members=files,
@@ -234,7 +236,8 @@ class TestDeterministicPackage:
 class TestInteropApi:
     @pytest.mark.asyncio
     async def test_export_list_manifest_download(
-        self, phase9a_client: httpx.AsyncClient,
+        self,
+        phase9a_client: httpx.AsyncClient,
     ) -> None:
         case = await create_case(phase9a_client)
         case_id = case["id"]
@@ -290,7 +293,8 @@ class TestInteropApi:
 
     @pytest.mark.asyncio
     async def test_import_validation_and_conflicts(
-        self, phase9a_client: httpx.AsyncClient,
+        self,
+        phase9a_client: httpx.AsyncClient,
     ) -> None:
         case = await create_case(phase9a_client)
         case_id = case["id"]
@@ -317,8 +321,7 @@ class TestInteropApi:
         assert conflict_body["status"] == "CONFLICTS"
         assert conflict_body["integrity_status"] == "CONFLICTS"
         assert any(
-            f"case_number:{case_number}" == item
-            or item.startswith("case_id:")
+            f"case_number:{case_number}" == item or item.startswith("case_id:")
             for item in conflict_body["conflicts"]
         )
 
@@ -335,7 +338,8 @@ class TestInteropApi:
         fresh_id = str(uuid4())
         snapshot = _snapshot(case_id=fresh_id, case_number="CASE-FRESH-9A")
         files, _ = export_json_package(
-            snapshot, created_at="2026-01-01T00:00:00Z",
+            snapshot,
+            created_at="2026-01-01T00:00:00Z",
         )
         archive = build_deterministic_zip(files)
         ok = await phase9a_client.post(

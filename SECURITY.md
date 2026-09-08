@@ -1,14 +1,29 @@
 # Security Policy
 
-AI_Forge is a foundation for regulated workloads and must not be used with
-real evidence or production credentials until authentication, authorization,
-tenant isolation, encryption, audit immutability, retention, and deployment
-hardening are implemented and reviewed.
+AI-Forge v1.0.0 includes JWT authentication, RBAC, upload allow-lists, audit
+logging, and production secret validation. Treat it as **sensitive
+investigative software**: do not put real case data in public issues.
 
-Do not report vulnerabilities with confidential evidence, credentials, or
-personally identifiable information. Provide a minimal reproducible
-description through the organization's approved private security channel.
-Public issue trackers are not appropriate for security reports.
+## Supported versions
 
-Dependencies and container images should be continuously scanned, and security
-fixes should be evaluated before each release.
+| Version | Support |
+| --- | --- |
+| 1.0.x | Security fixes for the current stable line |
+| &lt; 1.0 | Unsupported (pre-release trains) |
+
+## Reporting a vulnerability
+
+Do **not** open a public GitHub issue for a security defect.
+
+1. Use GitHub **Privately report a vulnerability** on this repository, or
+   email the maintainer listed in the repository profile.
+2. Include affected version, a minimal reproduction **without** real evidence
+   or credentials, and impact.
+3. Allow a reasonable window for a patch before public discussion.
+
+We will acknowledge reports and ship a patch release (`1.0.x`) when a fix is
+verified. Critical CI scans (`pip-audit`, `npm audit`, Trivy, Gitleaks) fail
+the pipeline on **critical** findings.
+
+See [docs/security-rc3.md](docs/security-rc3.md) and
+[docs/security-hardening.md](docs/security-hardening.md).

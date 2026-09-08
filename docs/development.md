@@ -1,6 +1,7 @@
 # Development
 
-Phase 10H documentation index: [README.md](README.md). Standards:
+Phase 10H documentation index: [README.md](README.md). Contributor map:
+[developer-guide.md](developer-guide.md). Standards:
 [coding-standards.md](coding-standards.md). Contributions:
 [contributing.md](contributing.md).
 

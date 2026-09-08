@@ -9,15 +9,16 @@ these tables use the decision_support_* prefix.
 
 from __future__ import annotations
 
-from typing import Sequence, Union
+from collections.abc import Sequence
 
 import sqlalchemy as sa
+
 from alembic import op
 
 revision: str = "20260910_0029"
-down_revision: Union[str, Sequence[str], None] = "20260909_0028"
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | Sequence[str] | None = "20260909_0028"
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
@@ -72,7 +73,9 @@ def upgrade() -> None:
         sa.Column("updated_at", sa.DateTime(timezone=True), nullable=False),
         sa.ForeignKeyConstraint(["case_id"], ["cases.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(
-            ["run_id"], ["decision_support_runs.id"], ondelete="CASCADE",
+            ["run_id"],
+            ["decision_support_runs.id"],
+            ondelete="CASCADE",
         ),
         sa.PrimaryKeyConstraint("id"),
     )
@@ -111,7 +114,9 @@ def upgrade() -> None:
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
         sa.ForeignKeyConstraint(["case_id"], ["cases.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(
-            ["run_id"], ["decision_support_runs.id"], ondelete="CASCADE",
+            ["run_id"],
+            ["decision_support_runs.id"],
+            ondelete="CASCADE",
         ),
         sa.PrimaryKeyConstraint("id"),
     )
@@ -139,10 +144,14 @@ def upgrade() -> None:
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
         sa.ForeignKeyConstraint(["case_id"], ["cases.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(
-            ["run_id"], ["decision_support_runs.id"], ondelete="SET NULL",
+            ["run_id"],
+            ["decision_support_runs.id"],
+            ondelete="SET NULL",
         ),
         sa.ForeignKeyConstraint(
-            ["task_id"], ["decision_support_tasks.id"], ondelete="SET NULL",
+            ["task_id"],
+            ["decision_support_tasks.id"],
+            ondelete="SET NULL",
         ),
         sa.PrimaryKeyConstraint("id"),
     )

@@ -104,9 +104,7 @@ class CaseAccessRecord(Base):
         nullable=False,
     )
     access_level: Mapped[str] = mapped_column(String(64), nullable=False)
-    granted_by: Mapped[UUID | None] = mapped_column(
-        Uuid(as_uuid=True), nullable=True
-    )
+    granted_by: Mapped[UUID | None] = mapped_column(Uuid(as_uuid=True), nullable=True)
     reason: Mapped[str | None] = mapped_column(Text, nullable=True)
     active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     granted_at: Mapped[datetime] = mapped_column(

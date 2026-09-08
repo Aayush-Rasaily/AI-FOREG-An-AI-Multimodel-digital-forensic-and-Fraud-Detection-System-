@@ -53,14 +53,10 @@ def compute_coverage(
         if item.coverage_status == EvidenceCoverageStatus.FAILED
     )
     supporting = sum(
-        1
-        for item in participations
-        if item.fusion_verdict in _SUSPICIOUS_VERDICTS
+        1 for item in participations if item.fusion_verdict in _SUSPICIOUS_VERDICTS
     )
     contradictory = sum(
-        1
-        for item in participations
-        if item.fusion_verdict in _GENUINE_VERDICTS
+        1 for item in participations if item.fusion_verdict in _GENUINE_VERDICTS
     )
     modalities: set[str] = set()
     for item in participations:

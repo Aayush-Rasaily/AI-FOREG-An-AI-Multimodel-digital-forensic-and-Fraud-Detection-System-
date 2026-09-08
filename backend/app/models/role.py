@@ -66,7 +66,9 @@ class Role(Base):
     __table_args__ = (UniqueConstraint("name", name="uq_roles_name"),)
 
     id: Mapped[UUID] = mapped_column(
-        Uuid(as_uuid=True), primary_key=True, default=uuid4,
+        Uuid(as_uuid=True),
+        primary_key=True,
+        default=uuid4,
     )
     name: Mapped[str] = mapped_column(String(64), nullable=False)
     description: Mapped[str] = mapped_column(String(512), nullable=False, default="")
@@ -98,7 +100,9 @@ class Permission(Base):
     __table_args__ = (UniqueConstraint("code", name="uq_permissions_code"),)
 
     id: Mapped[UUID] = mapped_column(
-        Uuid(as_uuid=True), primary_key=True, default=uuid4,
+        Uuid(as_uuid=True),
+        primary_key=True,
+        default=uuid4,
     )
     code: Mapped[str] = mapped_column(String(64), nullable=False)
     description: Mapped[str] = mapped_column(String(512), nullable=False, default="")

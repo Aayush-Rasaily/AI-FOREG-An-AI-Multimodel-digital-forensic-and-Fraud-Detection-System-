@@ -354,4 +354,3 @@ async def test_resolver_direct_empty(phase7c_client) -> None:
         assert result.metadata["evidence_count"] == 0
         assert result.provenance["engine_version"] == ENGINE_VERSION
         assert result.provenance["policy_version"] == POLICY_VERSION
-

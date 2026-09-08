@@ -33,9 +33,7 @@ def policy_document() -> dict[str, Any]:
         "engine_version": ENGINE_VERSION,
         "case_retention_days": CASE_RETENTION_DAYS,
         "evidence_retention_days": EVIDENCE_RETENTION_DAYS,
-        "report_publication_requires_approval": (
-            REPORT_PUBLICATION_REQUIRES_APPROVAL
-        ),
+        "report_publication_requires_approval": (REPORT_PUBLICATION_REQUIRES_APPROVAL),
         "workflow_approval_required_for_archive": (
             WORKFLOW_APPROVAL_REQUIRED_FOR_ARCHIVE
         ),
@@ -44,9 +42,7 @@ def policy_document() -> dict[str, Any]:
         "policies": [
             {
                 "code": PolicyCode.CASE_RETENTION.value,
-                "description": (
-                    f"Cases retained for {CASE_RETENTION_DAYS} days."
-                ),
+                "description": (f"Cases retained for {CASE_RETENTION_DAYS} days."),
             },
             {
                 "code": PolicyCode.EVIDENCE_RETENTION.value,
@@ -60,9 +56,7 @@ def policy_document() -> dict[str, Any]:
             },
             {
                 "code": PolicyCode.WORKFLOW_APPROVAL.value,
-                "description": (
-                    "Archival requires approved/reported workflow status."
-                ),
+                "description": ("Archival requires approved/reported workflow status."),
             },
             {
                 "code": PolicyCode.AI_EXECUTION.value,

@@ -305,15 +305,15 @@ class TestAuthApi:
         assert permissions.status_code == 200
         assert any(item["name"] == "Administrator" for item in roles.json()["data"])
         assert any(
-            item["code"] == "admin.manage_users"
-            for item in permissions.json()["data"]
+            item["code"] == "admin.manage_users" for item in permissions.json()["data"]
         )
 
 
 class TestMigration:
     def test_migration_file_loads(self) -> None:
         spec = importlib.util.spec_from_file_location(
-            "phase8a_migration", MIGRATION_PATH,
+            "phase8a_migration",
+            MIGRATION_PATH,
         )
         assert spec is not None and spec.loader is not None
         module = importlib.util.module_from_spec(spec)

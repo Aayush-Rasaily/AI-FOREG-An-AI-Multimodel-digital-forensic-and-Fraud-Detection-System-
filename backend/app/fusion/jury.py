@@ -59,9 +59,7 @@ def assess_jury(
         if role != JuryMemberRole.CONSISTENCY_ANALYST:
             assessments.append(_assess_role(role, scoped))
     specialist_assessments = tuple(assessments)
-    assessments.append(
-        _assess_senior_judge(specialist_assessments, member_findings)
-    )
+    assessments.append(_assess_senior_judge(specialist_assessments, member_findings))
     return tuple(assessments)
 
 
@@ -77,9 +75,7 @@ def _assess_role(
     findings: tuple[NormalizedFinding, ...],
 ) -> JuryAssessment:
     actionable = [
-        item
-        for item in findings
-        if item.verdict != FindingVerdict.UNAVAILABLE
+        item for item in findings if item.verdict != FindingVerdict.UNAVAILABLE
     ]
     if not findings:
         return JuryAssessment(
@@ -101,29 +97,21 @@ def _assess_role(
             confidence=None,
             availability=ModalityAvailability.UNAVAILABLE,
             supporting_finding_ids=(),
-            contradictory_finding_ids=tuple(
-                item.finding_id for item in findings
-            ),
+            contradictory_finding_ids=tuple(item.finding_id for item in findings),
             explanation="Scoped findings are unavailable capability states only.",
             limitations="Unavailable analysis is not treated as negative evidence.",
         )
     supporting = [
-        item.finding_id
-        for item in actionable
-        if item.verdict in _SUSPICIOUS_VERDICTS
+        item.finding_id for item in actionable if item.verdict in _SUSPICIOUS_VERDICTS
     ]
     genuine = [
-        item.finding_id
-        for item in actionable
-        if item.verdict in _GENUINE_VERDICTS
+        item.finding_id for item in actionable if item.verdict in _GENUINE_VERDICTS
     ]
     fraud_count = sum(
         1 for item in actionable if item.verdict == FindingVerdict.SUPPORTS_FRAUD
     )
     suspicious_count = sum(
-        1
-        for item in actionable
-        if item.verdict == FindingVerdict.SUPPORTS_SUSPICIOUS
+        1 for item in actionable if item.verdict == FindingVerdict.SUPPORTS_SUSPICIOUS
     )
     if fraud_count > 0:
         verdict = FusionVerdict.POTENTIAL_FRAUD
@@ -138,9 +126,7 @@ def _assess_role(
     confidences = [
         item.confidence for item in actionable if item.confidence is not None
     ]
-    confidence = (
-        round(sum(confidences) / len(confidences), 4) if confidences else None
-    )
+    confidence = round(sum(confidences) / len(confidences), 4) if confidences else None
     return JuryAssessment(
         role=role,
         member_name=_ROLE_LABELS[role],
@@ -198,9 +184,7 @@ def _assess_senior_judge(
     else:
         verdict = FusionVerdict.INCONCLUSIVE
     confidences = [item.confidence for item in available if item.confidence is not None]
-    confidence = (
-        round(sum(confidences) / len(confidences), 4) if confidences else None
-    )
+    confidence = round(sum(confidences) / len(confidences), 4) if confidences else None
     supporting = tuple(
         finding_id
         for assessment in available

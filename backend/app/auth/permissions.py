@@ -115,15 +115,11 @@ PERMISSION_DESCRIPTIONS: dict[str, str] = {
     PermissionCode.CASE_REVIEW_VIEW: (
         "View case review checklists, approvals, and metrics."
     ),
-    PermissionCode.INTEGRITY_RUN: (
-        "Run digital evidence integrity monitoring checks."
-    ),
+    PermissionCode.INTEGRITY_RUN: ("Run digital evidence integrity monitoring checks."),
     PermissionCode.INTEGRITY_VIEW: (
         "View integrity alerts, drift, and verification history."
     ),
-    PermissionCode.ANALYTICS_RUN: (
-        "Refresh investigation analytics snapshots."
-    ),
+    PermissionCode.ANALYTICS_RUN: ("Refresh investigation analytics snapshots."),
     PermissionCode.ANALYTICS_VIEW: (
         "View investigation analytics dashboards and exports."
     ),

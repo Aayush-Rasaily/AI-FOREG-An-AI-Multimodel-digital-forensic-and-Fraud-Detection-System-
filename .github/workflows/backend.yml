@@ -11,6 +11,22 @@ jobs:
   backend:
     name: Ruff, MyPy, pytest, Alembic, OpenAPI
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: ai_forge
+          POSTGRES_PASSWORD: ai_forge
+          POSTGRES_DB: ai_forge
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U ai_forge -d ai_forge"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql+psycopg://ai_forge:ai_forge@localhost:5432/ai_forge
     steps:
       - name: Check out source
         uses: actions/checkout@v4
@@ -24,9 +40,23 @@ jobs:
         uses: astral-sh/setup-uv@v5
         with:
           version: "0.11.12"
+          enable-cache: true
+
+      - name: Verify lockfile
+        run: uv lock --check
 
       - name: Install dependencies
         run: uv sync --locked --dev
+
+      - name: Version consistency
+        run: |
+          uv run python - <<'PY'
+          from pathlib import Path
+          from backend.app.cicd.gates import validate_declared_versions
+          result = validate_declared_versions(Path(".").resolve())
+          print(result)
+          raise SystemExit(0 if result["status"] == "PASSED" else 1)
+          PY
 
       - name: Ruff
         run: uv run ruff check backend tests
@@ -38,10 +68,18 @@ jobs:
         run: uv run mypy backend
 
       - name: Backend pytest
-        run: uv run pytest tests -q --tb=short
+        run: |
+          mkdir -p reports/ci
+          uv run pytest tests -q --tb=short --junitxml=reports/ci/pytest.xml
 
-      - name: Alembic migration verification
+      - name: Alembic head
         run: uv run python -c "from pathlib import Path; from backend.app.cicd.gates import validate_alembic_heads; r=validate_alembic_heads(repo_root=Path('.').resolve()); print(r); raise SystemExit(0 if r['status']=='PASSED' else 1)"
+
+      - name: Alembic upgrade and downgrade
+        run: |
+          uv run alembic -c backend/alembic.ini upgrade head
+          uv run alembic -c backend/alembic.ini downgrade -1
+          uv run alembic -c backend/alembic.ini upgrade head
 
       - name: OpenAPI validation
         run: |
@@ -70,3 +108,12 @@ jobs:
           print(result)
           raise SystemExit(0 if result["status"] == "PASSED" else 1)
           PY
+
+      - name: Upload backend reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-ci-reports
+          path: reports/ci/
+          if-no-files-found: ignore
+          retention-days: 14

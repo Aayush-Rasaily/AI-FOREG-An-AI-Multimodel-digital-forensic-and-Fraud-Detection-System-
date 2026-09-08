@@ -40,12 +40,9 @@ class ReportEngine:
         timeline = snapshot.get("timeline") or {}
 
         included_ids = {
-            "case_intelligence_run_id": (
-                intelligence.get("analysis_run_id")
-            ),
+            "case_intelligence_run_id": (intelligence.get("analysis_run_id")),
             "fusion_run_ids": [
-                item["fusion_run_id"]
-                for item in snapshot.get("fusion_snapshots", [])
+                item["fusion_run_id"] for item in snapshot.get("fusion_snapshots", [])
             ],
             "correlation_run_id": correlation.get("run_id"),
             "entity_resolution_run_id": entity_res.get("run_id"),
@@ -60,9 +57,7 @@ class ReportEngine:
                     if item.get("policy_version")
                 }
             ),
-            "case_intelligence": (
-                intelligence.get("policy_version")
-            ),
+            "case_intelligence": (intelligence.get("policy_version")),
             "correlation": correlation.get("policy_version"),
         }
 

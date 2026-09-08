@@ -347,7 +347,8 @@ class TestMigration:
         import importlib.util
 
         spec = importlib.util.spec_from_file_location(
-            "m0017", MIGRATION_PATH,
+            "m0017",
+            MIGRATION_PATH,
         )
         assert spec and spec.loader
         mod = importlib.util.module_from_spec(spec)

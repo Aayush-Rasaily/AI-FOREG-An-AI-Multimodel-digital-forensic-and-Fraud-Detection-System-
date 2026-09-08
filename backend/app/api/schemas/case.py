@@ -11,6 +11,8 @@ from backend.app.domain.case import CasePriority, CaseStatus
 class CaseCreateRequest(BaseModel):
     """Client input for creating a case."""
 
+    model_config = ConfigDict(extra="forbid")
+
     title: str = Field(min_length=1, max_length=255)
     description: str | None = Field(default=None, max_length=10_000)
     priority: CasePriority = CasePriority.MEDIUM
@@ -18,6 +20,8 @@ class CaseCreateRequest(BaseModel):
 
 class CaseUpdateRequest(BaseModel):
     """Optional fields accepted by the case PATCH endpoint."""
+
+    model_config = ConfigDict(extra="forbid")
 
     title: str | None = Field(default=None, min_length=1, max_length=255)
     description: str | None = Field(default=None, max_length=10_000)

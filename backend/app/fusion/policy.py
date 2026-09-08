@@ -46,7 +46,7 @@ def fuse_evidence(
     - Exclude unavailable findings from risk scoring.
     - Jury senior judge verdict informs final verdict with conflict penalty.
     - Unavailable modalities never reduce confidence as negative evidence.
-  """
+    """
 
     if not findings:
         return FusionResult(
@@ -144,9 +144,7 @@ def fuse_evidence(
 
 def _risk_score(findings: tuple[NormalizedFinding, ...]) -> float | None:
     actionable = [
-        item
-        for item in findings
-        if item.verdict != FindingVerdict.UNAVAILABLE
+        item for item in findings if item.verdict != FindingVerdict.UNAVAILABLE
     ]
     if not actionable:
         return None
@@ -181,8 +179,7 @@ def _fusion_confidence(
     finding_confidences = [
         item.confidence
         for item in findings
-        if item.confidence is not None
-        and item.verdict != FindingVerdict.UNAVAILABLE
+        if item.confidence is not None and item.verdict != FindingVerdict.UNAVAILABLE
     ]
     values = jury_confidences or finding_confidences
     if not values:
@@ -196,9 +193,7 @@ def _build_explanation(
     conflicts: tuple[FusionConflict, ...],
 ) -> str:
     conflict_note = (
-        f" {len(conflicts)} cross-modal conflict(s) detected."
-        if conflicts
-        else ""
+        f" {len(conflicts)} cross-modal conflict(s) detected." if conflicts else ""
     )
     return (
         f"Final multimodal verdict: {verdict.value}.{conflict_note} "
@@ -224,9 +219,7 @@ def _insufficient_assessment(
         supporting_finding_ids=(),
         contradictory_finding_ids=(),
         participating_modalities=(),
-        unavailable_modalities=tuple(
-            status.modality for status in modality_statuses
-        ),
+        unavailable_modalities=tuple(status.modality for status in modality_statuses),
         agreement=agreement,
         conflicts=conflicts,
         jury_assessments=jury_assessments,

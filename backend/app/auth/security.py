@@ -41,9 +41,7 @@ def validate_password(password: str) -> None:
     """Enforce the platform password policy."""
 
     if len(password) < PASSWORD_MIN_LENGTH or len(password) > PASSWORD_MAX_LENGTH:
-        raise PasswordPolicyError(
-            "Passwords must be between 12 and 128 characters."
-        )
+        raise PasswordPolicyError("Passwords must be between 12 and 128 characters.")
     classes = [
         any(char.islower() for char in password),
         any(char.isupper() for char in password),
@@ -108,9 +106,7 @@ def assert_ip_allowed(ip_address: str | None) -> None:
     recent = [stamp for stamp in _ip_failures[ip_address] if stamp >= cutoff]
     _ip_failures[ip_address] = recent
     if len(recent) >= IP_MAX_FAILURES:
-        raise AuthenticationError(
-            "Too many failed sign-in attempts. Try again later."
-        )
+        raise AuthenticationError("Too many failed sign-in attempts. Try again later.")
 
 
 def clear_ip_failures(ip_address: str | None) -> None:

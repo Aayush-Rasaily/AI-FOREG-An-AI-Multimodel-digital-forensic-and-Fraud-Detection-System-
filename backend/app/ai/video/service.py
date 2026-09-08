@@ -479,9 +479,7 @@ class VideoAnalysisService:
             except OSError:
                 frame_index = {}
         duration = extraction_metadata.get("duration")
-        duration_ms = (
-            int(float(str(duration)) * 1000) if duration is not None else None
-        )
+        duration_ms = int(float(str(duration)) * 1000) if duration is not None else None
         fps_value = extraction_metadata.get("fps")
         fps = float(str(fps_value)) if fps_value is not None else None
         frame_count_value = extraction_metadata.get("frame_count")
@@ -503,9 +501,7 @@ class VideoAnalysisService:
             duration_ms=duration_ms,
             fps=fps,
             frame_count=(
-                int(str(frame_count_value))
-                if frame_count_value is not None
-                else None
+                int(str(frame_count_value)) if frame_count_value is not None else None
             ),
             width=int(str(width_value)) if width_value is not None else None,
             height=int(str(height_value)) if height_value is not None else None,
@@ -592,9 +588,7 @@ class VideoAnalysisService:
                     width=region.width,
                     height=region.height,
                     frame_number=region.frame_number,
-                    timestamp_ms=(
-                        temporal.start_timestamp_ms if temporal else None
-                    ),
+                    timestamp_ms=(temporal.start_timestamp_ms if temporal else None),
                     polygon_json=(
                         [list(point) for point in region.polygon]
                         if region.polygon
@@ -714,10 +708,7 @@ class VideoAnalysisService:
     @staticmethod
     def _finding_response(finding: VideoAIFinding) -> VideoAIFindingResponse:
         temporal = None
-        if (
-            finding.start_frame is not None
-            or finding.start_timestamp_ms is not None
-        ):
+        if finding.start_frame is not None or finding.start_timestamp_ms is not None:
             temporal = TemporalEvidenceResponse(
                 start_frame=finding.start_frame,
                 end_frame=finding.end_frame,

@@ -118,7 +118,9 @@ async def list_recommendations(
     offset: Annotated[int, Query(ge=0)] = 0,
 ) -> ApiResponse[RecommendationListResponse]:
     data = await service.list_recommendations(
-        case_id, limit=limit, offset=offset,
+        case_id,
+        limit=limit,
+        offset=offset,
     )
     return ApiResponse(data=data, request_id=get_request_id())
 

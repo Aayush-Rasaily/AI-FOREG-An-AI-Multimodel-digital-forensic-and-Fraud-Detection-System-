@@ -28,7 +28,8 @@ from backend.app.decision_support.service import DecisionSupportService
 
 router = APIRouter(tags=["decision-support"])
 ServiceDependency = Annotated[
-    DecisionSupportService, Depends(get_decision_support_service),
+    DecisionSupportService,
+    Depends(get_decision_support_service),
 ]
 
 

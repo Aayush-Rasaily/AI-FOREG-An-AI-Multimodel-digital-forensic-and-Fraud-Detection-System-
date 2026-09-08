@@ -20,7 +20,8 @@ from backend.app.knowledge_graph.service import KnowledgeGraphService
 
 router = APIRouter(tags=["knowledge-graph"])
 KgServiceDependency = Annotated[
-    KnowledgeGraphService, Depends(get_knowledge_graph_service),
+    KnowledgeGraphService,
+    Depends(get_knowledge_graph_service),
 ]
 
 

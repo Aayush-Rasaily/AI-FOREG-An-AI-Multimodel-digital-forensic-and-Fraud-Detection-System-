@@ -76,7 +76,8 @@ async def phase8f_client(
     app.dependency_overrides[get_db_session] = _override_db
     transport = httpx.ASGITransport(app=app)
     async with httpx.AsyncClient(
-        transport=transport, base_url="http://test",
+        transport=transport,
+        base_url="http://test",
     ) as client:
         yield client, session_factory
     await engine.dispose()
@@ -121,9 +122,7 @@ class TestSecurityApi:
     @pytest.mark.asyncio
     async def test_roles_permissions_policy(
         self,
-        phase8f_client: tuple[
-            httpx.AsyncClient, async_sessionmaker[AsyncSession]
-        ],
+        phase8f_client: tuple[httpx.AsyncClient, async_sessionmaker[AsyncSession]],
     ) -> None:
         client, _ = phase8f_client
         roles = await client.get("/api/v1/security/roles")
@@ -148,9 +147,7 @@ class TestSecurityApi:
     @pytest.mark.asyncio
     async def test_case_access_compliance_validate(
         self,
-        phase8f_client: tuple[
-            httpx.AsyncClient, async_sessionmaker[AsyncSession]
-        ],
+        phase8f_client: tuple[httpx.AsyncClient, async_sessionmaker[AsyncSession]],
     ) -> None:
         client, session_factory = phase8f_client
         case = await create_case(client)
@@ -192,18 +189,14 @@ class TestSecurityApi:
 
         async with session_factory() as session:
             result = await session.execute(
-                select(AuditEvent).where(
-                    AuditEvent.category == "security_governance"
-                )
+                select(AuditEvent).where(AuditEvent.category == "security_governance")
             )
             assert len(list(result.scalars().all())) >= 1
 
     @pytest.mark.asyncio
     async def test_phase8e_workflow_untouched(
         self,
-        phase8f_client: tuple[
-            httpx.AsyncClient, async_sessionmaker[AsyncSession]
-        ],
+        phase8f_client: tuple[httpx.AsyncClient, async_sessionmaker[AsyncSession]],
     ) -> None:
         client, _ = phase8f_client
         case = await create_case(client)
@@ -218,7 +211,8 @@ class TestSecurityApi:
 class TestMigration:
     def test_migration_metadata(self) -> None:
         spec = importlib.util.spec_from_file_location(
-            "phase8f_migration", MIGRATION_PATH,
+            "phase8f_migration",
+            MIGRATION_PATH,
         )
         assert spec is not None and spec.loader is not None
         module = importlib.util.module_from_spec(spec)

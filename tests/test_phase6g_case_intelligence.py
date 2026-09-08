@@ -409,8 +409,7 @@ async def test_api_evidence_without_fusion(phase6g_client) -> None:
     payload = latest.json()["data"]
     assert payload["coverage"]["not_analyzed"] >= 1
     assert any(
-        item["coverage_status"] == "not_analyzed"
-        for item in payload["participations"]
+        item["coverage_status"] == "not_analyzed" for item in payload["participations"]
     )
 
 

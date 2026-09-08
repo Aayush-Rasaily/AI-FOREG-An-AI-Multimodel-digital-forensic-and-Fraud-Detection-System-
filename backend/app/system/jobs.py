@@ -48,13 +48,10 @@ async def _aggregate_status(
     status_column: Any,
 ) -> dict[str, int]:
     result = await session.execute(
-        select(status_column, func.count())
-        .group_by(status_column),
+        select(status_column, func.count()).group_by(status_column),
     )
     rows = result.all()
-    pairs: list[tuple[str, int]] = [
-        (str(row[0]), int(row[1])) for row in rows
-    ]
+    pairs: list[tuple[str, int]] = [(str(row[0]), int(row[1])) for row in rows]
     return _status_counts(pairs)
 
 
@@ -63,13 +60,19 @@ async def collect_job_summary(
 ) -> dict[str, Any]:
     """Aggregate job counts across pipeline categories."""
     processing = await _aggregate_status(
-        session, ProcessingJob, ProcessingJob.status,
+        session,
+        ProcessingJob,
+        ProcessingJob.status,
     )
     fusion = await _aggregate_status(
-        session, FusionAnalysisRun, FusionAnalysisRun.status,
+        session,
+        FusionAnalysisRun,
+        FusionAnalysisRun.status,
     )
     timeline = await _aggregate_status(
-        session, InvestigationTimeline, InvestigationTimeline.status,
+        session,
+        InvestigationTimeline,
+        InvestigationTimeline.status,
     )
     correlation = await _aggregate_status(
         session,
@@ -82,7 +85,9 @@ async def collect_job_summary(
         EntityResolutionRun.status,
     )
     reports = await _aggregate_status(
-        session, ForensicReport, ForensicReport.status,
+        session,
+        ForensicReport,
+        ForensicReport.status,
     )
 
     categories = {

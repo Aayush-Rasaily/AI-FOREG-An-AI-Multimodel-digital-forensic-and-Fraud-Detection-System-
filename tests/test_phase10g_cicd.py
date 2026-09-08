@@ -124,10 +124,13 @@ class TestArtifacts:
         assert jobs["quality-gate"]["needs"] == [
             "backend",
             "frontend",
+            "docs",
             "security",
             "docker",
         ]
 
+        assert (REPO_ROOT / ".github" / "dependabot.yml").is_file()
+        assert (WORKFLOWS / "docs.yml").is_file()
         assert (REPO_ROOT / ".github" / "CODEOWNERS").is_file()
         assert (REPO_ROOT / ".github" / "PULL_REQUEST_TEMPLATE.md").is_file()
         assert (REPO_ROOT / ".github" / "ISSUE_TEMPLATE" / "bug.yml").is_file()
@@ -142,3 +145,4 @@ class TestArtifacts:
         ]
         assert "deployment/docker/backend.Dockerfile" in files
         assert "deployment/docker/frontend.Dockerfile" in files
+        assert "deployment/docker/worker.Dockerfile" in files

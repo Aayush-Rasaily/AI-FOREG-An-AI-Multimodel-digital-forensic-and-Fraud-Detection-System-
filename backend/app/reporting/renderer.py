@@ -12,7 +12,7 @@ ReportFormat = Literal["json", "md", "html"]
 
 
 def _md_heading(level: int, text: str) -> str:
-    return f'{"#" * level} {text}\n\n'
+    return f"{'#' * level} {text}\n\n"
 
 
 def _md_kv(data: dict[str, Any]) -> str:
@@ -107,12 +107,16 @@ def render_report(content: dict[str, Any], fmt: ReportFormat) -> tuple[bytes, st
         return payload, "application/json", f"investigation-report-{report_id}.json"
     if fmt == "md":
         payload = render_markdown(content).encode("utf-8")
-        return payload, "text/markdown; charset=utf-8", (
-            f"investigation-report-{report_id}.md"
+        return (
+            payload,
+            "text/markdown; charset=utf-8",
+            (f"investigation-report-{report_id}.md"),
         )
     if fmt == "html":
         payload = render_html_document(content).encode("utf-8")
-        return payload, "text/html; charset=utf-8", (
-            f"investigation-report-{report_id}.html"
+        return (
+            payload,
+            "text/html; charset=utf-8",
+            (f"investigation-report-{report_id}.html"),
         )
     raise ValueError(f"Unsupported report format: {fmt}")

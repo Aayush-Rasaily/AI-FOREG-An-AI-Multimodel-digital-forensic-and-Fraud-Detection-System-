@@ -166,12 +166,11 @@ class SecurityService:
         if principal.has_permission("security.manage"):
             return
         access = await self.repository.get_active_access(
-            case_id, principal.user_id,
+            case_id,
+            principal.user_id,
         )
         if access is None:
-            raise SecurityForbiddenError(
-                "You do not have access to this case."
-            )
+            raise SecurityForbiddenError("You do not have access to this case.")
 
     async def list_case_access(
         self,
@@ -202,17 +201,13 @@ class SecurityService:
             or principal.has_permission("security.manage")
             or principal.has_permission("collab.manage_members")
         ):
-            raise SecurityForbiddenError(
-                "You are not allowed to manage case access."
-            )
+            raise SecurityForbiddenError("You are not allowed to manage case access.")
         if await self.repository.get_user(user_id) is None:
             raise ResourceNotFoundError("The user was not found.")
         try:
             level = AccessLevel(access_level)
         except ValueError as exc:
-            raise SecurityError(
-                f"Unknown access level: {access_level}"
-            ) from exc
+            raise SecurityError(f"Unknown access level: {access_level}") from exc
 
         actor_id, actor_username = _actor(principal)
         existing = await self.repository.get_active_access(case_id, user_id)
@@ -222,8 +217,7 @@ class SecurityService:
             (
                 row
                 for row in all_rows
-                if row.user_id == user_id
-                and row.access_level == level.value
+                if row.user_id == user_id and row.access_level == level.value
             ),
             None,
         )
@@ -273,7 +267,8 @@ class SecurityService:
         return self._access_response(row)
 
     async def _build_compliance(
-        self, case_id: UUID,
+        self,
+        case_id: UUID,
     ) -> ComplianceResponse:
         evidence_count = await self.repository.count_evidence(case_id)
         custody = await self.repository.count_custody_events(case_id)
@@ -297,7 +292,8 @@ class SecurityService:
         fusion_total, fusion_prov = await self.repository.count_fusion(case_id)
         corr_total, corr_prov = await self.repository.count_correlation(case_id)
         open_violations = await self.repository.list_violations(
-            case_id=case_id, open_only=True,
+            case_id=case_id,
+            open_only=True,
         )
         snapshot = evaluate_compliance(
             case_id=case_id,
@@ -460,23 +456,13 @@ class SecurityService:
                 )
 
             result = evaluate_chain_validation(
-                evidence_hash_ok=(
-                    evidence_count == 0 or hashed == evidence_count
-                ),
+                evidence_hash_ok=(evidence_count == 0 or hashed == evidence_count),
                 audit_continuity_ok=(audits > 0 or evidence_count == 0),
-                timeline_continuity_ok=(
-                    not has_timeline or has_timeline
-                ),
+                timeline_continuity_ok=(not has_timeline or has_timeline),
                 workflow_continuity_ok=workflow_ok,
-                report_provenance_ok=(
-                    reports == 0 or reports_prov == reports
-                ),
-                fusion_provenance_ok=(
-                    fusion_total == 0 or fusion_prov == fusion_total
-                ),
-                correlation_provenance_ok=(
-                    corr_total == 0 or corr_prov == corr_total
-                ),
+                report_provenance_ok=(reports == 0 or reports_prov == reports),
+                fusion_provenance_ok=(fusion_total == 0 or fusion_prov == fusion_total),
+                correlation_provenance_ok=(corr_total == 0 or corr_prov == corr_total),
                 details={
                     "evidence": {
                         "count": evidence_count,
@@ -486,9 +472,7 @@ class SecurityService:
                     "timeline": {"present": has_timeline},
                     "workflow": {
                         "present": inv is not None,
-                        "activity_events": (
-                            len(inv.activity_json or []) if inv else 0
-                        ),
+                        "activity_events": (len(inv.activity_json or []) if inv else 0),
                     },
                     "report": {
                         "count": reports,

@@ -22,7 +22,8 @@ RUN node ./scripts/build.mjs
 FROM nginx:1.27-alpine AS runtime
 
 COPY deployment/nginx/frontend.conf /etc/nginx/conf.d/default.conf
-COPY --from=build /app/dist /usr/share/nginx/html
+COPY --from=build --chown=nginx:nginx /app/dist /usr/share/nginx/html
+RUN chmod -R a-w /usr/share/nginx/html
 
 EXPOSE 80
 

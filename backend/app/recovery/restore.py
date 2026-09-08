@@ -76,10 +76,9 @@ def validate_restore_bundle(
     config_file = root / "configuration.json"
     if config_file.is_file():
         payload = json.loads(config_file.read_text(encoding="utf-8"))
-        exported_env = (
-            payload.get("configuration", {}).get("app_env")
-            or payload.get("release", {}).get("environment")
-        )
+        exported_env = payload.get("configuration", {}).get("app_env") or payload.get(
+            "release", {}
+        ).get("environment")
         checks.append(
             {
                 "check": "configuration_readable",
@@ -108,9 +107,7 @@ def validate_restore_bundle(
         "fail_count": len(failed),
         "bundle_dir": root.as_posix(),
         "message": (
-            "Restore validation passed."
-            if not failed
-            else "Restore validation failed."
+            "Restore validation passed." if not failed else "Restore validation failed."
         ),
     }
 

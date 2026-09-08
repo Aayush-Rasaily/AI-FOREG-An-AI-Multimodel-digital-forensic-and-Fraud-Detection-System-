@@ -101,7 +101,8 @@ class CollaborationService:
         if principal.has_permission("admin.manage_users"):
             return
         member = await self.repository.get_member_by_user(
-            case_id, principal.user_id,
+            case_id,
+            principal.user_id,
         )
         if member is None or member.role not in {
             item.value for item in MEMBER_MANAGE_ROLES
@@ -187,7 +188,8 @@ class CollaborationService:
                     "Authentication is required to transfer ownership."
                 )
             current_owner = await self.repository.get_member_by_user(
-                case_id, principal.user_id,
+                case_id,
+                principal.user_id,
             )
             if (
                 current_owner is None
@@ -318,7 +320,8 @@ class CollaborationService:
         )
 
     async def list_assignments(
-        self, evidence_id: UUID,
+        self,
+        evidence_id: UUID,
     ) -> EvidenceAssignmentListResponse:
         if await self.repository.get_evidence(evidence_id) is None:
             raise ResourceNotFoundError("The evidence was not found.")
@@ -342,7 +345,8 @@ class CollaborationService:
         return EvidenceAssignmentListResponse(items=items, total=len(items))
 
     async def _comment_response(
-        self, row: InvestigationComment,
+        self,
+        row: InvestigationComment,
     ) -> CommentResponse:
         user = await self.repository.get_user(row.author_id)
         mentions = await self.repository.list_mentions(row.id)
@@ -432,7 +436,9 @@ class CollaborationService:
         return await self._comment_response(loaded)
 
     async def list_comments(
-        self, resource_type: str, resource_id: str,
+        self,
+        resource_type: str,
+        resource_id: str,
     ) -> CommentListResponse:
         rows = await self.repository.list_comments(
             resource_type=resource_type,
@@ -469,9 +475,7 @@ class CollaborationService:
             row.author_id != principal.user_id
             and not principal.has_permission("admin.manage_users")
         ):
-            raise CollaborationForbiddenError(
-                "You can only delete your own comments."
-            )
+            raise CollaborationForbiddenError("You can only delete your own comments.")
         soft_delete_comment(row)
         await self.session.commit()
         return await self._comment_response(row)
@@ -678,9 +682,7 @@ class CollaborationService:
         row.decision = decision
         row.comments = comments
         row.reviewer_id = (
-            reviewer_id
-            or (principal.user_id if principal else None)
-            or row.reviewer_id
+            reviewer_id or (principal.user_id if principal else None) or row.reviewer_id
         )
         row.decided_at = datetime.now(UTC)
         await create_notification(
@@ -705,7 +707,8 @@ class CollaborationService:
         return self._review_response(row)
 
     async def list_notifications(
-        self, principal: AuthenticatedPrincipal,
+        self,
+        principal: AuthenticatedPrincipal,
     ) -> NotificationListResponse:
         rows = await self.repository.list_notifications(principal.user_id)
         items = [
@@ -725,7 +728,9 @@ class CollaborationService:
         ]
         unread = await self.repository.count_unread(principal.user_id)
         return NotificationListResponse(
-            items=items, total=len(items), unread_count=unread,
+            items=items,
+            total=len(items),
+            unread_count=unread,
         )
 
     async def update_notification(

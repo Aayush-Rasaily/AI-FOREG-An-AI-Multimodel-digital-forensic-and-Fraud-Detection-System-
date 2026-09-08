@@ -1,4 +1,4 @@
-﻿"""Collect structured data for forensic investigation reports."""
+"""Collect structured data for forensic investigation reports."""
 
 from __future__ import annotations
 
@@ -127,9 +127,7 @@ async def aggregate_report_data(
         )
     )
     participations = await collect_case_evidence(session, case.id)
-    participation_by_evidence = {
-        item.evidence_id: item for item in participations
-    }
+    participation_by_evidence = {item.evidence_id: item for item in participations}
 
     evidence_ids = [evidence.id for evidence in evidence_rows]
     fusion_by_evidence = await fusion_repository.get_latest_for_evidence_ids(
@@ -315,9 +313,7 @@ async def aggregate_report_data(
             "status": correlation_run.status.value,
             "engine_version": correlation_run.engine_version,
             "policy_version": correlation_run.policy_version,
-            "correlation_count": (
-                correlation_run.correlation_count
-            ),
+            "correlation_count": (correlation_run.correlation_count),
             "items": [
                 {
                     "left_evidence_id": str(
@@ -423,9 +419,7 @@ async def aggregate_report_data(
                             ev.timestamp,
                         ),
                         "evidence_id": (
-                            str(ev.evidence_id)
-                            if ev.evidence_id
-                            else None
+                            str(ev.evidence_id) if ev.evidence_id else None
                         ),
                         "description": ev.description,
                     }

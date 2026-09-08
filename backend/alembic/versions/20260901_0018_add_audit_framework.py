@@ -36,19 +36,29 @@ def upgrade() -> None:
         sa.Column("client_ip", sa.String(64), nullable=True),
         sa.Column("user_agent", sa.String(512), nullable=True),
         sa.Column(
-            "engine_version", sa.String(32), nullable=False,
+            "engine_version",
+            sa.String(32),
+            nullable=False,
         ),
         sa.Column(
-            "policy_version", sa.String(32), nullable=False,
+            "policy_version",
+            sa.String(32),
+            nullable=False,
         ),
         sa.Column(
-            "sha256_checksum", sa.String(64), nullable=True,
+            "sha256_checksum",
+            sa.String(64),
+            nullable=True,
         ),
         sa.Column(
-            "integrity_hash", sa.String(64), nullable=False,
+            "integrity_hash",
+            sa.String(64),
+            nullable=False,
         ),
         sa.Column(
-            "metadata", sa.JSON(), nullable=False,
+            "metadata",
+            sa.JSON(),
+            nullable=False,
         ),
         sa.PrimaryKeyConstraint("id"),
     )

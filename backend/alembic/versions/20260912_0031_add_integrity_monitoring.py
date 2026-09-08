@@ -6,15 +6,16 @@ Revises: 20260911_0030
 
 from __future__ import annotations
 
-from typing import Sequence, Union
+from collections.abc import Sequence
 
 import sqlalchemy as sa
+
 from alembic import op
 
 revision: str = "20260912_0031"
-down_revision: Union[str, Sequence[str], None] = "20260911_0030"
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | Sequence[str] | None = "20260911_0030"
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
@@ -67,7 +68,9 @@ def upgrade() -> None:
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
         sa.ForeignKeyConstraint(["case_id"], ["cases.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(
-            ["run_id"], ["integrity_monitor_runs.id"], ondelete="CASCADE",
+            ["run_id"],
+            ["integrity_monitor_runs.id"],
+            ondelete="CASCADE",
         ),
         sa.PrimaryKeyConstraint("id"),
     )
@@ -91,14 +94,18 @@ def upgrade() -> None:
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
         sa.ForeignKeyConstraint(["case_id"], ["cases.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(
-            ["run_id"], ["integrity_monitor_runs.id"], ondelete="CASCADE",
+            ["run_id"],
+            ["integrity_monitor_runs.id"],
+            ondelete="CASCADE",
         ),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index("ix_integrity_alerts_run_id", "integrity_alerts", ["run_id"])
     op.create_index("ix_integrity_alerts_case_id", "integrity_alerts", ["case_id"])
     op.create_index(
-        "ix_integrity_alerts_severity", "integrity_alerts", ["severity"],
+        "ix_integrity_alerts_severity",
+        "integrity_alerts",
+        ["severity"],
     )
 
     op.create_table(
@@ -117,7 +124,9 @@ def upgrade() -> None:
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
         sa.ForeignKeyConstraint(["case_id"], ["cases.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(
-            ["run_id"], ["integrity_monitor_runs.id"], ondelete="CASCADE",
+            ["run_id"],
+            ["integrity_monitor_runs.id"],
+            ondelete="CASCADE",
         ),
         sa.PrimaryKeyConstraint("id"),
     )
@@ -161,7 +170,8 @@ def downgrade() -> None:
     op.drop_index("ix_integrity_checks_run_id", table_name="integrity_checks")
     op.drop_table("integrity_checks")
     op.drop_index(
-        "ix_integrity_monitor_runs_status", table_name="integrity_monitor_runs",
+        "ix_integrity_monitor_runs_status",
+        table_name="integrity_monitor_runs",
     )
     op.drop_index(
         "ix_integrity_monitor_runs_case_id",
