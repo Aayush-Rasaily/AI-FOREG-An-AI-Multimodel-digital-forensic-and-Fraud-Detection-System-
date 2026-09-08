@@ -19,7 +19,7 @@ ENV NODE_ENV=production
 
 RUN node ./scripts/build.mjs
 
-FROM nginx:1.27-alpine AS runtime
+FROM nginx:1.31-alpine AS runtime
 
 COPY deployment/nginx/frontend.conf /etc/nginx/conf.d/default.conf
 COPY --from=build --chown=nginx:nginx /app/dist /usr/share/nginx/html
