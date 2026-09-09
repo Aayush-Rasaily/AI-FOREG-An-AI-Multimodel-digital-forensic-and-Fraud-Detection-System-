@@ -5,10 +5,24 @@ function run(script, args) {
   const result = spawnSync(
     process.execPath,
     [resolve("node_modules", script), ...args],
-    { stdio: "inherit" },
+    { encoding: "utf8" },
   );
-  if (result.status !== 0) {
-    process.exit(result.status ?? 1);
+
+  if (result.stdout) {
+    process.stdout.write(result.stdout);
+  }
+  if (result.stderr) {
+    process.stderr.write(result.stderr);
+  }
+
+  if (result.error) {
+    console.error(result.error);
+    process.exit(1);
+  }
+
+  const status = result.status ?? 1;
+  if (status !== 0) {
+    process.exit(status);
   }
 }
 

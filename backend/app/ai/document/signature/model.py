@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any
 
 from backend.app.ai.document.signature.config import SignatureAISettings
+from backend.app.ai.document.signature.loader import SignatureModelLoader
 from backend.app.ai.models.base import AIModel
 from backend.app.ai.registry.metadata import (
     DeviceRequirement,
@@ -26,10 +27,16 @@ class ModelIntegrityError(RuntimeError):
 
 
 class SiameseSignatureModel(AIModel):
-    """Siamese signature verification model with EfficientNet-B0 backbone."""
+    """Siamese signature verification model with EfficientNet-B0 backbone.
+
+    Weights are the packaged timm EfficientNet-B0 encoder + 256-d head under
+    ``backend/app/ai/models/signature/``. Loading is delegated to
+    :class:`SignatureModelLoader` (process-wide singleton).
+    """
 
     MODEL_NAME = "siamese-signature"
     BACKBONE = "efficientnet-b0"
+    EMBEDDING_DIM = 256
 
     def __init__(self, settings: SignatureAISettings | None = None) -> None:
         self.settings = settings or SignatureAISettings()
@@ -41,7 +48,7 @@ class SiameseSignatureModel(AIModel):
         self._file_hash: str | None = None
 
     def load(self, *, device: str) -> None:
-        self._device = device
+        self._device = SignatureModelLoader.resolve_device(device)
         self._loaded = False
         self._module = None
         self._load_error = None
@@ -59,42 +66,25 @@ class SiameseSignatureModel(AIModel):
         file_hash = self._hash_file(path)
         expected = (self.settings.model_sha256 or "").lower()
         if expected and file_hash != expected:
-            raise ModelIntegrityError(
-                "Configured signature model SHA-256 does not match the weight file.",
+            self._load_error = (
+                "Configured signature model SHA-256 does not match the weight file."
             )
+            raise ModelIntegrityError(self._load_error)
         self._file_hash = file_hash
-        try:
-            import torch
-            from torch import nn
-            from torchvision.models import efficientnet_b0
-        except ImportError as exc:
-            self._load_error = "PyTorch is not installed."
-            logger.warning("Signature model unavailable: %s", exc)
+        loaded = SignatureModelLoader.get_or_load(
+            model_path=str(path.resolve()),
+            device=self._device,
+            file_hash=file_hash,
+        )
+        if loaded is None:
+            self._load_error = (
+                SignatureModelLoader.last_error()
+                or "Failed to load Siamese signature model weights."
+            )
+            logger.warning("Signature model unavailable: %s", self._load_error)
             return
-        backbone = efficientnet_b0(weights=None)
-        backbone.classifier = nn.Identity()
-        embedding_dim = 128
-
-        class SiameseNet(nn.Module):
-            def __init__(self) -> None:
-                super().__init__()
-                self.backbone = backbone
-                self.projection = nn.Sequential(
-                    nn.Linear(1280, embedding_dim),
-                    nn.ReLU(),
-                    nn.Linear(embedding_dim, embedding_dim),
-                )
-
-            def embed(self, tensor: torch.Tensor) -> torch.Tensor:
-                features = self.backbone(tensor)
-                return self.projection(features)
-
-        model = SiameseNet()
-        state = torch.load(path, map_location=device, weights_only=True)
-        model.load_state_dict(state, strict=False)
-        model.to(device)
-        model.eval()
-        self._module = model
+        self._module = loaded.module
+        self._device = loaded.device
         self._loaded = True
 
     def unload(self) -> None:
@@ -120,6 +110,7 @@ class SiameseSignatureModel(AIModel):
         *,
         batch_size: int = 1,
     ) -> dict[str, Any]:
+        del batch_size  # pair inference is always batch size 1 per stream
         if not self._loaded or self._module is None:
             return {
                 "model": self.MODEL_NAME,
@@ -158,6 +149,7 @@ class SiameseSignatureModel(AIModel):
             "processing_time_ms": round(latency_ms, 3),
             "backbone": self.BACKBONE,
             "model_hash": self._file_hash,
+            "status": "ok",
         }
 
     def metadata(self) -> ModelMetadata:
@@ -178,7 +170,11 @@ class SiameseSignatureModel(AIModel):
                 "with contrastive training."
             ),
             tags=("signature", "siamese", "efficientnet-b0"),
-            extra={"backbone": self.BACKBONE, "threshold": self.settings.threshold},
+            extra={
+                "backbone": self.BACKBONE,
+                "embedding_dim": self.EMBEDDING_DIM,
+                "threshold": self.settings.threshold,
+            },
         )
 
     def supports(self, task: str) -> bool:

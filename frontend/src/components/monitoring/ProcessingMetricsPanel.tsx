@@ -15,36 +15,36 @@ export function ProcessingMetricsPanel({ data }: ProcessingMetricsPanelProps) {
     <Panel description="Jobs created, completed, retries, and runtimes." title="Processing Summary">
       <dl className="grid grid-cols-2 gap-3 p-4 text-xs">
         <div>
-          <dt className="text-slate-500">Created</dt>
-          <dd className="text-slate-200">{num(data.jobs_created)}</dd>
+          <dt className="text-muted">Created</dt>
+          <dd className="text-foreground">{num(data.jobs_created)}</dd>
         </div>
         <div>
-          <dt className="text-slate-500">Completed</dt>
-          <dd className="text-slate-200">{num(data.jobs_completed)}</dd>
+          <dt className="text-muted">Completed</dt>
+          <dd className="text-foreground">{num(data.jobs_completed)}</dd>
         </div>
         <div>
-          <dt className="text-slate-500">Failures</dt>
-          <dd className="text-slate-200">{num(data.failures)}</dd>
+          <dt className="text-muted">Failures</dt>
+          <dd className="text-foreground">{num(data.failures)}</dd>
         </div>
         <div>
-          <dt className="text-slate-500">Retries</dt>
-          <dd className="text-slate-200">{num(data.retries)}</dd>
+          <dt className="text-muted">Retries</dt>
+          <dd className="text-foreground">{num(data.retries)}</dd>
         </div>
         <div>
-          <dt className="text-slate-500">Avg execution</dt>
-          <dd className="text-slate-200">{num(data.execution_duration_avg_ms)} ms</dd>
+          <dt className="text-muted">Avg execution</dt>
+          <dd className="text-foreground">{num(data.execution_duration_avg_ms)} ms</dd>
         </div>
         <div>
-          <dt className="text-slate-500">P95 execution</dt>
-          <dd className="text-slate-200">{num(data.execution_duration_p95_ms)} ms</dd>
+          <dt className="text-muted">P95 execution</dt>
+          <dd className="text-foreground">{num(data.execution_duration_p95_ms)} ms</dd>
         </div>
         <div>
-          <dt className="text-slate-500">Success rate</dt>
-          <dd className="text-slate-200">{num(data.success_rate)}</dd>
+          <dt className="text-muted">Success rate</dt>
+          <dd className="text-foreground">{num(data.success_rate)}</dd>
         </div>
         <div>
-          <dt className="text-slate-500">Failure rate</dt>
-          <dd className="text-slate-200">{num(data.failure_rate)}</dd>
+          <dt className="text-muted">Failure rate</dt>
+          <dd className="text-foreground">{num(data.failure_rate)}</dd>
         </div>
       </dl>
     </Panel>

@@ -54,16 +54,16 @@ export function ManifestViewer({ exportId }: ManifestViewerProps) {
       description="Deterministic package manifest with per-file SHA-256 digests."
       title="Manifest"
     >
-      <div className="space-y-3 p-4 text-xs text-slate-400">
+      <div className="space-y-3 p-4 text-xs text-muted">
         <div className="flex flex-wrap gap-2">
           <IntegrityBadge status="VALID" label="Manifest" />
-          <span className="font-mono text-slate-300">
+          <span className="font-mono text-muted">
             {data.manifest_checksum.slice(0, 16)}…
           </span>
         </div>
         <p>
           Package checksum:{" "}
-          <span className="font-mono text-slate-200">
+          <span className="font-mono text-foreground">
             {data.package_checksum}
           </span>
         </p>
@@ -76,7 +76,7 @@ export function ManifestViewer({ exportId }: ManifestViewerProps) {
           <ul className="max-h-48 space-y-1 overflow-y-auto">
             {files.map((file) => (
               <li key={file.path}>
-                <span className="text-slate-300">{file.path}</span>:{" "}
+                <span className="text-muted">{file.path}</span>:{" "}
                 <span className="font-mono">{file.sha256?.slice(0, 12)}…</span>
               </li>
             ))}

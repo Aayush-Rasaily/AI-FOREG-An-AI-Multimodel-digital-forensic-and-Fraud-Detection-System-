@@ -18,7 +18,7 @@ export function GraphFilters({
 }: GraphFiltersProps) {
   return (
     <div className="flex flex-wrap items-end gap-3">
-      <label className="block text-xs text-slate-400">
+      <label className="block text-xs text-muted">
         Search
         <Input
           className="mt-1 w-56"
@@ -27,7 +27,7 @@ export function GraphFilters({
           value={search}
         />
       </label>
-      <label className="block text-xs text-slate-400">
+      <label className="block text-xs text-muted">
         Entity type
         <Select
           className="mt-1 w-48"

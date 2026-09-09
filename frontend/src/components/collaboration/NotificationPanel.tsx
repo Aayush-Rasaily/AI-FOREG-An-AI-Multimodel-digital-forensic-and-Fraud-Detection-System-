@@ -29,15 +29,15 @@ export function NotificationPanel() {
       <ul className="space-y-2">
         {items.map((item) => (
           <li
-            className="flex items-start justify-between gap-2 rounded-lg border border-slate-800 px-3 py-2 text-xs"
+            className="flex items-start justify-between gap-2 rounded-lg border border-border px-3 py-2 text-xs"
             key={item.id}
           >
             <div>
-              <p className="text-slate-200">{item.title}</p>
-              <p className="mt-1 text-slate-500">{item.body}</p>
+              <p className="text-foreground">{item.title}</p>
+              <p className="mt-1 text-muted">{item.body}</p>
             </div>
             <div className="flex flex-col items-end gap-1">
-              <Badge tone={item.status === "unread" ? "amber" : "neutral"}>
+              <Badge tone={item.status === "unread" ? "warning" : "neutral"}>
                 {item.status}
               </Badge>
               {item.status === "unread" && (

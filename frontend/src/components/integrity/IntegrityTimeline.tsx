@@ -13,18 +13,18 @@ export function IntegrityTimeline({ timeline }: IntegrityTimelineProps) {
     >
       <div className="space-y-3 p-4">
         {timeline.length === 0 ? (
-          <p className="text-xs text-slate-500">No timeline events.</p>
+          <p className="text-xs text-muted">No timeline events.</p>
         ) : null}
         {timeline.map((item, index) => (
           <div
-            className="border-b border-slate-800/80 pb-2 text-xs last:border-0"
+            className="border-b border-border/80 pb-2 text-xs last:border-0"
             key={`${String(item.evidence_id)}-${index}`}
           >
-            <p className="text-slate-200">
+            <p className="text-foreground">
               {String(item.event ?? "event")} · evidence{" "}
               {String(item.evidence_id ?? "—")}
             </p>
-            <p className="mt-1 text-slate-500">
+            <p className="mt-1 text-muted">
               Custody {String(item.custody_events ?? 0)} · Storage{" "}
               {String(item.storage_present ?? "n/a")}
             </p>

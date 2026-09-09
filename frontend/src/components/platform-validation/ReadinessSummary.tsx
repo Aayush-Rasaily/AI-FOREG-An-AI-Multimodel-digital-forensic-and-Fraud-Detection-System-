@@ -2,10 +2,10 @@ import { Badge } from "../ui/Badge";
 import { Panel } from "../ui/Panel";
 import type { PlatformValidationRun } from "../../types/platformValidation";
 
-function toneForLevel(level: string): "green" | "amber" | "red" | "neutral" {
-  if (level === "READY") return "green";
-  if (level === "DEGRADED") return "amber";
-  if (level === "NOT_READY") return "red";
+function toneForLevel(level: string): "success" | "warning" | "error" | "neutral" {
+  if (level === "READY") return "success";
+  if (level === "DEGRADED") return "warning";
+  if (level === "NOT_READY") return "error";
   return "neutral";
 }
 
@@ -20,7 +20,7 @@ export function ReadinessSummary({ run }: Props) {
         description="Run validation to compute a readiness score."
         title="Platform Readiness"
       >
-        <div className="p-4 text-sm text-slate-600">No validation results yet.</div>
+        <div className="p-4 text-sm text-subtle">No validation results yet.</div>
       </Panel>
     );
   }
@@ -35,8 +35,8 @@ export function ReadinessSummary({ run }: Props) {
           <Badge tone={toneForLevel(run.readiness_level)}>
             {run.readiness_level}
           </Badge>
-          <Badge tone="cyan">{run.readiness_score}%</Badge>
-          <Badge tone={run.persisted ? "green" : "amber"}>
+          <Badge tone="primary">{run.readiness_score}%</Badge>
+          <Badge tone={run.persisted ? "success" : "warning"}>
             {run.persisted ? "persisted" : "live"}
           </Badge>
           <Badge tone="neutral">{run.check_count} checks</Badge>

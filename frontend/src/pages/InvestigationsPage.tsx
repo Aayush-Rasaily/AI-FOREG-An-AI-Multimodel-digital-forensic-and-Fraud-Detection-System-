@@ -69,7 +69,7 @@ export function InvestigationsPage() {
             <span className="sr-only">Search investigations</span>
             <Search
               aria-hidden="true"
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600"
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-subtle"
               size={16}
             />
             <Input
@@ -103,7 +103,7 @@ export function InvestigationsPage() {
           </div>
         </div>
         {search && (
-          <p className="mt-3 flex items-center gap-2 text-[11px] text-slate-600">
+          <p className="mt-3 flex items-center gap-2 text-[11px] text-subtle">
             <ListFilter aria-hidden="true" size={13} />
             Search is ready for connected case data: “{search}”
           </p>
@@ -147,26 +147,26 @@ export function InvestigationsPage() {
             items={filteredCases}
             renderRow={(item: CaseRecord) => (
               <Link
-                className="grid gap-3 p-4 transition-colors hover:bg-slate-900/70 md:grid-cols-[1.2fr_1fr_0.8fr_0.8fr]"
+                className="grid gap-3 p-4 transition-colors hover:bg-background-offset/70 md:grid-cols-[1.2fr_1fr_0.8fr_0.8fr]"
                 to={`/investigations/${item.id}`}
               >
                 <div className="min-w-0">
-                  <p className="text-[11px] font-medium text-cyan-300">{item.case_number}</p>
-                  <p className="mt-1 truncate text-sm font-medium text-slate-100">{item.title}</p>
+                  <p className="text-[11px] font-medium text-primary">{item.case_number}</p>
+                  <p className="mt-1 truncate text-sm font-medium text-foreground">{item.title}</p>
                 </div>
                 <div>
-                  <p className="text-[10px] uppercase tracking-wider text-slate-600">Status</p>
-                  <Badge className="mt-1" tone={item.status === "COMPLETED" ? "green" : "cyan"}>
+                  <p className="text-[10px] uppercase tracking-wider text-subtle">Status</p>
+                  <Badge className="mt-1" tone={item.status === "COMPLETED" ? "success" : "primary"}>
                     {item.status.replaceAll("_", " ")}
                   </Badge>
                 </div>
                 <div>
-                  <p className="text-[10px] uppercase tracking-wider text-slate-600">Priority</p>
-                  <p className="mt-1 text-xs text-slate-300">{item.priority}</p>
+                  <p className="text-[10px] uppercase tracking-wider text-subtle">Priority</p>
+                  <p className="mt-1 text-xs text-muted">{item.priority}</p>
                 </div>
                 <div>
-                  <p className="text-[10px] uppercase tracking-wider text-slate-600">Created</p>
-                  <p className="mt-1 text-xs text-slate-400">
+                  <p className="text-[10px] uppercase tracking-wider text-subtle">Created</p>
+                  <p className="mt-1 text-xs text-muted">
                     {new Date(item.created_at).toLocaleDateString()}
                   </p>
                 </div>
@@ -183,19 +183,19 @@ export function InvestigationsPage() {
         title="Create case"
       >
         <form className="space-y-4" onSubmit={submitCase}>
-          <label className="block text-xs text-slate-400">
+          <label className="block text-xs text-muted">
             Case title
             <Input className="mt-2" onChange={(event) => setTitle(event.target.value)} required value={title} />
           </label>
-          <label className="block text-xs text-slate-400">
+          <label className="block text-xs text-muted">
             Description
             <textarea
-              className="mt-2 min-h-24 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-200 outline-none focus:border-cyan-400"
+              className="mt-2 min-h-24 w-full rounded-lg border border-border-strong bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
               onChange={(event) => setDescription(event.target.value)}
               value={description}
             />
           </label>
-          <label className="block text-xs text-slate-400">
+          <label className="block text-xs text-muted">
             Priority
             <Select className="mt-2 w-full" onChange={(event) => setPriority(event.target.value as CasePriority)} value={priority}>
               <option value="LOW">Low</option>
@@ -205,7 +205,7 @@ export function InvestigationsPage() {
             </Select>
           </label>
           {createCase.isError && (
-            <p className="text-xs text-red-300">
+            <p className="text-xs text-danger">
               {createCase.error instanceof ApiClientError
                 ? createCase.error.message
                 : "The case could not be created."}

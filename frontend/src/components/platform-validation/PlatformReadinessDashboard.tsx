@@ -38,7 +38,7 @@ export function PlatformReadinessDashboard() {
             <div className="flex flex-wrap gap-2">
               {run ? (
                 <>
-                  <Badge tone="cyan">{run.status}</Badge>
+                  <Badge tone="primary">{run.status}</Badge>
                   <Badge tone="neutral">
                     engine {run.engine_version}
                   </Badge>
@@ -83,7 +83,7 @@ export function PlatformReadinessDashboard() {
         <CompatibilityPanel compatibility={run?.compatibility ?? {}} />
       </div>
 
-      <div className="flex items-center gap-2 text-xs text-slate-600">
+      <div className="flex items-center gap-2 text-xs text-subtle">
         <HeartPulse size={14} /> Readiness only — no forecasting or model
         execution.
       </div>

@@ -46,26 +46,26 @@ export function ConfigurationPanel() {
           <Badge tone="neutral">
             Version: {String(profile.version ?? "—")}
           </Badge>
-          <Badge tone={profile.debug ? "amber" : "green"}>
+          <Badge tone={profile.debug ? "warning" : "success"}>
             Debug: {String(profile.debug ?? false)}
           </Badge>
         </div>
-        <dl className="grid gap-2 text-xs text-slate-400 sm:grid-cols-2">
+        <dl className="grid gap-2 text-xs text-muted sm:grid-cols-2">
           <div>
-            <dt className="text-slate-600">Storage backend</dt>
-            <dd className="text-slate-200">
+            <dt className="text-subtle">Storage backend</dt>
+            <dd className="text-foreground">
               {String(profile.storage_backend ?? "—")}
             </dd>
           </div>
           <div>
-            <dt className="text-slate-600">Auth required</dt>
-            <dd className="text-slate-200">
+            <dt className="text-subtle">Auth required</dt>
+            <dd className="text-foreground">
               {String(profile.auth_required ?? "—")}
             </dd>
           </div>
         </dl>
         <div>
-          <p className="mb-2 text-[11px] uppercase tracking-wide text-slate-600">
+          <p className="mb-2 text-[11px] uppercase tracking-wide text-subtle">
             Integrity findings
           </p>
           {findings.length ? (
@@ -76,16 +76,16 @@ export function ConfigurationPanel() {
                   key={item.check}
                 >
                   <div>
-                    <p className="font-medium text-slate-200">{item.check}</p>
-                    <p className="text-slate-500">{item.message}</p>
+                    <p className="font-medium text-foreground">{item.check}</p>
+                    <p className="text-muted">{item.message}</p>
                   </div>
                   <Badge
                     tone={
                       item.status === "PASS"
-                        ? "green"
+                        ? "success"
                         : item.status === "WARN"
-                          ? "amber"
-                          : "red"
+                          ? "warning"
+                          : "error"
                     }
                   >
                     {item.status}

@@ -48,9 +48,18 @@ async def run_async_migrations() -> None:
 
 
 def run_migrations_online() -> None:
-    """Run migrations in online mode."""
+    """Run migrations in online mode.
+
+    psycopg async requires a SelectorEventLoop. On Windows, Python 3.8+
+    defaults to ProactorEventLoop, which raises InterfaceError. Prefer the
+    selector policy on Windows; keep asyncio.run() elsewhere.
+    """
 
     import asyncio
+    import sys
+
+    if sys.platform.startswith("win"):
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
     asyncio.run(run_async_migrations())
 

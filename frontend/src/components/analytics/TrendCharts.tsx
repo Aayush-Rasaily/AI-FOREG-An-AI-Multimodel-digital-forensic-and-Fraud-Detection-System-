@@ -14,17 +14,17 @@ export function TrendCharts({ trends }: TrendChartsProps) {
     >
       <div className="space-y-4 p-4">
         {entries.length === 0 ? (
-          <p className="text-xs text-slate-500">No trend data yet.</p>
+          <p className="text-xs text-muted">No trend data yet.</p>
         ) : null}
         {entries.map(([key, points]) => {
           const max = Math.max(1, ...points.map((p) => p.value));
           return (
             <div key={key}>
-              <p className="mb-2 text-xs text-slate-400">{key}</p>
-              <div className="flex h-16 items-end gap-1">
+              <p className="mb-2 text-xs text-muted">{key}</p>
+      <div className="flex h-16 items-end gap-0.5 sm:gap-1">
                 {points.map((point) => (
                   <div
-                    className="flex-1 rounded-t bg-cyan-400/40"
+                    className="min-w-0 flex-1 rounded-t bg-primary/40 duration-fast transition-[height]"
                     key={`${key}-${point.index}`}
                     style={{
                       height: `${Math.max(8, (point.value / max) * 100)}%`,

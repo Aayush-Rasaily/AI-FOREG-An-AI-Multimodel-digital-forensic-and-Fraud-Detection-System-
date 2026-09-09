@@ -50,7 +50,7 @@ export function ApprovalPanel({
       title="Approval Chain"
     >
       <div className="space-y-4 p-4">
-        <div className="flex flex-wrap gap-2 text-xs text-slate-500">
+        <div className="flex flex-wrap gap-2 text-xs text-muted">
           Required:{" "}
           {(requiredRoles.length ? requiredRoles : ROLES).map((item) => (
             <Badge key={item} tone="neutral">
@@ -61,7 +61,7 @@ export function ApprovalPanel({
 
         {onSubmit ? (
           <div className="grid gap-2 sm:grid-cols-2">
-            <label className="block text-xs text-slate-400">
+            <label className="block text-xs text-muted">
               Reviewer
               <Input
                 className="mt-1"
@@ -69,7 +69,7 @@ export function ApprovalPanel({
                 value={reviewer}
               />
             </label>
-            <label className="block text-xs text-slate-400">
+            <label className="block text-xs text-muted">
               Role
               <Select
                 className="mt-1"
@@ -83,7 +83,7 @@ export function ApprovalPanel({
                 ))}
               </Select>
             </label>
-            <label className="block text-xs text-slate-400">
+            <label className="block text-xs text-muted">
               Decision
               <Select
                 className="mt-1"
@@ -97,7 +97,7 @@ export function ApprovalPanel({
                 ))}
               </Select>
             </label>
-            <label className="block text-xs text-slate-400">
+            <label className="block text-xs text-muted">
               Comments
               <Input
                 className="mt-1"
@@ -124,20 +124,20 @@ export function ApprovalPanel({
         ) : null}
 
         {approvals.length === 0 ? (
-          <p className="text-xs text-slate-500">No approvals recorded.</p>
+          <p className="text-xs text-muted">No approvals recorded.</p>
         ) : (
           approvals.map((item) => (
             <div
-              className="border-b border-slate-800/80 pb-2 text-xs last:border-0"
+              className="border-b border-border/80 pb-2 text-xs last:border-0"
               key={item.id ?? `${item.approver_role}-${item.created_at}`}
             >
               <div className="flex flex-wrap gap-2">
-                <Badge tone="cyan">{item.approver_role}</Badge>
+                <Badge tone="primary">{item.approver_role}</Badge>
                 <Badge tone="neutral">{item.decision}</Badge>
-                <span className="text-slate-400">{item.reviewer}</span>
+                <span className="text-muted">{item.reviewer}</span>
               </div>
               {item.comments ? (
-                <p className="mt-1 text-slate-500">{item.comments}</p>
+                <p className="mt-1 text-muted">{item.comments}</p>
               ) : null}
             </div>
           ))

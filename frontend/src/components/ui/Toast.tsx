@@ -56,7 +56,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
         {items.map((item) => (
           <div
             className={cn(
-              "pointer-events-auto rounded-md border p-3 shadow-lg",
+              "pointer-events-auto animate-slide-in-right rounded-md border p-3 shadow-lg",
               toneClass[item.tone],
             )}
             key={item.id}

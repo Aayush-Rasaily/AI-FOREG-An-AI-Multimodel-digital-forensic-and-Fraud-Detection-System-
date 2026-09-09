@@ -19,7 +19,7 @@ export function ReportsPage() {
           title="No reports available"
         />
       </Card>
-      <div className="mt-4 flex items-center gap-2 text-xs text-slate-600">
+      <div className="mt-4 flex items-center gap-2 text-xs text-subtle">
         <FileText aria-hidden="true" size={14} />
         Report provenance and export controls are reserved for a later phase.
       </div>

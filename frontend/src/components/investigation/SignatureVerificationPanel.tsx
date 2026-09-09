@@ -22,11 +22,11 @@ interface SignatureVerificationPanelProps {
 
 const verdictTone: Record<
   string,
-  "neutral" | "cyan" | "green" | "amber" | "red"
+  "neutral" | "primary" | "success" | "warning" | "error"
 > = {
-  MATCH: "green",
-  NON_MATCH: "red",
-  INCONCLUSIVE: "amber",
+  MATCH: "success",
+  NON_MATCH: "error",
+  INCONCLUSIVE: "warning",
   UNAVAILABLE: "neutral",
 };
 
@@ -60,7 +60,7 @@ export function SignatureVerificationPanel({
           <>
             <div className="space-y-2">
               <label
-                className="text-[11px] text-slate-500"
+                className="text-[11px] text-muted"
                 htmlFor="signature-reference"
               >
                 Reference signature evidence
@@ -119,7 +119,7 @@ export function SignatureVerificationPanel({
             )}
 
             {latestRun && (
-              <div className="rounded border border-slate-800 px-3 py-2 text-xs text-slate-400">
+              <div className="rounded border border-border px-3 py-2 text-xs text-muted">
                 <div className="flex items-center gap-2">
                   <ShieldCheck aria-hidden="true" size={14} />
                   <span>
@@ -134,14 +134,14 @@ export function SignatureVerificationPanel({
                     </>
                   )}
                 </div>
-                <p className="mt-2 break-all text-[10px] text-slate-600">
+                <p className="mt-2 break-all text-[10px] text-subtle">
                   Reference hash: {latestRun.reference_hash}
                 </p>
-                <p className="mt-1 break-all text-[10px] text-slate-600">
+                <p className="mt-1 break-all text-[10px] text-subtle">
                   Questioned hash: {latestRun.questioned_hash}
                 </p>
                 {latestRun.verdict === "UNAVAILABLE" && (
-                  <p className="mt-2 text-[11px] text-amber-300">
+                  <p className="mt-2 text-[11px] text-warning">
                     Signature model is unavailable. Configure SIGNATURE_MODEL_PATH to
                     enable inference.
                   </p>
@@ -158,7 +158,7 @@ export function SignatureVerificationPanel({
               )}
 
             {queueMutation.isError && (
-              <p className="text-[11px] text-red-300">
+              <p className="text-[11px] text-danger">
                 {queueMutation.error instanceof ApiClientError
                   ? queueMutation.error.message
                   : "Signature verification failed."}

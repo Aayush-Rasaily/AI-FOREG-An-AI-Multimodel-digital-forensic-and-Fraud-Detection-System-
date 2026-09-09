@@ -2,7 +2,7 @@ import { Badge } from "../ui/Badge";
 
 function tone(
   status: string,
-): "green" | "amber" | "red" | "neutral" {
+): "success" | "warning" | "error" | "neutral" {
   const value = status.toUpperCase();
   if (
     value === "VALID" ||
@@ -10,7 +10,7 @@ function tone(
     value === "PASSED" ||
     value === "PASS"
   ) {
-    return "green";
+    return "success";
   }
   if (
     value === "DEGRADED" ||
@@ -18,14 +18,14 @@ function tone(
     value === "CONFLICTS" ||
     value === "PARTIAL"
   ) {
-    return "amber";
+    return "warning";
   }
   if (
     value === "INVALID" ||
     value === "FAILED" ||
     value === "FAIL"
   ) {
-    return "red";
+    return "error";
   }
   return "neutral";
 }

@@ -107,7 +107,7 @@ export function KnowledgeGraphPanel({ caseId }: KnowledgeGraphPanelProps) {
             <div className="flex flex-wrap gap-2">
               {graph ? (
                 <>
-                  <Badge tone="cyan">{graph.status}</Badge>
+                  <Badge tone="primary">{graph.status}</Badge>
                   <Badge tone="neutral">{graph.entity_count} entities</Badge>
                   <Badge tone="neutral">
                     {graph.relationship_count} relationships
@@ -168,7 +168,7 @@ export function KnowledgeGraphPanel({ caseId }: KnowledgeGraphPanelProps) {
           {laidOut.length ? (
             <svg
               aria-label="Knowledge graph visualization"
-              className="w-full rounded-lg border border-slate-800 bg-slate-950/50"
+              className="w-full rounded-lg border border-border bg-background/50"
               height={height}
               role="img"
               viewBox={`0 0 ${width} ${height}`}
@@ -189,7 +189,7 @@ export function KnowledgeGraphPanel({ caseId }: KnowledgeGraphPanelProps) {
                       y2={target.y}
                     />
                     <text
-                      className="cursor-pointer fill-slate-500 text-[8px]"
+                      className="cursor-pointer fill-current text-[8px]"
                       onClick={() => setSelectedRelationship(edge)}
                       textAnchor="middle"
                       x={(source.x + target.x) / 2}
@@ -221,7 +221,7 @@ export function KnowledgeGraphPanel({ caseId }: KnowledgeGraphPanelProps) {
                     strokeWidth={node.id === selectedEntityId ? 2 : 1}
                   />
                   <text
-                    className="fill-slate-200 text-[9px]"
+                    className="fill-current text-[9px]"
                     textAnchor="middle"
                     x={node.x}
                     y={node.y + 22}
@@ -234,15 +234,15 @@ export function KnowledgeGraphPanel({ caseId }: KnowledgeGraphPanelProps) {
           ) : null}
 
           {neighborsQuery.data?.data ? (
-            <div className="rounded-lg border border-slate-800 p-3 text-xs text-slate-400">
-              <div className="mb-2 flex items-center gap-2 text-slate-300">
+            <div className="rounded-lg border border-border p-3 text-xs text-muted">
+              <div className="mb-2 flex items-center gap-2 text-muted">
                 <GitBranch size={14} /> Neighbors
               </div>
               <ul className="space-y-1">
                 {neighborsQuery.data.data.neighbors.map((item) => (
                   <li key={item.id}>
                     <button
-                      className="text-left hover:text-cyan-300"
+                      className="text-left hover:text-primary"
                       onClick={() => {
                         setSelectedEntityId(item.id);
                         setSelectedEntityKey(item.entity_key);

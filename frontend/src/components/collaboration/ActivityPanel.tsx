@@ -19,10 +19,10 @@ export function ActivityPanel({ caseId }: { caseId: string }) {
       <ul className="space-y-2">
         {items.map((item) => (
           <li
-            className="rounded-lg border border-slate-800 px-3 py-2 text-xs text-slate-400"
+            className="rounded-lg border border-border px-3 py-2 text-xs text-muted"
             key={item.id}
           >
-            <p className="text-slate-200">{item.summary}</p>
+            <p className="text-foreground">{item.summary}</p>
             <p className="mt-1">
               {item.actor_username} · {item.action} ·{" "}
               {new Date(item.created_at).toLocaleString()}

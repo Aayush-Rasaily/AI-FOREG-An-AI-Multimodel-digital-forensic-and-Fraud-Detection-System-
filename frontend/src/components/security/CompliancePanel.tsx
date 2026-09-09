@@ -35,9 +35,9 @@ export function CompliancePanel({ caseId }: { caseId: string }) {
           />
         )}
         {report && (
-          <div className="space-y-2 text-sm text-slate-300">
+          <div className="space-y-2 text-sm text-muted">
             <SecurityStatusBadge status={report.status} />
-            <ul className="space-y-1 text-xs text-slate-500">
+            <ul className="space-y-1 text-xs text-muted">
               <li>
                 Custody complete:{" "}
                 {report.chain_of_custody_complete ? "yes" : "no"}
@@ -56,12 +56,12 @@ export function CompliancePanel({ caseId }: { caseId: string }) {
               </li>
             </ul>
             {report.missing_approvals.length > 0 && (
-              <p className="text-xs text-amber-400">
+              <p className="text-xs text-warning">
                 Missing approvals: {report.missing_approvals.join(", ")}
               </p>
             )}
             {report.missing_provenance.length > 0 && (
-              <p className="text-xs text-amber-400">
+              <p className="text-xs text-warning">
                 Missing provenance: {report.missing_provenance.join(", ")}
               </p>
             )}

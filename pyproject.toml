@@ -37,6 +37,8 @@ dependencies = [
     "opentelemetry-instrumentation-redis>=0.49b0",
     "opentelemetry-instrumentation-httpx>=0.49b0",
     "opentelemetry-instrumentation-asgi>=0.49b0",
+    "torch>=2.2,<3.0",
+    "timm>=1.0,<2.0",
 ]
 
 [dependency-groups]

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { BarChart3, RefreshCw } from "lucide-react";
 
 import {
@@ -6,6 +6,7 @@ import {
   useAnalyticsQuery,
   useRefreshAnalyticsMutation,
 } from "../../hooks/useAnalytics";
+import { ContextualHelp } from "../help/HelpChrome";
 import { ExportPanel } from "./ExportPanel";
 import { KpiCards } from "./KpiCards";
 import { SectionMetrics } from "./SectionMetrics";
@@ -16,6 +17,13 @@ import { ErrorState } from "../ui/ErrorState";
 import { LoadingState } from "../ui/LoadingState";
 import { Panel } from "../ui/Panel";
 import { PageHeader } from "../layout/PageHeader";
+import { VizSkeleton } from "../viz/VizSkeleton";
+
+const InteractiveAnalyticsWorkspace = lazy(() =>
+  import("../viz/InteractiveAnalyticsWorkspace").then((m) => ({
+    default: m.InteractiveAnalyticsWorkspace,
+  })),
+);
 
 export function AnalyticsDashboard() {
   const query = useAnalyticsQuery();
@@ -50,9 +58,9 @@ export function AnalyticsDashboard() {
             <div className="flex flex-wrap gap-2">
               {run ? (
                 <>
-                  <Badge tone="cyan">{run.status}</Badge>
+                  <Badge tone="primary">{run.status}</Badge>
                   <Badge tone="neutral">{run.metric_count} metrics</Badge>
-                  <Badge tone={run.persisted ? "green" : "amber"}>
+                  <Badge tone={run.persisted ? "success" : "warning"}>
                     {run.persisted ? "persisted" : "live"}
                   </Badge>
                 </>
@@ -86,7 +94,7 @@ export function AnalyticsDashboard() {
           ) : null}
 
           {run?.provenance ? (
-            <div className="text-[11px] text-slate-600">
+            <div className="text-[11px] text-subtle">
               Provenance · engine {run.engine_version} · policy{" "}
               {run.policy_version} · forecasting off
             </div>
@@ -95,7 +103,22 @@ export function AnalyticsDashboard() {
       </Panel>
 
       <KpiCards items={overview.kpis ?? []} />
+      <ContextualHelp
+        body="Analytics refresh persists a deterministic snapshot from platform tables. Interactive charts below filter client-side only and never re-run AI engines."
+        title="How investigation analytics works"
+      />
       <TrendCharts trends={run?.trends ?? {}} />
+
+      <Suspense
+        fallback={
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <VizSkeleton label="Loading interactive analytics" />
+            <VizSkeleton />
+          </div>
+        }
+      >
+        <InteractiveAnalyticsWorkspace />
+      </Suspense>
 
       <div className="grid gap-4 xl:grid-cols-2">
         <SectionMetrics
@@ -146,7 +169,7 @@ export function AnalyticsDashboard() {
         />
       </div>
 
-      <div className="flex items-center gap-2 text-xs text-slate-600">
+      <div className="flex items-center gap-2 text-xs text-subtle">
         <BarChart3 size={14} /> Operational metrics only — no predictive models.
       </div>
     </div>

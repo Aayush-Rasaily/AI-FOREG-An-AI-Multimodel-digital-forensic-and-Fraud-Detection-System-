@@ -12,11 +12,11 @@ import { Panel } from "../ui/Panel";
 
 const STATUS_TONE: Record<
   string,
-  "green" | "amber" | "red" | "neutral"
+  "success" | "warning" | "error" | "neutral"
 > = {
-  PASS: "green",
-  WARN: "amber",
-  FAIL: "red",
+  PASS: "success",
+  WARN: "warning",
+  FAIL: "error",
   SKIP: "neutral",
 };
 
@@ -56,10 +56,10 @@ export function DiagnosticsPanel() {
             <Badge
               tone={
                 data.overall_status === "healthy"
-                  ? "green"
+                  ? "success"
                   : data.overall_status === "unhealthy"
-                    ? "red"
-                    : "amber"
+                    ? "error"
+                    : "warning"
               }
             >
               {data.overall_status}
@@ -67,14 +67,14 @@ export function DiagnosticsPanel() {
             <ul className="space-y-1 text-xs">
               {data.checks.map((check) => (
                 <li
-                  className="flex items-center gap-2 rounded border border-slate-800 px-2 py-1.5"
+                  className="flex items-center gap-2 rounded border border-border px-2 py-1.5"
                   key={check.name}
                 >
                   <Badge tone={STATUS_TONE[check.status] ?? "neutral"}>
                     {check.status}
                   </Badge>
-                  <span className="text-slate-300">{check.name}</span>
-                  <span className="ml-auto text-slate-500">
+                  <span className="text-muted">{check.name}</span>
+                  <span className="ml-auto text-muted">
                     {check.detail}
                   </span>
                 </li>

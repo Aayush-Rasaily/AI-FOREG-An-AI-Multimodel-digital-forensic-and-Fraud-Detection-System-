@@ -11,8 +11,8 @@ export function MetadataPanel() {
         icon={<Fingerprint aria-hidden="true" size={19} />}
         title="Metadata unavailable"
       />
-      <div className="border-t border-slate-800 px-4 py-3">
-        <p className="flex items-center gap-2 text-[11px] text-slate-600">
+      <div className="border-t border-border px-4 py-3">
+        <p className="flex items-center gap-2 text-[11px] text-subtle">
           <Database aria-hidden="true" size={13} />
           No persistence record loaded
         </p>

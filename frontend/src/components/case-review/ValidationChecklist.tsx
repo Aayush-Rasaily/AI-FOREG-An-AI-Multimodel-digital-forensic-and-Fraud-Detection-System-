@@ -38,26 +38,26 @@ export function ValidationChecklist({
     >
       <div className="space-y-3 p-4">
         {filtered.length === 0 ? (
-          <p className="text-xs text-slate-500">No checklist items match.</p>
+          <p className="text-xs text-muted">No checklist items match.</p>
         ) : null}
         {filtered.map((item) => (
           <div
-            className="border-b border-slate-800/80 pb-3 last:border-0"
+            className="border-b border-border/80 pb-3 last:border-0"
             key={item.item_key}
           >
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-sm text-slate-200">{item.title}</span>
-              <Badge tone={item.blocking ? "red" : "neutral"}>
+              <span className="text-sm text-foreground">{item.title}</span>
+              <Badge tone={item.blocking ? "error" : "neutral"}>
                 {item.status}
               </Badge>
-              <Badge tone="cyan">suggest {item.suggested_status}</Badge>
+              <Badge tone="primary">suggest {item.suggested_status}</Badge>
               {item.outstanding ? (
-                <Badge tone="amber">outstanding</Badge>
+                <Badge tone="warning">outstanding</Badge>
               ) : null}
             </div>
-            <p className="mt-1 text-xs text-slate-500">{item.notes}</p>
+            <p className="mt-1 text-xs text-muted">{item.notes}</p>
             {item.provenance?.engine_version ? (
-              <p className="mt-1 text-[11px] text-slate-600">
+              <p className="mt-1 text-[11px] text-subtle">
                 Provenance · {String(item.provenance.engine_version)}
               </p>
             ) : null}

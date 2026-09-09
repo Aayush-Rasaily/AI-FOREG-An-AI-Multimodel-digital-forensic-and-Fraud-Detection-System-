@@ -24,14 +24,14 @@ export function PermissionsPanel() {
         <ul className="max-h-96 space-y-2 overflow-y-auto">
           {items.map((item) => (
             <li
-              className="rounded-lg border border-slate-800 px-3 py-2"
+              className="rounded-lg border border-border px-3 py-2"
               key={item.code}
             >
               <div className="flex flex-wrap items-center gap-2">
-                <p className="text-sm text-slate-200">{item.code}</p>
-                <Badge tone="cyan">{item.resource}</Badge>
+                <p className="text-sm text-foreground">{item.code}</p>
+                <Badge tone="primary">{item.resource}</Badge>
               </div>
-              <p className="text-xs text-slate-500">{item.description}</p>
+              <p className="text-xs text-muted">{item.description}</p>
             </li>
           ))}
         </ul>

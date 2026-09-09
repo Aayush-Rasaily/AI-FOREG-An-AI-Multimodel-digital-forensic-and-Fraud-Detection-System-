@@ -4,12 +4,12 @@ import { Panel } from "../ui/Panel";
 
 const toneByStatus: Record<
   PlatformHealthStatus,
-  "green" | "amber" | "red" | "neutral"
+  "success" | "warning" | "error" | "neutral"
 > = {
-  HEALTHY: "green",
-  DEGRADED: "amber",
-  WARNING: "amber",
-  CRITICAL: "red",
+  HEALTHY: "success",
+  DEGRADED: "warning",
+  WARNING: "warning",
+  CRITICAL: "error",
 };
 
 interface SystemHealthCardProps {
@@ -29,13 +29,13 @@ export function SystemHealthCard({
     <Panel description="Deterministic platform health from persisted job and AI outcomes." title="System Health">
       <div className="space-y-3 p-4">
         <Badge tone={tone}>Health: {status}</Badge>
-        <ul className="space-y-1 text-xs text-slate-400">
+        <ul className="space-y-1 text-xs text-muted">
           {reasons.map((reason) => (
             <li key={reason}>{reason}</li>
           ))}
         </ul>
         {assessedAt ? (
-          <p className="text-[11px] text-slate-600">
+          <p className="text-[11px] text-subtle">
             Assessed {new Date(assessedAt).toLocaleString()}
           </p>
         ) : null}

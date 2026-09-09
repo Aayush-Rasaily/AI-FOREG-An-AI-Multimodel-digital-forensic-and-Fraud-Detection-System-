@@ -28,11 +28,11 @@ interface AuditTrailPanelProps {
 
 const CATEGORY_TONE: Record<
   string,
-  "neutral" | "cyan" | "green" | "amber" | "red"
+  "neutral" | "primary" | "success" | "warning" | "error"
 > = {
-  case: "cyan",
-  evidence: "green",
-  analysis: "amber",
+  case: "primary",
+  evidence: "success",
+  analysis: "warning",
   report: "neutral",
   user: "neutral",
   system: "neutral",
@@ -86,10 +86,10 @@ export function AuditTrailPanel({ caseId }: AuditTrailPanelProps) {
               <Badge
                 tone={
                   integrityResults.overall_status === "VERIFIED"
-                    ? "green"
+                    ? "success"
                     : integrityResults.overall_status === "MISMATCH"
-                      ? "red"
-                      : "amber"
+                      ? "error"
+                      : "warning"
                 }
               >
                 {integrityResults.overall_status}
@@ -127,11 +127,11 @@ export function AuditTrailPanel({ caseId }: AuditTrailPanelProps) {
 
         <div className="relative">
           <Search
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted"
             size={14}
           />
           <input
-            className="w-full rounded-lg border border-slate-800 bg-slate-950/40 py-2 pl-9 pr-3 text-xs text-slate-200 placeholder:text-slate-600 focus:border-cyan-700 focus:outline-none"
+            className="w-full rounded-lg border border-border bg-background/40 py-2 pl-9 pr-3 text-xs text-foreground placeholder:text-subtle focus:border-primary-strong focus:outline-none"
             onChange={(e) => setFilter(e.target.value)}
             placeholder="Filter events…"
             type="text"
@@ -168,11 +168,11 @@ export function AuditTrailPanel({ caseId }: AuditTrailPanelProps) {
               const isOpen = expanded[event.id] ?? false;
               return (
                 <div
-                  className="rounded-lg border border-slate-800 bg-slate-950/40 p-3"
+                  className="rounded-lg border border-border bg-background/40 p-3"
                   key={event.id}
                 >
                   <button
-                    className="flex w-full items-center gap-2 text-left text-xs text-slate-200"
+                    className="flex w-full items-center gap-2 text-left text-xs text-foreground"
                     onClick={() =>
                       setExpanded((c) => ({
                         ...c,
@@ -194,12 +194,12 @@ export function AuditTrailPanel({ caseId }: AuditTrailPanelProps) {
                     <span className="font-medium">
                       {event.operation}
                     </span>
-                    <span className="ml-auto text-slate-500">
+                    <span className="ml-auto text-muted">
                       {formatTimestamp(event.timestamp)}
                     </span>
                   </button>
                   {isOpen && (
-                    <div className="mt-2 space-y-1 text-[11px] text-slate-400">
+                    <div className="mt-2 space-y-1 text-[11px] text-muted">
                       <p>User: {event.user}</p>
                       <p>
                         Integrity:{" "}
@@ -220,7 +220,7 @@ export function AuditTrailPanel({ caseId }: AuditTrailPanelProps) {
                       </p>
                       {(event.previous_state != null ||
                         event.new_state != null) && (
-                        <pre className="mt-1 overflow-x-auto rounded bg-slate-900 p-2">
+                        <pre className="mt-1 overflow-x-auto rounded bg-background-offset p-2">
                           {JSON.stringify(
                             {
                               previous_state: event.previous_state,
@@ -241,20 +241,20 @@ export function AuditTrailPanel({ caseId }: AuditTrailPanelProps) {
 
         {integrityResults &&
           integrityResults.results.length > 0 && (
-            <div className="rounded-lg border border-slate-800 p-3">
-              <p className="mb-2 text-xs font-medium text-slate-200">
+            <div className="rounded-lg border border-border p-3">
+              <p className="mb-2 text-xs font-medium text-foreground">
                 Integrity Verification
               </p>
-              <ul className="space-y-1 text-xs text-slate-400">
+              <ul className="space-y-1 text-xs text-muted">
                 {integrityResults.results.map((r, i) => (
                   <li key={i}>
                     <Badge
                       tone={
                         r.status === "VERIFIED"
-                          ? "green"
+                          ? "success"
                           : r.status === "MISMATCH"
-                            ? "red"
-                            : "amber"
+                            ? "error"
+                            : "warning"
                       }
                     >
                       {r.status}

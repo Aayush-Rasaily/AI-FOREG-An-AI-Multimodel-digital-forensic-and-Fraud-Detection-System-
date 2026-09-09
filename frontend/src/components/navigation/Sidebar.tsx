@@ -23,6 +23,7 @@ import {
 
 import { useOptionalAuth } from "../../context/AuthContext";
 import { cn } from "../../lib/utils";
+import { SmartSidebarExtras } from "./SmartSidebarExtras";
 
 interface SidebarProps {
   collapsed: boolean;
@@ -104,11 +105,11 @@ function NavigationGroup({
         <NavLink
           className={({ isActive }) =>
             cn(
-              "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/80",
+              "group flex min-h-11 items-center gap-3 rounded-lg px-3 py-2.5 text-sm duration-fast transition-colors",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
               isActive
-                ? "bg-cyan-400/10 text-cyan-200"
-                : "text-slate-500 hover:bg-slate-800/80 hover:text-slate-200",
+                ? "bg-primary-soft text-primary"
+                : "text-muted hover:bg-surface-muted hover:text-foreground",
               collapsed && "justify-center px-2",
             )
           }
@@ -150,7 +151,10 @@ export function Sidebar({
       {mobileOpen && (
         <button
           aria-label="Close navigation"
-          className="fixed inset-0 z-30 bg-slate-950/70 lg:hidden"
+          className={cn(
+            "fixed inset-0 z-30 bg-background/80 backdrop-blur-[2px] sm:hidden",
+            "animate-fade-in",
+          )}
           onClick={onClose}
           type="button"
         />
@@ -158,30 +162,39 @@ export function Sidebar({
       <aside
         aria-label="Primary navigation"
         className={cn(
-          "fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-slate-800 bg-slate-950 transition-transform duration-200 lg:relative lg:z-0 lg:translate-x-0",
-          collapsed ? "lg:w-[76px]" : "lg:w-64",
-          mobileOpen ? "translate-x-0" : "-translate-x-full",
+          // Mobile: off-canvas drawer. Tablet+: in-flow collapsible rail.
+          "fixed inset-y-0 left-0 z-40 flex w-[min(18rem,88vw)] flex-col border-r border-border bg-background-offset",
+          "duration-normal transition-[transform,width] ease-[var(--ds-ease-default)]",
+          "sm:relative sm:z-0 sm:w-64 sm:translate-x-0",
+          collapsed ? "sm:w-[76px]" : "sm:w-64",
+          mobileOpen ? "translate-x-0" : "-translate-x-full sm:translate-x-0",
         )}
       >
-        <div className="flex h-16 items-center justify-between border-b border-slate-800 px-4">
+        <div className="flex h-16 items-center justify-between border-b border-border px-4">
           <NavLink
             aria-label="AI-FORGE dashboard"
-            className={cn("flex items-center gap-3", collapsed && "lg:mx-auto")}
+            className={cn(
+              "flex items-center gap-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+              collapsed && "sm:mx-auto",
+            )}
             onClick={onClose}
             to="/dashboard"
           >
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-cyan-400/10 text-cyan-300">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-soft text-primary">
               <Shield aria-hidden="true" size={18} strokeWidth={1.8} />
             </span>
             {!collapsed && (
-              <span className="text-sm font-semibold tracking-[0.18em] text-slate-100">
+              <span className="text-body font-semibold tracking-[0.18em] text-foreground">
                 AI-FORGE
               </span>
             )}
           </NavLink>
           <button
             aria-label="Close navigation"
-            className="rounded-md p-1.5 text-slate-500 hover:bg-slate-800 hover:text-slate-100 lg:hidden"
+            className={cn(
+              "rounded-md p-2 text-muted hover:bg-surface-muted hover:text-foreground sm:hidden",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+            )}
             onClick={onClose}
             type="button"
           >
@@ -190,9 +203,10 @@ export function Sidebar({
         </div>
 
         <div className="flex-1 space-y-7 overflow-y-auto px-3 py-6">
+          <SmartSidebarExtras collapsed={collapsed} onNavigate={onClose} />
           <div>
             {!collapsed && (
-              <p className="mb-3 px-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-600">
+              <p className="mb-3 px-3 text-micro font-semibold uppercase tracking-[0.18em] text-subtle">
                 Workspace
               </p>
             )}
@@ -204,7 +218,7 @@ export function Sidebar({
           </div>
           <div>
             {!collapsed && (
-              <p className="mb-3 px-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-600">
+              <p className="mb-3 px-3 text-micro font-semibold uppercase tracking-[0.18em] text-subtle">
                 System
               </p>
             )}
@@ -216,10 +230,15 @@ export function Sidebar({
           </div>
         </div>
 
-        <div className="border-t border-slate-800 p-3">
+        <div className="border-t border-border p-3">
           <button
             aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-            className="hidden w-full items-center justify-center gap-2 rounded-lg p-2 text-xs text-slate-600 hover:bg-slate-800 hover:text-slate-300 lg:flex"
+            className={cn(
+              "hidden w-full min-h-11 items-center justify-center gap-2 rounded-lg p-2 text-caption text-subtle",
+              "hover:bg-surface-muted hover:text-foreground sm:flex",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+              "duration-fast transition-colors",
+            )}
             onClick={onToggle}
             type="button"
           >

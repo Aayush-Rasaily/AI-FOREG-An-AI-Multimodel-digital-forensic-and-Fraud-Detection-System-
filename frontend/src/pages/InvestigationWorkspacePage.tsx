@@ -1,9 +1,11 @@
-import { lazy, Suspense, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   ArrowLeft,
   Clock3,
   FileBarChart,
+  Pin,
+  Star,
   Shield,
 } from "lucide-react";
 
@@ -15,6 +17,8 @@ import { ComparisonPanel } from "../components/investigation/ComparisonPanel";
 import { FindingsPanel } from "../components/investigation/FindingsPanel";
 import { MetadataPanel } from "../components/investigation/MetadataPanel";
 import { PageHeader } from "../components/layout/PageHeader";
+import { InvestigationTabBar } from "../components/workspace/InvestigationTabBar";
+import { ResizableSplit } from "../components/workspace/ResizableSplit";
 import { Badge } from "../components/ui/Badge";
 import { Button } from "../components/ui/Button";
 import { ErrorState } from "../components/ui/ErrorState";
@@ -22,8 +26,10 @@ import { LoadingState } from "../components/ui/LoadingState";
 import { NotFoundState } from "../components/ui/NotFoundState";
 import { Panel } from "../components/ui/Panel";
 import { Tabs, type TabOption } from "../components/ui/Tabs";
+import { useOptionalProductivity } from "../context/ProductivityContext";
 import { useCaseQuery } from "../hooks/useCases";
 import { useCaseEvidenceQuery } from "../hooks/useEvidence";
+import { useViewport } from "../hooks/useMediaQuery";
 import { ApiClientError } from "../services/api/client";
 import type { InvestigationTab } from "../types/investigation";
 
@@ -240,9 +246,51 @@ function TabFallback({ label }: { label: string }) {
 export function InvestigationWorkspacePage() {
   const { caseId } = useParams<{ caseId: string }>();
   const navigate = useNavigate();
+  const productivity = useOptionalProductivity();
+  const { isTabletUp } = useViewport();
   const [activeTab, setActiveTab] = useState<InvestigationTab>("overview");
+  const [selectedEvidenceId, setSelectedEvidenceId] = useState<string>("");
   const caseQuery = useCaseQuery(caseId);
   const evidenceQuery = useCaseEvidenceQuery(caseId);
+
+  useEffect(() => {
+    if (!caseId || !productivity) {
+      return;
+    }
+    const saved = productivity.activeTabByCase[caseId];
+    if (saved && tabs.some((tab) => tab.value === saved)) {
+      setActiveTab(saved as InvestigationTab);
+      return;
+    }
+    if (productivity.preferredView) {
+      const preferred = productivity.preferredView as InvestigationTab;
+      if (tabs.some((tab) => tab.value === preferred)) {
+        setActiveTab(preferred);
+      }
+    }
+    // Restore once per case open — do not re-run when productivity identity changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [caseId]);
+
+  useEffect(() => {
+    if (!caseQuery.data?.data || !caseId || !productivity) {
+      return;
+    }
+    const record = caseQuery.data.data;
+    productivity.registerOpenTab({
+      caseId,
+      title: record.title,
+      caseNumber: record.case_number,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [caseId, caseQuery.data?.data?.id]);
+
+  const onTabChange = (tab: InvestigationTab) => {
+    setActiveTab(tab);
+    if (caseId && productivity) {
+      productivity.setCaseActiveTab(caseId, tab);
+    }
+  };
 
   if (caseQuery.isPending) {
     return <LoadingState label="Loading case workspace" />;
@@ -264,96 +312,180 @@ export function InvestigationWorkspacePage() {
     return <NotFoundState />;
   }
   const evidence = evidenceQuery.data?.data.items ?? [];
-  const primaryEvidence = evidence[0];
+  const primaryEvidence =
+    evidence.find((item) => item.id === selectedEvidenceId) ?? evidence[0];
+  const isPinned = productivity?.pinnedCaseIds.includes(caseId) ?? false;
+  const isFavorite = productivity?.favoriteCaseIds.includes(caseId) ?? false;
+
+  const evidenceNavigator = (
+    <Panel className="min-w-0" collapsible title="Evidence navigator">
+      <div className="max-h-[28rem] overflow-auto p-3 sm:p-4">
+        {evidenceQuery.isPending && (
+          <LoadingState label="Loading evidence" />
+        )}
+        {evidenceQuery.isError && (
+          <ErrorState
+            description="Evidence records could not be loaded."
+            onRetry={() => void evidenceQuery.refetch()}
+          />
+        )}
+        {evidenceQuery.isSuccess && (
+          <EvidenceList
+            items={evidence}
+            onSelect={setSelectedEvidenceId}
+            selectedId={primaryEvidence?.id}
+            showDetails={false}
+          />
+        )}
+      </div>
+    </Panel>
+  );
 
   return (
-    <div>
+    <div className="min-w-0">
+      <InvestigationTabBar />
       <PageHeader
         actions={
-          <Button onClick={() => navigate("/reports")} variant="secondary">
-            <FileBarChart aria-hidden="true" size={16} />
-            Reports
-          </Button>
+          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+            <Button
+              aria-label={isPinned ? "Unpin investigation" : "Pin investigation"}
+              onClick={() => productivity?.togglePinned(caseId)}
+              variant="secondary"
+            >
+              <Pin aria-hidden="true" size={16} />
+              {isPinned ? "Pinned" : "Pin"}
+            </Button>
+            <Button
+              aria-label={
+                isFavorite ? "Remove favorite" : "Favorite investigation"
+              }
+              onClick={() => productivity?.toggleFavorite(caseId)}
+              variant="secondary"
+            >
+              <Star aria-hidden="true" size={16} />
+              {isFavorite ? "Favorited" : "Favorite"}
+            </Button>
+            <Button
+              className="min-h-11"
+              onClick={() => navigate("/reports")}
+              variant="secondary"
+            >
+              <FileBarChart aria-hidden="true" size={16} />
+              Reports
+            </Button>
+          </div>
         }
-        description={caseRecord.description || "Preserve original evidence and review its custody history."}
+        description={
+          caseRecord.description ||
+          "Preserve original evidence and review its custody history."
+        }
         eyebrow="Investigation workspace"
         title={caseRecord.title}
       />
 
-      <div className="mb-5 flex flex-wrap items-center gap-3 border-y border-slate-800 py-3">
+      <div className="mb-4 flex flex-wrap items-center gap-2 border-y border-border py-3 sm:mb-5 sm:gap-3">
         <Link
-          className="inline-flex items-center gap-2 text-xs text-slate-500 hover:text-cyan-300"
+          className="inline-flex min-h-9 items-center gap-2 rounded-md text-xs text-muted hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           to="/investigations"
         >
           <ArrowLeft aria-hidden="true" size={14} />
           All investigations
         </Link>
-        <span className="hidden h-4 w-px bg-slate-800 sm:block" />
+        <span className="hidden h-4 w-px bg-surface-muted sm:block" />
         <Badge tone="neutral">Case ID: {caseRecord.case_number}</Badge>
-        <Badge tone="cyan">{caseRecord.status.replaceAll("_", " ")}</Badge>
-        <Badge tone="neutral">{evidenceQuery.data?.data.total ?? 0} evidence items</Badge>
-        <span className="flex items-center gap-1.5 text-[11px] text-slate-600">
+        <Badge tone="primary">{caseRecord.status.replaceAll("_", " ")}</Badge>
+        <Badge tone="neutral">
+          {evidenceQuery.data?.data.total ?? 0} evidence items
+        </Badge>
+        <span className="flex w-full items-center gap-1.5 text-[11px] text-subtle sm:w-auto">
           <Clock3 aria-hidden="true" size={13} />
-          Last activity unavailable
+          Session restored from local preferences when available
         </span>
       </div>
 
-      <Tabs options={tabs} onChange={setActiveTab} value={activeTab} />
+      <div className="-mx-3 overflow-x-auto px-3 sm:mx-0 sm:px-0">
+        <Tabs onChange={onTabChange} options={tabs} value={activeTab} />
+      </div>
 
-      <div className="mt-5">
+      <div className="mt-4 sm:mt-5">
         {activeTab === "overview" && (
           <div className="space-y-4">
-            <div className="grid gap-4 xl:grid-cols-[0.9fr_1.6fr_1fr]">
-              <Panel title="Evidence navigator">
-                {evidenceQuery.isPending && <LoadingState label="Loading evidence" />}
-                {evidenceQuery.isError && (
-                  <ErrorState
-                    description="Evidence records could not be loaded."
-                    onRetry={() => void evidenceQuery.refetch()}
-                  />
-                )}
-                {evidenceQuery.isSuccess && <EvidenceList items={evidence} />}
-              </Panel>
-              <EvidenceViewer />
-              <div className="space-y-4">
+            {!isTabletUp ? (
+              <div className="grid grid-cols-1 gap-4">
+                {evidenceNavigator}
+                <EvidenceViewer
+                  evidenceName={primaryEvidence?.original_filename}
+                />
                 <AnalysisPanel evidence={primaryEvidence} />
                 <ComparisonPanel evidence={primaryEvidence} />
                 <FindingsPanel evidence={primaryEvidence} />
               </div>
-            </div>
+            ) : (
+              <ResizableSplit
+                className="gap-0"
+                defaultLeftPercent={28}
+                left={evidenceNavigator}
+                right={
+                  <div className="grid min-w-0 gap-4 desktop:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
+                    <EvidenceViewer
+                      evidenceName={primaryEvidence?.original_filename}
+                    />
+                    <div className="min-w-0 space-y-4">
+                      <AnalysisPanel evidence={primaryEvidence} />
+                      <ComparisonPanel evidence={primaryEvidence} />
+                      <FindingsPanel evidence={primaryEvidence} />
+                    </div>
+                  </div>
+                }
+                storageKey={`overview-split:${caseId}`}
+              />
+            )}
             <EvidenceUploadForm caseId={caseId} />
-            <div className="grid gap-4 xl:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <MetadataPanel />
             </div>
           </div>
         )}
         {activeTab === "evidence" && (
           <div className="space-y-4">
-            <Panel title="Registered evidence">
-              {evidenceQuery.isPending && <LoadingState label="Loading evidence" />}
-              {evidenceQuery.isError && (
-                <ErrorState
-                  description="Evidence records could not be loaded."
-                  onRetry={() => void evidenceQuery.refetch()}
-                />
-              )}
-              {evidenceQuery.isSuccess && <EvidenceList items={evidence} />}
+            <Panel collapsible title="Registered evidence">
+              <div className="p-3 sm:p-4">
+                {evidenceQuery.isPending && (
+                  <LoadingState label="Loading evidence" />
+                )}
+                {evidenceQuery.isError && (
+                  <ErrorState
+                    description="Evidence records could not be loaded."
+                    onRetry={() => void evidenceQuery.refetch()}
+                  />
+                )}
+                {evidenceQuery.isSuccess && (
+                  <EvidenceList
+                    items={evidence}
+                    layout="grid"
+                    onSelect={setSelectedEvidenceId}
+                    selectedId={primaryEvidence?.id}
+                  />
+                )}
+              </div>
             </Panel>
             <EvidenceUploadForm caseId={caseId} />
           </div>
         )}
         <Suspense fallback={<TabFallback label="Loading panel…" />}>
           {activeTab === "jury" && <AiJuryPanel evidence={primaryEvidence} />}
-          {activeTab === "findings" && <FindingsPanel evidence={primaryEvidence} />}
+          {activeTab === "findings" && (
+            <FindingsPanel evidence={primaryEvidence} />
+          )}
           {activeTab === "metadata" && <MetadataPanel />}
           {activeTab === "comparison" && (
-            <div className="grid gap-4 xl:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <ComparisonPanel evidence={primaryEvidence} />
               <DifferencesPanel evidence={primaryEvidence} />
             </div>
           )}
           {activeTab === "forensics" && (
-            <div className="grid gap-4 xl:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <AnalysisPanel evidence={primaryEvidence} />
               <ImageAnalysisPanel evidence={primaryEvidence} />
               <DocumentAnalysisPanel evidence={primaryEvidence} />
@@ -392,15 +524,15 @@ export function InvestigationWorkspacePage() {
           {activeTab === "collaboration" && (
             <div className="space-y-4">
               <WorkflowPanel caseId={caseId} />
-              <div className="grid gap-4 xl:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <CaseMembersPanel caseId={caseId} />
                 <NotificationPanel />
               </div>
-              <div className="grid gap-4 xl:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <TaskBoard caseId={caseId} />
                 <AssignmentsPanel caseId={caseId} />
               </div>
-              <div className="grid gap-4 xl:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <CommentsPanel caseId={caseId} />
                 <ReviewPanel caseId={caseId} />
               </div>
@@ -410,11 +542,11 @@ export function InvestigationWorkspacePage() {
           {activeTab === "workflow" && (
             <div className="space-y-4">
               <InvestigationWorkflowPanel caseId={caseId} />
-              <div className="grid gap-4 xl:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <InvestigationTaskBoard caseId={caseId} />
                 <InvestigationReviewPanel caseId={caseId} />
               </div>
-              <div className="grid gap-4 xl:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <MilestoneTimeline caseId={caseId} />
                 <WorkflowNotificationsPanel caseId={caseId} />
               </div>
@@ -423,7 +555,7 @@ export function InvestigationWorkspacePage() {
           )}
           {activeTab === "security" && (
             <div className="space-y-4">
-              <div className="grid gap-4 xl:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <CaseAccessPanel caseId={caseId} />
                 <CompliancePanel caseId={caseId} />
               </div>
@@ -435,7 +567,7 @@ export function InvestigationWorkspacePage() {
         </Suspense>
       </div>
 
-      <div className="mt-5 flex items-center gap-2 text-[11px] text-slate-600">
+      <div className="mt-5 flex items-center gap-2 text-[11px] text-subtle">
         <Shield aria-hidden="true" size={13} />
         Chain-of-custody controls will be enforced by the backend integration.
       </div>

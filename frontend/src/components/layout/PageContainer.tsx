@@ -9,7 +9,11 @@ export function PageContainer({
   children: ReactNode;
   className?: string;
 }) {
-  return <div className={cn("mx-auto w-full max-w-[1800px]", className)}>{children}</div>;
+  return (
+    <div className={cn("mx-auto w-full max-w-[1800px]", className)}>
+      {children}
+    </div>
+  );
 }
 
 export function SectionHeader({
@@ -23,7 +27,7 @@ export function SectionHeader({
     <div className="mb-4">
       <h2 className="text-display-h2 text-foreground">{title}</h2>
       {description && (
-        <p className="text-caption mt-1 text-muted">{description}</p>
+        <p className="mt-1 text-caption text-muted">{description}</p>
       )}
     </div>
   );

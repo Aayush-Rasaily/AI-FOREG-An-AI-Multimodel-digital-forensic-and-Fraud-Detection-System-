@@ -25,12 +25,12 @@ interface ComparisonPanelProps {
 
 const statusTone: Record<
   string,
-  "neutral" | "cyan" | "green" | "amber" | "red"
+  "neutral" | "primary" | "success" | "warning" | "error"
 > = {
-  SUCCEEDED: "green",
-  RUNNING: "cyan",
-  QUEUED: "amber",
-  FAILED: "red",
+  SUCCEEDED: "success",
+  RUNNING: "primary",
+  QUEUED: "warning",
+  FAILED: "error",
 };
 
 export function ComparisonPanel({ evidence }: ComparisonPanelProps) {
@@ -53,7 +53,7 @@ export function ComparisonPanel({ evidence }: ComparisonPanelProps) {
       <Panel title="Reference comparison">
         <div className="p-4">
           <EmptyState
-            className="min-h-48 rounded-lg border border-dashed border-slate-800"
+            className="min-h-48 rounded-lg border border-dashed border-border"
             description="Select evidence to compare against trusted reference material."
             icon={<GitCompare aria-hidden="true" size={19} />}
             title="No evidence selected"
@@ -70,7 +70,7 @@ export function ComparisonPanel({ evidence }: ComparisonPanelProps) {
           <div className="flex items-center gap-2">
             <Badge tone={statusTone[status] ?? "neutral"}>{status}</Badge>
             {summary && summary.differences_count > 0 && (
-              <span className="text-[11px] text-slate-500">
+              <span className="text-[11px] text-muted">
                 {summary.differences_count} differences
               </span>
             )}
@@ -106,7 +106,7 @@ export function ComparisonPanel({ evidence }: ComparisonPanelProps) {
 
         <div className="mt-2 flex flex-wrap items-end gap-2">
           <label className="min-w-0 flex-1">
-            <span className="mb-1 block text-[10px] uppercase tracking-wider text-slate-600">
+            <span className="mb-1 block text-[10px] uppercase tracking-wider text-subtle">
               Register as reference
             </span>
             <Input
@@ -141,7 +141,7 @@ export function ComparisonPanel({ evidence }: ComparisonPanelProps) {
           />
         )}
         {compareMutation.isError && (
-          <p className="mt-2 text-[11px] text-red-300">
+          <p className="mt-2 text-[11px] text-danger">
             {compareMutation.error instanceof ApiClientError
               ? compareMutation.error.message
               : "Comparison could not be started."}
@@ -149,10 +149,10 @@ export function ComparisonPanel({ evidence }: ComparisonPanelProps) {
         )}
 
         {comparisonsQuery.isSuccess && comparisonsQuery.data.data.items.length > 0 && (
-          <div className="mt-3 space-y-2 border-t border-slate-800 pt-3">
+          <div className="mt-3 space-y-2 border-t border-border pt-3">
             {comparisonsQuery.data.data.items.map((run) => (
               <div
-                className="rounded border border-slate-800 px-2.5 py-2 text-xs text-slate-400"
+                className="rounded border border-border px-2.5 py-2 text-xs text-muted"
                 key={run.id}
               >
                 <div className="flex flex-wrap items-center gap-2">

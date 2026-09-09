@@ -1,8 +1,9 @@
 import { lazy, Suspense } from "react";
-import { Navigate, Outlet, Route, Routes } from "react-router-dom";
+import { Outlet, Route, Routes } from "react-router-dom";
 
 import { ProtectedRoute } from "../components/auth/ProtectedRoute";
 import { RoleGuard } from "../components/auth/RoleGuard";
+import { DefaultHomeRedirect } from "../components/routing/DefaultHomeRedirect";
 import { LoadingState } from "../components/ui/LoadingState";
 import { AppShell } from "../layouts/AppShell";
 
@@ -102,7 +103,7 @@ export function AppRoutes() {
       <Routes>
         <Route element={<LoginPage />} path="/login" />
         <Route element={<ShellRoute />}>
-          <Route element={<Navigate replace to="/dashboard" />} path="/" />
+          <Route element={<DefaultHomeRedirect />} path="/" />
           <Route element={<DashboardPage />} path="/dashboard" />
           <Route element={<InvestigationsPage />} path="/investigations" />
           <Route

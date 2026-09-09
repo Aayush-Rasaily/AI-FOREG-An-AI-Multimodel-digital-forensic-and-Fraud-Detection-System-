@@ -17,7 +17,7 @@ export function WorkflowMetricsPanel({
   if (!metrics) {
     return (
       <Panel description="Workload and progress metrics." title="Metrics">
-        <div className="p-4 text-xs text-slate-500">No metrics yet.</div>
+        <div className="p-4 text-xs text-muted">No metrics yet.</div>
       </Panel>
     );
   }
@@ -36,12 +36,12 @@ export function WorkflowMetricsPanel({
 
   return (
     <Panel description="Workload and progress metrics." title="Metrics">
-      <div className="space-y-2 p-4 text-xs text-slate-400">
+      <div className="space-y-2 p-4 text-xs text-muted">
         <dl className="grid gap-2 sm:grid-cols-2">
           {rows.map(([label, value]) => (
             <div key={label}>
-              <dt className="text-slate-600">{label}</dt>
-              <dd className="text-slate-200">{value}</dd>
+              <dt className="text-subtle">{label}</dt>
+              <dd className="text-foreground">{value}</dd>
             </div>
           ))}
         </dl>

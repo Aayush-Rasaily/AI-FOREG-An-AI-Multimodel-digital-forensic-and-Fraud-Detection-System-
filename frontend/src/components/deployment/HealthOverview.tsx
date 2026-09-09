@@ -12,7 +12,7 @@ import {
 
 function statusTone(
   status: string,
-): "green" | "amber" | "red" | "neutral" {
+): "success" | "warning" | "error" | "neutral" {
   const normalized = status.toUpperCase();
   if (
     normalized === "ALIVE" ||
@@ -20,7 +20,7 @@ function statusTone(
     normalized === "PASSED" ||
     normalized === "PASS"
   ) {
-    return "green";
+    return "success";
   }
   if (
     normalized === "DEGRADED" ||
@@ -28,14 +28,14 @@ function statusTone(
     normalized === "PARTIAL" ||
     normalized === "NOT_READY"
   ) {
-    return "amber";
+    return "warning";
   }
   if (
     normalized === "FAILED" ||
     normalized === "FAIL" ||
     normalized === "NOT READY"
   ) {
-    return "red";
+    return "error";
   }
   return "neutral";
 }
@@ -57,8 +57,8 @@ function CheckList({ checks }: { checks: SystemCheckItem[] }) {
           key={item.check}
         >
           <div>
-            <p className="font-medium text-slate-200">{item.check}</p>
-            <p className="text-slate-500">{item.message}</p>
+            <p className="font-medium text-foreground">{item.check}</p>
+            <p className="text-muted">{item.message}</p>
           </div>
           <Badge tone={statusTone(item.status)}>{item.status}</Badge>
         </li>
@@ -107,13 +107,13 @@ export function HealthOverview() {
           </Badge>
         </div>
         <div>
-          <p className="mb-2 text-[11px] uppercase tracking-wide text-slate-600">
+          <p className="mb-2 text-[11px] uppercase tracking-wide text-subtle">
             Readiness checks
           </p>
           <CheckList checks={ready?.checks ?? []} />
         </div>
         {start ? (
-          <p className="text-[11px] text-slate-600">
+          <p className="text-[11px] text-subtle">
             Startup validation at {new Date(start.timestamp).toLocaleString()}
             {start.graceful_shutdown_supported
               ? " · graceful shutdown supported"

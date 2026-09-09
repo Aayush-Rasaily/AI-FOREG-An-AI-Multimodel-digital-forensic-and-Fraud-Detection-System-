@@ -100,26 +100,26 @@ export function MonitoringDashboard() {
           <Panel description="Case and evidence inventory." title="Case Summary">
             <dl className="grid grid-cols-2 gap-3 p-4 text-xs">
               <div>
-                <dt className="text-slate-500">Cases</dt>
-                <dd className="text-slate-200">
+                <dt className="text-muted">Cases</dt>
+                <dd className="text-foreground">
                   {String(cases.cases_created ?? 0)}
                 </dd>
               </div>
               <div>
-                <dt className="text-slate-500">Evidence</dt>
-                <dd className="text-slate-200">
+                <dt className="text-muted">Evidence</dt>
+                <dd className="text-foreground">
                   {String(cases.evidence_uploaded ?? 0)}
                 </dd>
               </div>
               <div>
-                <dt className="text-slate-500">Timelines</dt>
-                <dd className="text-slate-200">
+                <dt className="text-muted">Timelines</dt>
+                <dd className="text-foreground">
                   {String(cases.timelines_created ?? 0)}
                 </dd>
               </div>
               <div>
-                <dt className="text-slate-500">Correlations</dt>
-                <dd className="text-slate-200">
+                <dt className="text-muted">Correlations</dt>
+                <dd className="text-foreground">
                   {String(cases.correlation_runs ?? 0)}
                 </dd>
               </div>
@@ -128,14 +128,14 @@ export function MonitoringDashboard() {
           <Panel description="Report generation statistics." title="Report Summary">
             <dl className="grid grid-cols-2 gap-3 p-4 text-xs">
               <div>
-                <dt className="text-slate-500">Generated</dt>
-                <dd className="text-slate-200">
+                <dt className="text-muted">Generated</dt>
+                <dd className="text-foreground">
                   {String(reports.reports_generated ?? 0)}
                 </dd>
               </div>
               <div>
-                <dt className="text-slate-500">Avg ms</dt>
-                <dd className="text-slate-200">
+                <dt className="text-muted">Avg ms</dt>
+                <dd className="text-foreground">
                   {String(reports.average_generation_ms ?? "n/a")}
                 </dd>
               </div>
@@ -152,19 +152,19 @@ export function MonitoringDashboard() {
           <ActivityTimeline data={asRecord(dashboard.activity)} />
           <Panel description="Top operational bottlenecks and failures." title="Top Bottlenecks">
             <div className="space-y-3 p-4 text-xs">
-              <p className="text-slate-400">
+              <p className="text-muted">
                 Inactive investigations:{" "}
                 {Array.isArray(bottlenecks.inactive_investigations)
                   ? bottlenecks.inactive_investigations.length
                   : 0}
               </p>
               {failures.length === 0 ? (
-                <p className="text-slate-500">No recent processing failures.</p>
+                <p className="text-muted">No recent processing failures.</p>
               ) : (
                 <ul className="space-y-1">
                   {failures.slice(0, 5).map((item) => (
                     <li
-                      className="text-slate-300"
+                      className="text-muted"
                       key={String(item.job_id ?? item.job_type)}
                     >
                       {String(item.job_type)} · {String(item.status)} ·{" "}
@@ -181,8 +181,8 @@ export function MonitoringDashboard() {
           <dl className="grid grid-cols-2 gap-3 p-4 text-xs md:grid-cols-3">
             {Object.entries({ ...trends, ...kpis }).map(([key, value]) => (
               <div key={key}>
-                <dt className="text-slate-500">{key.replaceAll("_", " ")}</dt>
-                <dd className="text-slate-200">{String(value ?? "n/a")}</dd>
+                <dt className="text-muted">{key.replaceAll("_", " ")}</dt>
+                <dd className="text-foreground">{String(value ?? "n/a")}</dd>
               </div>
             ))}
           </dl>

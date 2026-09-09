@@ -69,21 +69,21 @@ export function CaseTimelinePanel({ caseId }: CaseTimelinePanelProps) {
           <div className="space-y-3">
             {events.map((event) => (
               <div
-                className="rounded-lg border border-slate-800 bg-slate-950/40 p-3"
+                className="rounded-lg border border-border bg-background/40 p-3"
                 key={event.event_id}
               >
                 <div className="flex flex-wrap items-center gap-2">
-                  <Badge tone={event.timestamp_known ? "cyan" : "neutral"}>
+                  <Badge tone={event.timestamp_known ? "primary" : "neutral"}>
                     {event.event_type.replaceAll("_", " ")}
                   </Badge>
-                  <span className="text-[11px] text-slate-500">
+                  <span className="text-[11px] text-muted">
                     {event.timestamp_known && event.timestamp
                       ? new Date(event.timestamp).toLocaleString()
                       : "Timestamp unknown"}
                   </span>
                 </div>
-                <p className="mt-2 text-xs text-slate-300">{event.description}</p>
-                <p className="mt-1 font-mono text-[10px] text-slate-600">
+                <p className="mt-2 text-xs text-muted">{event.description}</p>
+                <p className="mt-1 font-mono text-[10px] text-subtle">
                   {event.source_reference}
                 </p>
               </div>

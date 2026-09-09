@@ -15,7 +15,7 @@ export function RelationshipInspector({
       description="Selected relationship confidence, weight, and provenance."
       title="Relationship"
     >
-      <div className="space-y-3 p-4 text-xs text-slate-400">
+      <div className="space-y-3 p-4 text-xs text-muted">
         {!relationship ? (
           <EmptyState
             description="Select an edge label or neighbor link to inspect."
@@ -24,7 +24,7 @@ export function RelationshipInspector({
         ) : (
           <>
             <div className="flex flex-wrap gap-2">
-              <Badge tone="cyan">{relationship.relationship_type}</Badge>
+              <Badge tone="primary">{relationship.relationship_type}</Badge>
               <Badge tone="neutral">
                 {(relationship.confidence * 100).toFixed(0)}%
               </Badge>
@@ -33,9 +33,9 @@ export function RelationshipInspector({
               </Badge>
             </div>
             <p>
-              <span className="text-slate-300">{relationship.source_entity_key}</span>
+              <span className="text-muted">{relationship.source_entity_key}</span>
               {" → "}
-              <span className="text-slate-300">{relationship.target_entity_key}</span>
+              <span className="text-muted">{relationship.target_entity_key}</span>
             </p>
             <p>
               Source: {relationship.creation_source} · Supports:{" "}

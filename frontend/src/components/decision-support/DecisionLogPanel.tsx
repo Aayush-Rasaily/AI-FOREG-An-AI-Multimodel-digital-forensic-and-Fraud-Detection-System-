@@ -22,15 +22,15 @@ export function DecisionLogPanel({ decisions }: DecisionLogPanelProps) {
         ) : (
           decisions.map((item) => (
             <div
-              className="rounded-lg border border-slate-800 p-3 text-xs text-slate-400"
+              className="rounded-lg border border-border p-3 text-xs text-muted"
               key={item.id}
             >
               <div className="mb-2 flex flex-wrap gap-2">
-                <Badge tone="cyan">{item.decision_type}</Badge>
+                <Badge tone="primary">{item.decision_type}</Badge>
               </div>
-              <p className="text-slate-200">{item.investigator}</p>
+              <p className="text-foreground">{item.investigator}</p>
               <p className="mt-1">{item.justification}</p>
-              <p className="mt-2 text-[11px] text-slate-600">
+              <p className="mt-2 text-[11px] text-subtle">
                 {new Date(item.created_at).toLocaleString()}
               </p>
             </div>

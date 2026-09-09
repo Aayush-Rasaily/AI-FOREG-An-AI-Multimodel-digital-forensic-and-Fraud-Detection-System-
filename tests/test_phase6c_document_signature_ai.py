@@ -27,10 +27,13 @@ from backend.app.ai.document.preprocessing.document import (
     extract_page_info,
 )
 from backend.app.ai.document.signature.config import SignatureAISettings
+from backend.app.ai.document.signature.inference import SignatureInferenceEngine
+from backend.app.ai.document.signature.loader import SignatureModelLoader
 from backend.app.ai.document.signature.model import (
     ModelIntegrityError,
     SiameseSignatureModel,
 )
+from backend.app.ai.document.signature.preprocessing import preprocess_signature_image
 from backend.app.api.dependencies import get_db_session
 from backend.app.core.config import Settings
 from backend.app.domain.processing import EvidenceClassification
@@ -226,7 +229,8 @@ async def test_signature_verify_api_unavailable_state(
     ],
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.delenv("SIGNATURE_MODEL_PATH", raising=False)
+    # Force UNAVAILABLE without disabling the packaged production default path.
+    monkeypatch.setenv("SIGNATURE_MODEL_ENABLED", "false")
     client, _, _, _ = phase6c_client
     reference = _png_bytes()
     questioned = _png_bytes()
@@ -243,6 +247,32 @@ async def test_signature_verify_api_unavailable_state(
     assert payload["similarity"] is None
     assert payload["reference_hash"] == hashlib.sha256(reference).hexdigest()
     assert payload["questioned_hash"] == hashlib.sha256(questioned).hexdigest()
+
+
+@pytest.mark.asyncio
+async def test_packaged_siamese_model_runs_real_inference() -> None:
+    """Packaged siamese_best.pt must load strictly and emit a real similarity."""
+
+    SignatureModelLoader.reset_for_tests()
+    settings = SignatureAISettings(enabled=True)
+    assert settings.model_path is not None
+    engine = SignatureInferenceEngine(settings=settings)
+    reference = _png_bytes(128, 128)
+    questioned = _png_bytes(128, 128)
+    result = await engine.verify_pair(reference, questioned, device="cpu")
+    assert result["status"] == "ok"
+    assert result["verdict"] in {"MATCH", "NON_MATCH", "INCONCLUSIVE"}
+    assert result["similarity"] is not None
+    assert 0.0 <= float(result["similarity"]) <= 1.0
+    assert result["backbone"] == "efficientnet-b0"
+    # Identical blank crops should be highly similar under cosine embedding space.
+    assert float(result["similarity"]) >= 0.90
+
+
+def test_preprocess_signature_image_shape() -> None:
+    tensor = preprocess_signature_image(_png_bytes())
+    assert tensor.shape == (3, 224, 224)
+    assert tensor.dtype.str == "<f4"
 
 
 @pytest.mark.asyncio

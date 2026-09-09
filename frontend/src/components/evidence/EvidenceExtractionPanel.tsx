@@ -22,12 +22,12 @@ interface EvidenceExtractionPanelProps {
 
 const statusTone: Record<
   ExtractionStatus,
-  "neutral" | "cyan" | "green" | "amber" | "red"
+  "neutral" | "primary" | "success" | "warning" | "error"
 > = {
-  SUCCEEDED: "green",
-  PARTIAL: "amber",
+  SUCCEEDED: "success",
+  PARTIAL: "warning",
   UNAVAILABLE: "neutral",
-  FAILED: "red",
+  FAILED: "error",
 };
 
 export function EvidenceExtractionPanel({
@@ -64,11 +64,11 @@ export function EvidenceExtractionPanel({
   }, [refetchArtifacts, status]);
 
   return (
-    <div className="mt-2 rounded-lg border border-slate-800 bg-slate-950/50 p-3">
+    <div className="mt-2 rounded-lg border border-border bg-background/50 p-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <ScanSearch aria-hidden="true" className="text-slate-500" size={14} />
-          <span className="text-[11px] uppercase tracking-wider text-slate-600">
+          <ScanSearch aria-hidden="true" className="text-muted" size={14} />
+          <span className="text-[11px] uppercase tracking-wider text-subtle">
             Extraction
           </span>
           <Badge tone={statusTone[status]}>{status}</Badge>
@@ -95,7 +95,7 @@ export function EvidenceExtractionPanel({
         />
       )}
       {extractMutation.isError && (
-        <p className="mt-2 text-[11px] text-red-300">
+        <p className="mt-2 text-[11px] text-danger">
           {extractMutation.error instanceof ApiClientError
             ? extractMutation.error.message
             : "Extraction could not be started."}
@@ -103,32 +103,32 @@ export function EvidenceExtractionPanel({
       )}
       {extractionData?.error_code &&
         extractionData.error_code !== "EXTRACTION_NOT_RUN" && (
-          <p className="mt-2 text-[11px] text-amber-300">
+          <p className="mt-2 text-[11px] text-warning">
             Capability status: {extractionData.error_code}
           </p>
         )}
 
       {regionsQuery.isSuccess && (
         <div className="mt-3">
-          <p className="mb-2 text-[11px] uppercase tracking-wider text-slate-600">
+          <p className="mb-2 text-[11px] uppercase tracking-wider text-subtle">
             Localization
           </p>
           <EvidenceLocalization regions={regionsQuery.data.data.items} />
         </div>
       )}
       {regionsQuery.isError && (
-        <p className="mt-2 text-[11px] text-red-300">
+        <p className="mt-2 text-[11px] text-danger">
           Localized regions could not be loaded.
         </p>
       )}
 
-      <div className="mt-3 border-t border-slate-800 pt-3">
-        <p className="text-[11px] uppercase tracking-wider text-slate-600">
+      <div className="mt-3 border-t border-border pt-3">
+        <p className="text-[11px] uppercase tracking-wider text-subtle">
           Structured evidence
         </p>
         {pages.length > 0 && (
           <div className="mt-2 flex flex-wrap items-center gap-1.5">
-            <span className="mr-1 text-[10px] text-slate-600">Pages</span>
+            <span className="mr-1 text-[10px] text-subtle">Pages</span>
             <Button
               aria-pressed={selectedPage === null}
               onClick={() => setSelectedPage(null)}
@@ -161,36 +161,36 @@ export function EvidenceExtractionPanel({
           <div className="mt-2 max-h-64 space-y-2 overflow-y-auto">
             {visibleItems.map((item) => (
               <div
-                className="rounded border border-slate-800 px-2.5 py-2"
+                className="rounded border border-border px-2.5 py-2"
                 key={item.id}
               >
                 <div className="flex flex-wrap items-center gap-2">
-                  <Badge tone="purple">{item.extraction_type}</Badge>
+                  <Badge tone="info">{item.extraction_type}</Badge>
                   {item.page_number && (
-                    <span className="text-[10px] text-slate-500">
+                    <span className="text-[10px] text-muted">
                       Page {item.page_number}
                     </span>
                   )}
                   {item.frame_number !== null && (
-                    <span className="text-[10px] text-slate-500">
+                    <span className="text-[10px] text-muted">
                       Frame {item.frame_number}
                     </span>
                   )}
                   {item.confidence !== null && (
-                    <span className="text-[10px] text-slate-500">
+                    <span className="text-[10px] text-muted">
                       Confidence {(item.confidence * 100).toFixed(1)}%
                     </span>
                   )}
                 </div>
                 {item.content && (
-                  <p className="mt-1 whitespace-pre-wrap break-words text-xs text-slate-300">
+                  <p className="mt-1 whitespace-pre-wrap break-words text-xs text-muted">
                     {item.content}
                   </p>
                 )}
                 {(item.extraction_type === "AUDIO_STREAM" ||
                   item.extraction_type === "METADATA") &&
                   Object.keys(item.metadata).length > 0 && (
-                    <div className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1 text-[10px] text-slate-500">
+                    <div className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1 text-[10px] text-muted">
                       {Object.entries(item.metadata)
                         .filter(([, value]) => typeof value !== "object")
                         .slice(0, 8)
@@ -201,7 +201,7 @@ export function EvidenceExtractionPanel({
                         ))}
                     </div>
                   )}
-                <p className="mt-1 text-[10px] text-slate-600">
+                <p className="mt-1 text-[10px] text-subtle">
                   {item.method} v{item.version} · {item.source_type}
                 </p>
               </div>
@@ -210,12 +210,12 @@ export function EvidenceExtractionPanel({
         )}
       </div>
 
-      <div className="mt-3 border-t border-slate-800 pt-3">
-        <p className="text-[11px] uppercase tracking-wider text-slate-600">
+      <div className="mt-3 border-t border-border pt-3">
+        <p className="text-[11px] uppercase tracking-wider text-subtle">
           Extraction artifacts
         </p>
         {artifactsQuery.isError && (
-          <p className="mt-2 text-[11px] text-red-300">
+          <p className="mt-2 text-[11px] text-danger">
             Extraction artifacts could not be loaded.
           </p>
         )}

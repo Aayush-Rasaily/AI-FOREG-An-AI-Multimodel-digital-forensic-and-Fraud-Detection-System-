@@ -3,14 +3,14 @@ import { Badge } from "../ui/Badge";
 
 const tones: Record<
   InvestigationStatus,
-  "neutral" | "cyan" | "green" | "amber" | "red" | "purple"
+  "neutral" | "primary" | "success" | "warning" | "error" | "info"
 > = {
   NEW: "neutral",
-  ACTIVE: "cyan",
-  UNDER_REVIEW: "amber",
-  REQUIRES_CHANGES: "red",
-  APPROVED: "green",
-  REPORTED: "purple",
+  ACTIVE: "primary",
+  UNDER_REVIEW: "warning",
+  REQUIRES_CHANGES: "error",
+  APPROVED: "success",
+  REPORTED: "info",
   ARCHIVED: "neutral",
 };
 

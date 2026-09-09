@@ -2,8 +2,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 import { MemoryRouter } from "react-router-dom";
 
+import { ToastProvider } from "../components/ui/Toast";
 import { AuthProvider } from "../context/AuthContext";
+import { ProductivityProvider } from "../context/ProductivityContext";
 import { setTokens } from "../services/api/tokenStore";
+import { ThemeProvider } from "../theme/ThemeProvider";
 import type { AuthUser } from "../types/auth";
 
 /** Authenticated administrator used by investigation UI tests. */
@@ -89,11 +92,15 @@ export function TestProviders({
 
   return (
     <QueryClientProvider client={queryClient}>
-      <MemoryRouter initialEntries={initialEntries}>
-        <AuthProvider initialUser={authenticated ? TEST_USER : null}>
-          {children}
-        </AuthProvider>
-      </MemoryRouter>
+      <ThemeProvider>
+        <ToastProvider>
+          <MemoryRouter initialEntries={initialEntries}>
+            <AuthProvider initialUser={authenticated ? TEST_USER : null}>
+              <ProductivityProvider>{children}</ProductivityProvider>
+            </AuthProvider>
+          </MemoryRouter>
+        </ToastProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }

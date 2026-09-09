@@ -21,7 +21,7 @@ export function ReviewMetricsPanel({
   if (!metrics) {
     return (
       <Panel description="Validation and approval metrics." title="Metrics">
-        <div className="p-4 text-xs text-slate-500">No metrics yet.</div>
+        <div className="p-4 text-xs text-muted">No metrics yet.</div>
       </Panel>
     );
   }
@@ -38,19 +38,19 @@ export function ReviewMetricsPanel({
 
   return (
     <Panel description="Validation and approval metrics." title="Metrics">
-      <div className="space-y-3 p-4 text-xs text-slate-400">
+      <div className="space-y-3 p-4 text-xs text-muted">
         <dl className="grid gap-2 sm:grid-cols-2">
           {rows.map(([label, value]) => (
             <div key={label}>
-              <dt className="text-slate-600">{label}</dt>
-              <dd className="text-slate-200">{value}</dd>
+              <dt className="text-subtle">{label}</dt>
+              <dd className="text-foreground">{value}</dd>
             </div>
           ))}
         </dl>
         {blocking.length > 0 ? (
           <div>
-            <p className="text-slate-500">Blocking</p>
-            <ul className="mt-1 list-disc pl-4 text-rose-300">
+            <p className="text-muted">Blocking</p>
+            <ul className="mt-1 list-disc pl-4 text-danger">
               {blocking.map((item) => (
                 <li key={item}>{item}</li>
               ))}
@@ -59,8 +59,8 @@ export function ReviewMetricsPanel({
         ) : null}
         {outstanding.length > 0 ? (
           <div>
-            <p className="text-slate-500">Outstanding</p>
-            <ul className="mt-1 list-disc pl-4 text-amber-200/80">
+            <p className="text-muted">Outstanding</p>
+            <ul className="mt-1 list-disc pl-4 text-warning/80">
               {outstanding.map((item) => (
                 <li key={item}>{item}</li>
               ))}

@@ -15,7 +15,7 @@ export function AiMetricsPanel({ data }: AiMetricsPanelProps) {
   return (
     <Panel description="Modality executions, failures, and detector rankings." title="AI Summary">
       <div className="space-y-3 p-4 text-xs">
-        <p className="text-slate-400">
+        <p className="text-muted">
           Model executions: {String(data.model_executions ?? 0)} · Failures:{" "}
           {String(data.total_failures ?? 0)} · Unavailable:{" "}
           {String(data.total_unavailable ?? 0)}
@@ -23,7 +23,7 @@ export function AiMetricsPanel({ data }: AiMetricsPanelProps) {
         <ul className="space-y-1">
           {modalities.map((item) => (
             <li
-              className="flex justify-between rounded border border-slate-800 px-2 py-1 text-slate-300"
+              className="flex justify-between rounded border border-border px-2 py-1 text-muted"
               key={String(item.modality)}
             >
               <span>{String(item.modality)}</span>
@@ -36,10 +36,10 @@ export function AiMetricsPanel({ data }: AiMetricsPanelProps) {
         </ul>
         {rankings.length > 0 ? (
           <div>
-            <p className="mb-1 text-slate-500">Detector failure rankings</p>
+            <p className="mb-1 text-muted">Detector failure rankings</p>
             <ul className="space-y-1">
               {rankings.slice(0, 5).map((item) => (
-                <li key={String(item.modality)} className="text-slate-400">
+                <li key={String(item.modality)} className="text-muted">
                   {String(item.modality)}: {String(item.failures ?? 0)} (
                   {String(item.failure_rate ?? 0)})
                 </li>

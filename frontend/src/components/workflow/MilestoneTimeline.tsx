@@ -28,17 +28,17 @@ export function MilestoneTimeline({ caseId }: { caseId: string }) {
             title="No milestones yet"
           />
         )}
-        <ol className="space-y-3 border-l border-slate-800 pl-4">
+        <ol className="space-y-3 border-l border-border pl-4">
           {items.map((milestone) => (
             <li className="relative" key={milestone.id}>
-              <span className="absolute -left-[21px] top-1 h-2.5 w-2.5 rounded-full bg-cyan-400" />
+              <span className="absolute -left-[21px] top-1 h-2.5 w-2.5 rounded-full bg-primary" />
               <div className="flex flex-wrap items-center gap-2">
-                <p className="text-sm text-slate-200">{milestone.label}</p>
+                <p className="text-sm text-foreground">{milestone.label}</p>
                 {milestone.auto_derived && (
                   <Badge tone="neutral">auto</Badge>
                 )}
               </div>
-              <p className="text-[11px] text-slate-500">
+              <p className="text-[11px] text-muted">
                 {milestone.reached_at}
               </p>
             </li>

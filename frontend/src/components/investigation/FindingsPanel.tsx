@@ -21,13 +21,13 @@ interface FindingsPanelProps {
 
 const severityTone: Record<
   string,
-  "neutral" | "cyan" | "green" | "amber" | "red"
+  "neutral" | "primary" | "success" | "warning" | "error"
 > = {
   INFO: "neutral",
-  LOW: "cyan",
-  MEDIUM: "amber",
-  HIGH: "red",
-  CRITICAL: "red",
+  LOW: "primary",
+  MEDIUM: "warning",
+  HIGH: "error",
+  CRITICAL: "error",
 };
 
 export function FindingsPanel({ evidence }: FindingsPanelProps) {
@@ -78,7 +78,7 @@ export function FindingsPanel({ evidence }: FindingsPanelProps) {
               {heatmapsQuery.isSuccess && showHeatmaps && (
                 <div className="flex flex-wrap gap-1">
                   {heatmapsQuery.data.data.items.map((artifact) => (
-                    <Badge key={artifact.id} tone="purple">
+                    <Badge key={artifact.id} tone="info">
                       {artifact.artifact_type}
                     </Badge>
                   ))}
@@ -91,8 +91,8 @@ export function FindingsPanel({ evidence }: FindingsPanelProps) {
                 <button
                   className={`w-full rounded border px-2 py-2 text-left transition ${
                     selectedFindingId === finding.id
-                      ? "border-cyan-700 bg-cyan-950/30"
-                      : "border-slate-800 hover:border-slate-700"
+                      ? "border-primary-strong bg-primary-soft"
+                      : "border-border hover:border-border-strong"
                   }`}
                   key={finding.id}
                   onClick={() => setSelectedFindingId(finding.id)}
@@ -102,12 +102,12 @@ export function FindingsPanel({ evidence }: FindingsPanelProps) {
                     <Badge tone={severityTone[finding.severity] ?? "neutral"}>
                       {finding.severity}
                     </Badge>
-                    <span className="text-xs text-slate-300">{finding.detector}</span>
-                    <span className="text-[10px] text-slate-500">
+                    <span className="text-xs text-muted">{finding.detector}</span>
+                    <span className="text-[10px] text-muted">
                       {(finding.confidence * 100).toFixed(1)}%
                     </span>
                   </div>
-                  <p className="mt-1 text-xs text-slate-400">{finding.description}</p>
+                  <p className="mt-1 text-xs text-muted">{finding.description}</p>
                 </button>
               ))}
             </div>
@@ -118,7 +118,7 @@ export function FindingsPanel({ evidence }: FindingsPanelProps) {
           </>
         )}
 
-        <div className="flex items-center gap-2 text-[11px] text-slate-600">
+        <div className="flex items-center gap-2 text-[11px] text-subtle">
           <ListChecks aria-hidden="true" size={14} />
           Findings describe forensic evidence, not authenticity verdicts.
         </div>
@@ -129,17 +129,17 @@ export function FindingsPanel({ evidence }: FindingsPanelProps) {
 
 function FindingDetail({ finding }: { finding: ForensicFinding }) {
   return (
-    <div className="rounded-lg border border-slate-800 bg-slate-950/40 p-3">
+    <div className="rounded-lg border border-border bg-background/40 p-3">
       <FindingCard finding={finding} />
       {finding.regions.length > 0 && (
-        <div className="mt-3 border-t border-slate-800 pt-3">
-          <p className="mb-2 flex items-center gap-1 text-[11px] uppercase tracking-wider text-slate-600">
+        <div className="mt-3 border-t border-border pt-3">
+          <p className="mb-2 flex items-center gap-1 text-[11px] uppercase tracking-wider text-subtle">
             <MapPin aria-hidden="true" size={12} />
             Localization
           </p>
           <div className="space-y-1">
             {finding.regions.map((region, index) => (
-              <p className="text-[11px] text-slate-500" key={`${finding.id}-${index}`}>
+              <p className="text-[11px] text-muted" key={`${finding.id}-${index}`}>
                 x={region.x.toFixed(1)}, y={region.y.toFixed(1)}, w=
                 {region.width.toFixed(1)}, h={region.height.toFixed(1)}
                 {region.page_number !== null && ` · page ${region.page_number}`}

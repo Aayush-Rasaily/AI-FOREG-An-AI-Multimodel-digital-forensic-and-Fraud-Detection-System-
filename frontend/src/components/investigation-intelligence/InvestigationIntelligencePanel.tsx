@@ -46,7 +46,7 @@ export function InvestigationIntelligencePanel({
             <div className="flex flex-wrap gap-2">
               {run ? (
                 <>
-                  <Badge tone="cyan">{run.status}</Badge>
+                  <Badge tone="primary">{run.status}</Badge>
                   <Badge tone="neutral">
                     Score {run.investigation_score.toFixed(1)}
                   </Badge>
@@ -71,7 +71,7 @@ export function InvestigationIntelligencePanel({
           </div>
 
           <div className="flex flex-wrap items-end gap-3">
-            <label className="block text-xs text-slate-400">
+            <label className="block text-xs text-muted">
               Search
               <Input
                 className="mt-1 w-56"
@@ -80,7 +80,7 @@ export function InvestigationIntelligencePanel({
                 value={search}
               />
             </label>
-            <label className="block text-xs text-slate-400">
+            <label className="block text-xs text-muted">
               Priority
               <Select
                 className="mt-1 w-40"
@@ -119,13 +119,13 @@ export function InvestigationIntelligencePanel({
           ) : null}
 
           {run?.open_conflicts?.length ? (
-            <div className="rounded-lg border border-amber-900/40 p-3 text-xs text-amber-200/80">
+            <div className="rounded-lg border border-warning/40 p-3 text-xs text-warning/80">
               Open conflicts: {run.open_conflicts.length}
             </div>
           ) : null}
 
           {run?.provenance ? (
-            <div className="text-[11px] text-slate-600">
+            <div className="text-[11px] text-subtle">
               Provenance · engine {String(run.engine_version)} · policy{" "}
               {String(run.policy_version)}
             </div>

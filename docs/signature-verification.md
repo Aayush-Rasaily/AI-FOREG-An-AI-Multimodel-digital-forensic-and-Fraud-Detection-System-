@@ -1,6 +1,16 @@
 # Signature Verification
 
-Phase 6C adds Siamese signature verification using an EfficientNet-B0 backbone. The service compares questioned signature crops against trusted reference signatures while preserving original evidence hashes.
+Phase 6C adds Siamese signature verification using a **timm EfficientNet-B0**
+encoder with a 256-dimensional projection head. The service compares questioned
+signature crops against trusted reference signatures while preserving original
+evidence hashes.
+
+Packaged production weights live at:
+
+`backend/app/ai/models/signature/siamese_best.pt`
+
+When `SIGNATURE_MODEL_PATH` is unset, that checkpoint is used automatically
+(set `SIGNATURE_MODEL_PATH=` empty to force UNAVAILABLE).
 
 ## Verdicts
 
@@ -9,9 +19,16 @@ Phase 6C adds Siamese signature verification using an EfficientNet-B0 backbone. 
 | `MATCH` | Cosine similarity ≥ configured threshold |
 | `NON_MATCH` | Similarity ≤ threshold − inconclusive margin |
 | `INCONCLUSIVE` | Similarity falls in the margin band |
-| `UNAVAILABLE` | Model weights are not configured or failed integrity checks |
+| `UNAVAILABLE` | Model disabled, missing, or failed to load |
 
 Verdict logic is implemented in `SiameseSignatureModel._verdict` and never fabricates similarity when the model is unavailable.
+
+## Preprocessing
+
+- RGB conversion
+- Resize to 224×224 (bilinear)
+- Scale to `[0, 1]`, ImageNet mean/std normalization
+- CHW `float32` tensor
 
 ## API
 
@@ -31,18 +48,22 @@ Multipart form fields for direct verification:
 
 ```env
 SIGNATURE_MODEL_ENABLED=true
-SIGNATURE_MODEL_PATH=/path/to/siamese-signature.pt
+SIGNATURE_MODEL_PATH=backend/app/ai/models/signature/siamese_best.pt
 SIGNATURE_MODEL_SHA256=<sha256-of-weights>
 SIGNATURE_MODEL_VERSION=1.0.0
 SIGNATURE_THRESHOLD=0.80
 SIGNATURE_INCONCLUSIVE_MARGIN=0.05
+SIGNATURE_ENABLE_GPU=true
 ```
 
-When `SIGNATURE_MODEL_PATH` is unset, the API returns `UNAVAILABLE` with `similarity: null` and records reference/questioned hashes for audit.
+Weights load once per process via a thread-safe singleton (`SignatureModelLoader`).
+CUDA is used when available; otherwise CPU.
 
 ## Model Integrity
 
-Configured `SIGNATURE_MODEL_SHA256` is validated on load. A mismatch raises `ModelIntegrityError` and prevents inference.
+Configured `SIGNATURE_MODEL_SHA256` is validated on load. A mismatch raises
+`ModelIntegrityError` for direct loaders; the inference engine maps integrity
+failures to `UNAVAILABLE` so the API does not crash.
 
 ## Frontend
 

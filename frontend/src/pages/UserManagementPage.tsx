@@ -95,7 +95,7 @@ export function UserManagementPage() {
                   );
                 })}
               </Select>
-              {error && <p className="text-xs text-red-300">{error}</p>}
+              {error && <p className="text-xs text-danger">{error}</p>}
               <Button
                 disabled={createUser.isPending}
                 size="sm"
@@ -121,21 +121,21 @@ export function UserManagementPage() {
               <ul className="space-y-2">
                 {usersQuery.data.items.map((user) => (
                   <li
-                    className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-slate-800 px-3 py-3"
+                    className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border px-3 py-3"
                     key={user.id}
                   >
                     <div>
-                      <p className="text-sm text-slate-100">
+                      <p className="text-sm text-foreground">
                         {user.display_name}{" "}
-                        <span className="text-slate-500">@{user.username}</span>
+                        <span className="text-muted">@{user.username}</span>
                       </p>
                       <div className="mt-2 flex flex-wrap gap-2">
                         {user.roles.map((role) => (
-                          <Badge key={role} tone="cyan">
+                          <Badge key={role} tone="primary">
                             {role}
                           </Badge>
                         ))}
-                        {!user.is_active && <Badge tone="red">Inactive</Badge>}
+                        {!user.is_active && <Badge tone="error">Inactive</Badge>}
                       </div>
                     </div>
                     <div className="flex gap-2">

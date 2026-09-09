@@ -18,12 +18,12 @@ interface EvidenceCorrelationPanelProps {
   caseId: string;
 }
 
-function scoreTone(score: number): "cyan" | "amber" | "neutral" {
+function scoreTone(score: number): "primary" | "warning" | "neutral" {
   if (score >= 0.9) {
-    return "cyan";
+    return "primary";
   }
   if (score >= 0.7) {
-    return "amber";
+    return "warning";
   }
   return "neutral";
 }
@@ -60,7 +60,7 @@ export function EvidenceCorrelationPanel({ caseId }: EvidenceCorrelationPanelPro
           <div className="flex flex-wrap gap-2">
             <select
               aria-label="Filter correlation type"
-              className="rounded-lg border border-slate-700 bg-slate-900 px-2 py-1 text-xs text-slate-200"
+              className="rounded-lg border border-border-strong bg-background-offset px-2 py-1 text-xs text-foreground"
               onChange={(event) =>
                 setFilterType(event.target.value as CorrelationType | "all")
               }
@@ -113,11 +113,11 @@ export function EvidenceCorrelationPanel({ caseId }: EvidenceCorrelationPanelPro
               const isOpen = expanded[item.correlation_id] ?? false;
               return (
                 <div
-                  className="rounded-lg border border-slate-800 bg-slate-950/40 p-3"
+                  className="rounded-lg border border-border bg-background/40 p-3"
                   key={item.correlation_id}
                 >
                   <div className="flex flex-wrap items-center gap-2">
-                    <Badge tone="cyan">
+                    <Badge tone="primary">
                       {item.correlation_type.replaceAll("_", " ")}
                     </Badge>
                     <Badge tone={scoreTone(item.score)}>
@@ -127,17 +127,17 @@ export function EvidenceCorrelationPanel({ caseId }: EvidenceCorrelationPanelPro
                       confidence {(item.confidence * 100).toFixed(0)}%
                     </Badge>
                   </div>
-                  <p className="mt-2 text-xs text-slate-300">{item.explanation}</p>
-                  <p className="mt-1 font-mono text-[10px] text-slate-600">
+                  <p className="mt-2 text-xs text-muted">{item.explanation}</p>
+                  <p className="mt-1 font-mono text-[10px] text-subtle">
                     {item.left_evidence_id} ↔ {item.right_evidence_id}
                   </p>
                   {item.supporting_entities.length > 0 && (
-                    <p className="mt-1 text-[11px] text-slate-500">
+                    <p className="mt-1 text-[11px] text-muted">
                       Entities: {item.supporting_entities.join(", ")}
                     </p>
                   )}
                   <button
-                    className="mt-2 flex items-center gap-1 text-[11px] text-slate-400 hover:text-slate-200"
+                    className="mt-2 flex items-center gap-1 text-[11px] text-muted hover:text-foreground"
                     onClick={() =>
                       setExpanded((current) => ({
                         ...current,
@@ -150,7 +150,7 @@ export function EvidenceCorrelationPanel({ caseId }: EvidenceCorrelationPanelPro
                     Provenance
                   </button>
                   {isOpen && (
-                    <pre className="mt-2 overflow-x-auto rounded bg-slate-900/70 p-2 font-mono text-[10px] text-slate-400">
+                    <pre className="mt-2 overflow-x-auto rounded bg-background-offset/70 p-2 font-mono text-[10px] text-muted">
                       {JSON.stringify(
                         {
                           provenance: item.provenance,

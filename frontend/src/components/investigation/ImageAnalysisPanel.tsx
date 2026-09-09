@@ -19,13 +19,13 @@ interface ImageAnalysisPanelProps {
   evidence?: EvidenceRecord;
 }
 
-const severityTone: Record<string, "neutral" | "cyan" | "green" | "amber" | "red"> =
+const severityTone: Record<string, "neutral" | "primary" | "success" | "warning" | "error"> =
   {
     INFO: "neutral",
-    LOW: "cyan",
-    MEDIUM: "amber",
-    HIGH: "red",
-    CRITICAL: "red",
+    LOW: "primary",
+    MEDIUM: "warning",
+    HIGH: "error",
+    CRITICAL: "error",
   };
 
 const detectors = [
@@ -80,11 +80,11 @@ export function ImageAnalysisPanel({ evidence }: ImageAnalysisPanelProps) {
               </Button>
               {latestRun && (
                 <>
-                  <Badge tone={latestRun.status === "SUCCEEDED" ? "green" : "neutral"}>
+                  <Badge tone={latestRun.status === "SUCCEEDED" ? "success" : "neutral"}>
                     {latestRun.status}
                   </Badge>
                   {latestRun.latency_ms != null && (
-                    <span className="text-[11px] text-slate-500">
+                    <span className="text-[11px] text-muted">
                       {latestRun.latency_ms.toFixed(2)} ms · {latestRun.device}
                     </span>
                   )}
@@ -105,7 +105,7 @@ export function ImageAnalysisPanel({ evidence }: ImageAnalysisPanelProps) {
             )}
 
             {latestRun && (
-              <div className="rounded border border-slate-800 px-3 py-2 text-xs text-slate-400">
+              <div className="rounded border border-border px-3 py-2 text-xs text-muted">
                 <div className="flex items-center gap-2">
                   <BrainCircuit aria-hidden="true" size={14} />
                   <span>Engine v{latestRun.engine_version}</span>
@@ -127,7 +127,7 @@ export function ImageAnalysisPanel({ evidence }: ImageAnalysisPanelProps) {
             )}
 
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-[11px] text-slate-600">Detector filter</span>
+              <span className="text-[11px] text-subtle">Detector filter</span>
               <Button
                 onClick={() => setDetectorFilter("all")}
                 size="sm"
@@ -168,31 +168,31 @@ export function ImageAnalysisPanel({ evidence }: ImageAnalysisPanelProps) {
               <div className="max-h-80 space-y-2 overflow-y-auto">
                 {findings.map((finding) => (
                   <div
-                    className="rounded border border-slate-800 px-2.5 py-2 text-xs"
+                    className="rounded border border-border px-2.5 py-2 text-xs"
                     key={finding.id}
                   >
                     <div className="flex flex-wrap items-center gap-2">
                       <Badge tone={severityTone[finding.severity] ?? "neutral"}>
                         {finding.severity}
                       </Badge>
-                      <Badge tone="cyan">{finding.detector}</Badge>
-                      <span className="text-slate-400">
+                      <Badge tone="primary">{finding.detector}</Badge>
+                      <span className="text-muted">
                         {(finding.confidence * 100).toFixed(1)}%
                       </span>
                     </div>
-                    <p className="mt-1 text-slate-300">{finding.description}</p>
-                    <p className="mt-1 text-[11px] text-slate-500">
+                    <p className="mt-1 text-muted">{finding.description}</p>
+                    <p className="mt-1 text-[11px] text-muted">
                       {finding.model_name} v{finding.model_version} ·{" "}
                       {finding.model_framework}
                     </p>
                     {finding.regions.length > 0 && (
-                      <p className="mt-1 text-[10px] text-slate-600">
+                      <p className="mt-1 text-[10px] text-subtle">
                         {finding.regions.length} localized region
                         {finding.regions.length === 1 ? "" : "s"}
                       </p>
                     )}
                     {showHeatmaps && finding.heatmap_artifact_id && (
-                      <p className="mt-1 text-[10px] text-purple-300">
+                      <p className="mt-1 text-[10px] text-info">
                         Heatmap artifact: {finding.heatmap_artifact_id.slice(0, 8)}…
                       </p>
                     )}
@@ -202,13 +202,13 @@ export function ImageAnalysisPanel({ evidence }: ImageAnalysisPanelProps) {
             )}
 
             {showHeatmaps && heatmapFindings.length === 0 && findings.length > 0 && (
-              <p className="text-[11px] text-slate-600">
+              <p className="text-[11px] text-subtle">
                 No heatmap artifacts are linked to the current findings.
               </p>
             )}
 
             {analyzeMutation.isError && (
-              <p className="text-[11px] text-red-300">
+              <p className="text-[11px] text-danger">
                 {analyzeMutation.error instanceof ApiClientError
                   ? analyzeMutation.error.message
                   : "AI image analysis failed."}

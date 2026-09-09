@@ -39,11 +39,11 @@ export function MetricsPanel() {
             <div className="flex flex-wrap gap-2">
               {Object.entries(METRIC_LABELS).map(([key, label]) => (
                 <div
-                  className="rounded-lg border border-slate-800 bg-slate-950/40 px-3 py-2"
+                  className="rounded-lg border border-border bg-background/40 px-3 py-2"
                   key={key}
                 >
-                  <p className="text-[10px] text-slate-500">{label}</p>
-                  <p className="text-sm font-medium text-slate-200">
+                  <p className="text-[10px] text-muted">{label}</p>
+                  <p className="text-sm font-medium text-foreground">
                     {String(data[key as keyof typeof data] ?? 0)}
                   </p>
                 </div>

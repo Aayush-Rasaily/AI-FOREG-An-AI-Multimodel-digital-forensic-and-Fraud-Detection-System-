@@ -11,10 +11,10 @@ interface StatusIndicatorProps {
 }
 
 const toneStyles: Record<StatusTone, string> = {
-  online: "text-emerald-300",
-  pending: "text-amber-300",
-  warning: "text-amber-300",
-  offline: "text-slate-500",
+  online: "text-success",
+  pending: "text-warning",
+  warning: "text-warning",
+  offline: "text-subtle",
 };
 
 export function StatusIndicator({
@@ -30,10 +30,9 @@ export function StatusIndicator({
         : TriangleAlert;
 
   return (
-    <span className={cn("inline-flex items-center gap-2 text-xs", toneStyles[tone], className)}>
+    <span className={cn("inline-flex items-center gap-2 text-caption", toneStyles[tone], className)}>
       <Icon aria-hidden="true" size={14} />
       <span>{label}</span>
     </span>
   );
 }
-

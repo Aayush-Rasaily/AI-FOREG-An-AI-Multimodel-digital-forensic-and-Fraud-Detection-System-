@@ -22,30 +22,30 @@ export function AlertPanel({ alerts, search }: AlertPanelProps) {
     <Panel description="Alerts from failed or warned integrity checks." title="Alerts">
       <div className="space-y-3 p-4">
         {filtered.length === 0 ? (
-          <p className="text-xs text-slate-500">No alerts.</p>
+          <p className="text-xs text-muted">No alerts.</p>
         ) : null}
         {filtered.map((item) => (
           <div
-            className="border-b border-slate-800/80 pb-2 text-xs last:border-0"
+            className="border-b border-border/80 pb-2 text-xs last:border-0"
             key={item.alert_key}
           >
             <div className="flex flex-wrap gap-2">
               <Badge
                 tone={
                   item.severity === "CRITICAL" || item.severity === "HIGH"
-                    ? "red"
+                    ? "error"
                     : item.severity === "MEDIUM"
-                      ? "amber"
+                      ? "warning"
                       : "neutral"
                 }
               >
                 {item.severity}
               </Badge>
-              <span className="text-slate-200">{item.title}</span>
+              <span className="text-foreground">{item.title}</span>
             </div>
-            <p className="mt-1 text-slate-500">{item.message}</p>
+            <p className="mt-1 text-muted">{item.message}</p>
             {item.evidence_id ? (
-              <p className="mt-1 text-[11px] text-slate-600">
+              <p className="mt-1 text-[11px] text-subtle">
                 Evidence {item.evidence_id}
               </p>
             ) : null}

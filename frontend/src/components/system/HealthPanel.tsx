@@ -6,10 +6,10 @@ import { ErrorState } from "../ui/ErrorState";
 import { LoadingState } from "../ui/LoadingState";
 import { Panel } from "../ui/Panel";
 
-function tone(status: string): "green" | "amber" | "red" | "neutral" {
-  if (status === "healthy") return "green";
-  if (status === "degraded") return "amber";
-  if (status === "unavailable") return "red";
+function tone(status: string): "success" | "warning" | "error" | "neutral" {
+  if (status === "healthy") return "success";
+  if (status === "degraded") return "warning";
+  if (status === "unavailable") return "error";
   return "neutral";
 }
 
@@ -30,42 +30,42 @@ export function HealthPanel() {
         )}
         {data && (
           <div className="grid gap-3 sm:grid-cols-2">
-            <div className="rounded-lg border border-slate-800 bg-slate-950/40 p-3">
-              <div className="mb-2 flex items-center gap-2 text-xs text-slate-400">
+            <div className="rounded-lg border border-border bg-background/40 p-3">
+              <div className="mb-2 flex items-center gap-2 text-xs text-muted">
                 <Server size={14} /> Service
               </div>
               <Badge tone={tone(data.status)}>{data.status}</Badge>
-              <p className="mt-2 text-xs text-slate-500">
+              <p className="mt-2 text-xs text-muted">
                 {data.service} v{data.version}
               </p>
             </div>
-            <div className="rounded-lg border border-slate-800 bg-slate-950/40 p-3">
-              <div className="mb-2 flex items-center gap-2 text-xs text-slate-400">
+            <div className="rounded-lg border border-border bg-background/40 p-3">
+              <div className="mb-2 flex items-center gap-2 text-xs text-muted">
                 <Database size={14} /> Database
               </div>
               <Badge tone={tone(data.database.status)}>
                 {data.database.status}
               </Badge>
             </div>
-            <div className="rounded-lg border border-slate-800 bg-slate-950/40 p-3">
-              <div className="mb-2 flex items-center gap-2 text-xs text-slate-400">
+            <div className="rounded-lg border border-border bg-background/40 p-3">
+              <div className="mb-2 flex items-center gap-2 text-xs text-muted">
                 <Activity size={14} /> Redis
               </div>
               <Badge tone={tone(data.redis.status)}>
                 {data.redis.status}
               </Badge>
             </div>
-            <div className="rounded-lg border border-slate-800 bg-slate-950/40 p-3">
-              <div className="mb-2 flex items-center gap-2 text-xs text-slate-400">
+            <div className="rounded-lg border border-border bg-background/40 p-3">
+              <div className="mb-2 flex items-center gap-2 text-xs text-muted">
                 <HardDrive size={14} /> Resources
               </div>
-              <p className="text-xs text-slate-300">
+              <p className="text-xs text-muted">
                 CPU: {data.resources.cpu_percent ?? "—"}%
               </p>
-              <p className="text-xs text-slate-300">
+              <p className="text-xs text-muted">
                 Memory: {data.resources.memory_mb ?? "—"} MB
               </p>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-muted">
                 Uptime: {Math.round(data.uptime_seconds)}s
               </p>
             </div>

@@ -20,13 +20,13 @@ interface VideoAnalysisPanelProps {
   evidence?: EvidenceRecord;
 }
 
-const severityTone: Record<string, "neutral" | "cyan" | "green" | "amber" | "red"> =
+const severityTone: Record<string, "neutral" | "primary" | "success" | "warning" | "error"> =
   {
     INFO: "neutral",
-    LOW: "cyan",
-    MEDIUM: "amber",
-    HIGH: "red",
-    CRITICAL: "red",
+    LOW: "primary",
+    MEDIUM: "warning",
+    HIGH: "error",
+    CRITICAL: "error",
   };
 
 const detectors = [
@@ -95,11 +95,11 @@ export function VideoAnalysisPanel({ evidence }: VideoAnalysisPanelProps) {
               </Button>
               {latestRun && (
                 <>
-                  <Badge tone={latestRun.status === "SUCCEEDED" ? "green" : "neutral"}>
+                  <Badge tone={latestRun.status === "SUCCEEDED" ? "success" : "neutral"}>
                     {latestRun.status}
                   </Badge>
                   {latestRun.latency_ms != null && (
-                    <span className="text-[11px] text-slate-500">
+                    <span className="text-[11px] text-muted">
                       {latestRun.latency_ms.toFixed(2)} ms · {latestRun.device}
                     </span>
                   )}
@@ -120,7 +120,7 @@ export function VideoAnalysisPanel({ evidence }: VideoAnalysisPanelProps) {
             )}
 
             {latestRun && (
-              <div className="rounded border border-slate-800 px-3 py-2 text-xs text-slate-400">
+              <div className="rounded border border-border px-3 py-2 text-xs text-muted">
                 <div className="flex items-center gap-2">
                   <Clapperboard aria-hidden="true" size={14} />
                   <span>Engine v{latestRun.engine_version}</span>
@@ -150,8 +150,8 @@ export function VideoAnalysisPanel({ evidence }: VideoAnalysisPanelProps) {
             )}
 
             {timeline.length > 0 && (
-              <div className="rounded border border-slate-800 p-3">
-                <div className="mb-2 flex items-center gap-2 text-xs font-medium text-slate-300">
+              <div className="rounded border border-border p-3">
+                <div className="mb-2 flex items-center gap-2 text-xs font-medium text-muted">
                   <Timer aria-hidden="true" size={14} />
                   Timeline
                 </div>
@@ -159,7 +159,7 @@ export function VideoAnalysisPanel({ evidence }: VideoAnalysisPanelProps) {
                   {timeline.map((entry, index) => (
                     <button
                       key={`${entry.detector}-${index}`}
-                      className="flex w-full items-start justify-between rounded border border-slate-800 px-2 py-1 text-left text-[11px] text-slate-400 hover:border-cyan-700"
+                      className="flex w-full items-start justify-between rounded border border-border px-2 py-1 text-left text-[11px] text-muted hover:border-primary-strong"
                       onClick={() =>
                         setSelectedFrame(entry.start_frame ?? selectedFrame)
                       }
@@ -177,8 +177,8 @@ export function VideoAnalysisPanel({ evidence }: VideoAnalysisPanelProps) {
             )}
 
             {frames.length > 0 && (
-              <div className="rounded border border-slate-800 p-3">
-                <div className="mb-2 flex items-center gap-2 text-xs font-medium text-slate-300">
+              <div className="rounded border border-border p-3">
+                <div className="mb-2 flex items-center gap-2 text-xs font-medium text-muted">
                   <Film aria-hidden="true" size={14} />
                   Frame navigator
                 </div>
@@ -188,8 +188,8 @@ export function VideoAnalysisPanel({ evidence }: VideoAnalysisPanelProps) {
                       key={frame.frame_id || frame.frame_number}
                       className={`rounded px-2 py-1 text-[11px] ${
                         selectedFrameData?.frame_number === frame.frame_number
-                          ? "bg-cyan-900 text-cyan-100"
-                          : "bg-slate-900 text-slate-400"
+                          ? "bg-primary/20 text-primary/90"
+                          : "bg-background-offset text-muted"
                       }`}
                       onClick={() => setSelectedFrame(frame.frame_number)}
                       type="button"
@@ -199,7 +199,7 @@ export function VideoAnalysisPanel({ evidence }: VideoAnalysisPanelProps) {
                   ))}
                 </div>
                 {selectedFrameData && (
-                  <div className="mt-2 text-[11px] text-slate-500">
+                  <div className="mt-2 text-[11px] text-muted">
                     Frame {selectedFrameData.frame_number} ·{" "}
                     {formatTimestamp(selectedFrameData.timestamp_ms)}
                   </div>
@@ -237,7 +237,7 @@ export function VideoAnalysisPanel({ evidence }: VideoAnalysisPanelProps) {
             {findings.map((finding) => (
               <div
                 key={finding.id}
-                className="rounded border border-slate-800 px-3 py-2 text-xs"
+                className="rounded border border-border px-3 py-2 text-xs"
               >
                 <div className="flex flex-wrap items-center gap-2">
                   <Badge tone={severityTone[finding.severity] ?? "neutral"}>
@@ -246,23 +246,23 @@ export function VideoAnalysisPanel({ evidence }: VideoAnalysisPanelProps) {
                   <Badge tone="neutral">{finding.category}</Badge>
                   <Badge tone="neutral">{finding.method}</Badge>
                   {finding.confidence != null && (
-                    <span className="text-slate-500">
+                    <span className="text-muted">
                       {(finding.confidence * 100).toFixed(1)}%
                     </span>
                   )}
                   {finding.confidence == null && (
-                    <span className="text-slate-500">Unavailable</span>
+                    <span className="text-muted">Unavailable</span>
                   )}
                 </div>
-                <p className="mt-2 text-slate-200">{finding.description}</p>
-                <p className="mt-1 text-slate-500">{finding.explanation}</p>
+                <p className="mt-2 text-foreground">{finding.description}</p>
+                <p className="mt-1 text-muted">{finding.explanation}</p>
                 {finding.temporal && (
-                  <p className="mt-1 text-cyan-400">
+                  <p className="mt-1 text-primary">
                     {formatTimestamp(finding.temporal.start_timestamp_ms)} –{" "}
                     {formatTimestamp(finding.temporal.end_timestamp_ms)}
                   </p>
                 )}
-                <p className="mt-1 text-[10px] text-slate-600">
+                <p className="mt-1 text-[10px] text-subtle">
                   {finding.model_name} v{finding.model_version}
                 </p>
               </div>

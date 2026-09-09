@@ -18,12 +18,12 @@ interface EntityGraphPanelProps {
   caseId: string;
 }
 
-function confidenceTone(confidence: number): "cyan" | "amber" | "neutral" {
+function confidenceTone(confidence: number): "primary" | "warning" | "neutral" {
   if (confidence >= 0.9) {
-    return "cyan";
+    return "primary";
   }
   if (confidence >= 0.7) {
-    return "amber";
+    return "warning";
   }
   return "neutral";
 }
@@ -80,7 +80,7 @@ export function EntityGraphPanel({ caseId }: EntityGraphPanelProps) {
           <div className="flex flex-wrap gap-2">
             <select
               aria-label="Filter entity type"
-              className="rounded-lg border border-slate-700 bg-slate-900 px-2 py-1 text-xs text-slate-200"
+              className="rounded-lg border border-border-strong bg-background-offset px-2 py-1 text-xs text-foreground"
               onChange={(event) =>
                 setFilterType(event.target.value as EntityType | "all")
               }
@@ -95,7 +95,7 @@ export function EntityGraphPanel({ caseId }: EntityGraphPanelProps) {
             </select>
             <input
               aria-label="Search entities"
-              className="rounded-lg border border-slate-700 bg-slate-900 px-2 py-1 text-xs text-slate-200"
+              className="rounded-lg border border-border-strong bg-background-offset px-2 py-1 text-xs text-foreground"
               onChange={(event) => setSearch(event.target.value)}
               placeholder="Search entities…"
               value={search}
@@ -136,7 +136,7 @@ export function EntityGraphPanel({ caseId }: EntityGraphPanelProps) {
 
         {visible.length > 0 && !isRunning && (
           <div className="space-y-3">
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-muted">
               {detail?.entity_count ?? entities.length} entities ·{" "}
               {detail?.relationship_count ?? relationships.length} relationships
             </p>
@@ -145,11 +145,11 @@ export function EntityGraphPanel({ caseId }: EntityGraphPanelProps) {
               const edges = relationshipsByEntity.get(item.canonical_id) ?? [];
               return (
                 <div
-                  className="rounded-lg border border-slate-800 bg-slate-950/40 p-3"
+                  className="rounded-lg border border-border bg-background/40 p-3"
                   key={item.canonical_id}
                 >
                   <div className="flex flex-wrap items-center gap-2">
-                    <Badge tone="cyan">{item.canonical_id}</Badge>
+                    <Badge tone="primary">{item.canonical_id}</Badge>
                     <Badge tone="neutral">
                       {item.entity_type.replaceAll("_", " ")}
                     </Badge>
@@ -159,16 +159,16 @@ export function EntityGraphPanel({ caseId }: EntityGraphPanelProps) {
                     <Badge tone="neutral">
                       support {item.support_count}
                     </Badge>
-                    <span className="text-sm text-slate-100">
+                    <span className="text-sm text-foreground">
                       {item.display_name}
                     </span>
                   </div>
-                  <p className="mt-2 text-xs text-slate-400">
+                  <p className="mt-2 text-xs text-muted">
                     Evidence: {item.evidence_ids.length} · Relationships:{" "}
                     {edges.length}
                   </p>
                   <button
-                    className="mt-2 inline-flex items-center gap-1 text-xs text-cyan-300"
+                    className="mt-2 inline-flex items-center gap-1 text-xs text-primary"
                     onClick={() =>
                       setExpanded((current) => ({
                         ...current,
@@ -181,13 +181,13 @@ export function EntityGraphPanel({ caseId }: EntityGraphPanelProps) {
                     Provenance & relationships
                   </button>
                   {isOpen && (
-                    <div className="mt-2 space-y-2 text-xs text-slate-300">
+                    <div className="mt-2 space-y-2 text-xs text-muted">
                       <div>
-                        <p className="mb-1 font-medium text-slate-200">
+                        <p className="mb-1 font-medium text-foreground">
                           Relationships
                         </p>
                         {edges.length === 0 ? (
-                          <p className="text-slate-500">No relationships</p>
+                          <p className="text-muted">No relationships</p>
                         ) : (
                           <ul className="space-y-1">
                             {edges.map((edge) => (
@@ -202,7 +202,7 @@ export function EntityGraphPanel({ caseId }: EntityGraphPanelProps) {
                         )}
                       </div>
                       <div>
-                        <p className="mb-1 font-medium text-slate-200">
+                        <p className="mb-1 font-medium text-foreground">
                           Supporting evidence
                         </p>
                         <p>
@@ -211,7 +211,7 @@ export function EntityGraphPanel({ caseId }: EntityGraphPanelProps) {
                             : "None"}
                         </p>
                       </div>
-                      <pre className="overflow-x-auto rounded bg-slate-900 p-2 text-[11px] text-slate-400">
+                      <pre className="overflow-x-auto rounded bg-background-offset p-2 text-[11px] text-muted">
                         {JSON.stringify(item.provenance, null, 2)}
                       </pre>
                     </div>

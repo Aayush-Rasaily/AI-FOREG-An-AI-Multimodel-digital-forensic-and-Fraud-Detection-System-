@@ -41,7 +41,7 @@ export function ExportPanel({ caseId, onSelectExport }: ExportPanelProps) {
     >
       <div className="space-y-4 p-4">
         <div className="flex flex-wrap items-end gap-3">
-          <label className="block text-xs text-slate-400">
+          <label className="block text-xs text-muted">
             Format
             <Select
               className="mt-1 w-56"
@@ -57,7 +57,7 @@ export function ExportPanel({ caseId, onSelectExport }: ExportPanelProps) {
               ))}
             </Select>
           </label>
-          <label className="flex items-center gap-2 text-xs text-slate-400">
+          <label className="flex items-center gap-2 text-xs text-muted">
             <input
               checked={includeBinaries}
               onChange={(event) => setIncludeBinaries(event.target.checked)}
@@ -88,7 +88,7 @@ export function ExportPanel({ caseId, onSelectExport }: ExportPanelProps) {
         {exportMutation.data?.data ? (
           <div className="flex items-center gap-2 text-xs">
             <IntegrityBadge status={exportMutation.data.data.status} />
-            <span className="text-slate-500">
+            <span className="text-muted">
               {exportMutation.data.data.package_checksum?.slice(0, 16) ?? "—"}
             </span>
           </div>
@@ -107,14 +107,14 @@ export function ExportPanel({ caseId, onSelectExport }: ExportPanelProps) {
             title="No exports"
           />
         ) : (
-          <ul className="space-y-2 text-xs text-slate-400">
+          <ul className="space-y-2 text-xs text-muted">
             {exportsQuery.data.data.items.map((item) => (
               <li
-                className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-slate-800 px-3 py-2"
+                className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border px-3 py-2"
                 key={item.id}
               >
                 <button
-                  className="text-left text-slate-200 hover:text-cyan-300"
+                  className="text-left text-foreground hover:text-primary"
                   onClick={() => onSelectExport?.(item.id)}
                   type="button"
                 >

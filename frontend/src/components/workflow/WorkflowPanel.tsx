@@ -30,7 +30,7 @@ export function WorkflowPanel({ caseId }: { caseId: string }) {
           <>
             <div className="flex flex-wrap items-center gap-2">
               <WorkflowStatusBadge status={workflow.status} />
-              <span className="text-[11px] text-slate-500">
+              <span className="text-[11px] text-muted">
                 policy {workflow.policy_version}
               </span>
             </div>
@@ -47,21 +47,21 @@ export function WorkflowPanel({ caseId }: { caseId: string }) {
                 </Button>
               ))}
               {workflow.allowed_transitions.length === 0 && (
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-muted">
                   No further transitions are allowed from this status.
                 </p>
               )}
             </div>
             {workflow.activity.length > 0 && (
-              <div className="space-y-2 border-t border-slate-800 pt-3">
-                <h3 className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+              <div className="space-y-2 border-t border-border pt-3">
+                <h3 className="text-[11px] font-semibold uppercase tracking-wide text-muted">
                   Workflow activity
                 </h3>
-                <ul className="max-h-48 space-y-1 overflow-y-auto text-xs text-slate-400">
+                <ul className="max-h-48 space-y-1 overflow-y-auto text-xs text-muted">
                   {workflow.activity.map((event, index) => (
                     <li key={`${event.timestamp}-${index}`}>
-                      <span className="text-slate-300">{event.summary}</span>
-                      <span className="ml-2 text-slate-600">
+                      <span className="text-muted">{event.summary}</span>
+                      <span className="ml-2 text-subtle">
                         {event.timestamp}
                       </span>
                     </li>

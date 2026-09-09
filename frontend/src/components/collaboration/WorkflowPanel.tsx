@@ -21,7 +21,7 @@ export function WorkflowPanel({ caseId }: { caseId: string }) {
       )}
       {workflow && (
         <div className="space-y-3">
-          <Badge tone="cyan">{workflow.stage.replaceAll("_", " ")}</Badge>
+          <Badge tone="primary">{workflow.stage.replaceAll("_", " ")}</Badge>
           <div className="flex flex-wrap gap-2">
             {workflow.allowed_transitions.map((stage) => (
               <Button

@@ -17,7 +17,7 @@ export function CoveragePanel({
   if (!coverage) {
     return (
       <Panel description="Investigation coverage metrics." title="Coverage">
-        <div className="p-4 text-xs text-slate-500">No coverage yet.</div>
+        <div className="p-4 text-xs text-muted">No coverage yet.</div>
       </Panel>
     );
   }
@@ -38,17 +38,17 @@ export function CoveragePanel({
 
   return (
     <Panel description="Investigation coverage metrics." title="Coverage">
-      <div className="space-y-3 p-4 text-xs text-slate-400">
+      <div className="space-y-3 p-4 text-xs text-muted">
         {investigationScore != null ? (
-          <p className="text-lg text-slate-100">
+          <p className="text-lg text-foreground">
             Score {investigationScore.toFixed(1)}
           </p>
         ) : null}
         <dl className="grid gap-2 sm:grid-cols-2">
           {rows.map(([label, value]) => (
             <div key={label}>
-              <dt className="text-slate-600">{label}</dt>
-              <dd className="text-slate-200">{value}</dd>
+              <dt className="text-subtle">{label}</dt>
+              <dd className="text-foreground">{value}</dd>
             </div>
           ))}
         </dl>

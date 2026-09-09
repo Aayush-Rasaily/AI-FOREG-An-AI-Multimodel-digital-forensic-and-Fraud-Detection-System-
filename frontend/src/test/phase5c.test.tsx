@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { AppRoutes } from "../routes/AppRoutes";
@@ -179,16 +180,18 @@ beforeEach(() => {
 
 describe("Phase 5C comparison workspace", () => {
   it("shows comparison status, reference selector, and difference table", async () => {
+    const user = userEvent.setup();
     render(
       <TestProviders initialEntries={[`/investigations/${caseRecord.id}`]}>
         <AppRoutes />
       </TestProviders>,
     );
 
+    await user.click(await screen.findByRole("tab", { name: "Comparison" }));
     expect((await screen.findAllByText("Reference comparison")).length).toBeGreaterThan(
       0,
     );
-    expect(await screen.findByText("SUCCEEDED")).toBeInTheDocument();
+    expect((await screen.findAllByText("SUCCEEDED")).length).toBeGreaterThan(0);
     expect(
       screen.getAllByText("Numeric value changed between reference and submitted text.")
         .length,

@@ -9,12 +9,13 @@ export function Input({
   return (
     <input
       className={cn(
-        "h-10 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 text-sm text-slate-100",
-        "placeholder:text-slate-600 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20",
+        "h-11 w-full rounded-md border border-border bg-surface px-3 text-body text-foreground sm:h-10",
+        "placeholder:text-subtle duration-fast transition-colors",
+        "focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring",
+        "disabled:cursor-not-allowed disabled:bg-surface-muted disabled:opacity-60",
         className,
       )}
       {...props}
     />
   );
 }
-

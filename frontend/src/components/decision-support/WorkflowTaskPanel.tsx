@@ -39,23 +39,23 @@ export function WorkflowTaskPanel({
         ) : (
           visible.map((item) => (
             <div
-              className="rounded-lg border border-slate-800 p-3 text-xs text-slate-400"
+              className="rounded-lg border border-border p-3 text-xs text-muted"
               key={item.task_key}
             >
               <div className="mb-2 flex flex-wrap gap-2">
-                <Badge tone="cyan">{item.priority}</Badge>
+                <Badge tone="primary">{item.priority}</Badge>
                 <Badge tone="neutral">{item.stage}</Badge>
                 <Badge tone="neutral">{item.status}</Badge>
               </div>
-              <p className="text-sm text-slate-200">{item.title}</p>
+              <p className="text-sm text-foreground">{item.title}</p>
               <p className="mt-1">{item.description}</p>
-              <p className="mt-2 text-[11px] text-slate-600">
+              <p className="mt-2 text-[11px] text-subtle">
                 Effort ~{item.estimated_effort_hours}h · Provenance engine{" "}
                 {String(item.provenance.engine_version ?? "—")}
               </p>
               {item.id && onComplete && item.status !== "COMPLETED" ? (
                 <button
-                  className="mt-2 text-cyan-300 hover:underline"
+                  className="mt-2 text-primary hover:underline"
                   onClick={() => onComplete(item.id!)}
                   type="button"
                 >

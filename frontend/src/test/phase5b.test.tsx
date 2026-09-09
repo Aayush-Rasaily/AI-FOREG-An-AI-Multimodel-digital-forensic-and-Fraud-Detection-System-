@@ -176,7 +176,7 @@ describe("Phase 5B forensic workspace", () => {
       </TestProviders>,
     );
 
-    expect(await screen.findByText("SUCCEEDED")).toBeInTheDocument();
+    expect((await screen.findAllByText("SUCCEEDED")).length).toBeGreaterThan(0);
     expect(screen.getAllByText("document_metadata").length).toBeGreaterThan(0);
     expect(
       screen.getAllByText("PDF producer metadata present.").length,

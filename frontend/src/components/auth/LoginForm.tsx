@@ -36,7 +36,7 @@ export function LoginForm() {
   return (
     <form className="space-y-4" onSubmit={onSubmit}>
       <label className="block">
-        <span className="mb-2 block text-xs text-slate-400">Username</span>
+        <span className="mb-2 block text-xs text-muted">Username</span>
         <Input
           autoComplete="username"
           onChange={(event) => setUsername(event.target.value)}
@@ -45,7 +45,7 @@ export function LoginForm() {
         />
       </label>
       <label className="block">
-        <span className="mb-2 block text-xs text-slate-400">Password</span>
+        <span className="mb-2 block text-xs text-muted">Password</span>
         <Input
           autoComplete="current-password"
           onChange={(event) => setPassword(event.target.value)}
@@ -54,17 +54,17 @@ export function LoginForm() {
           value={password}
         />
       </label>
-      <label className="flex items-center gap-2 text-xs text-slate-400">
+      <label className="flex items-center gap-2 text-xs text-muted">
         <input
           checked={rememberMe}
-          className="rounded border-slate-700"
+          className="rounded border-border-strong"
           onChange={(event) => setRememberMe(event.target.checked)}
           type="checkbox"
         />
         Remember me
       </label>
       {error && (
-        <p className="rounded-lg border border-red-400/20 bg-red-400/10 px-3 py-2 text-xs text-red-200">
+        <p className="rounded-lg border border-danger/20 bg-danger-soft px-3 py-2 text-xs text-danger">
           {error}
         </p>
       )}

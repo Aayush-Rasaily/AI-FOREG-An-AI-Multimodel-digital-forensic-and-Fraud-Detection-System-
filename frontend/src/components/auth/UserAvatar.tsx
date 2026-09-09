@@ -18,7 +18,7 @@ export function UserAvatar({ name, className, size = "sm" }: UserAvatarProps) {
     <div
       aria-hidden="true"
       className={cn(
-        "flex items-center justify-center rounded-full border border-slate-700 bg-slate-800 font-semibold text-slate-300",
+        "flex items-center justify-center rounded-full border border-border-strong bg-surface-muted font-semibold text-muted",
         size === "sm" ? "h-7 w-7 text-[10px]" : "h-10 w-10 text-xs",
         className,
       )}

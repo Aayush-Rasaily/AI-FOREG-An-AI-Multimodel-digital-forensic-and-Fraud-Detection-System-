@@ -6,7 +6,7 @@ export function Card({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       className={cn(
-        "rounded-xl border border-slate-800 bg-slate-900/70 shadow-panel",
+        "rounded-xl border border-border bg-surface shadow-panel duration-fast transition-shadow hover:shadow-md",
         className,
       )}
       {...props}
@@ -31,8 +31,17 @@ export function CardTitle({
   ...props
 }: HTMLAttributes<HTMLHeadingElement>) {
   return (
-    <h2
-      className={cn("text-sm font-semibold text-slate-100", className)}
+    <h2 className={cn("text-display-h4 text-foreground", className)} {...props} />
+  );
+}
+
+export function CardDescription({
+  className,
+  ...props
+}: HTMLAttributes<HTMLParagraphElement>) {
+  return (
+    <p
+      className={cn("text-caption text-muted", className)}
       {...props}
     />
   );
@@ -45,3 +54,17 @@ export function CardContent({
   return <div className={cn("px-5 pb-5", className)} {...props} />;
 }
 
+export function CardFooter({
+  className,
+  ...props
+}: HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      className={cn(
+        "flex items-center justify-end gap-2 border-t border-border px-5 py-3",
+        className,
+      )}
+      {...props}
+    />
+  );
+}

@@ -1,6 +1,15 @@
-import { FileAudio, FileImage, FileSignature, FileText, Film, File } from "lucide-react";
+import { memo } from "react";
+import {
+  FileAudio,
+  FileImage,
+  FileSignature,
+  FileText,
+  Film,
+  File,
+} from "lucide-react";
 
 import type { EvidenceKind } from "../../types/investigation";
+import { cn } from "../../lib/utils";
 import { Badge } from "../ui/Badge";
 import { Card } from "../ui/Card";
 
@@ -21,7 +30,7 @@ const icons = {
   signature: FileSignature,
 };
 
-export function EvidenceCard({
+function EvidenceCardComponent({
   name,
   kind,
   meta = "Awaiting evidence",
@@ -31,25 +40,31 @@ export function EvidenceCard({
   const Icon = icons[kind] || File;
   const content = (
     <>
-      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-800 text-slate-400">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-surface-muted text-muted sm:h-9 sm:w-9">
         <Icon aria-hidden="true" size={17} strokeWidth={1.7} />
       </div>
       <div className="min-w-0 flex-1">
-        <p className="truncate text-xs font-medium text-slate-200">{name}</p>
-        <p className="mt-1 truncate text-[11px] text-slate-600">{meta}</p>
+        <p className="truncate text-caption font-medium text-foreground sm:text-xs">
+          {name}
+        </p>
+        <p className="mt-1 truncate text-[11px] text-subtle">{meta}</p>
       </div>
-      <Badge tone="neutral">{kind}</Badge>
+      <Badge className="shrink-0" tone="neutral">
+        {kind}
+      </Badge>
     </>
   );
 
   if (onClick) {
     return (
       <button
-        className={`flex w-full items-center gap-3 rounded-lg border p-3 text-left transition-colors ${
+        className={cn(
+          "flex w-full min-h-14 items-center gap-3 rounded-lg border p-3 text-left duration-fast transition-colors",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
           selected
-            ? "border-cyan-400/40 bg-cyan-400/10"
-            : "border-slate-800 bg-slate-950/40 hover:border-slate-700 hover:bg-slate-900"
-        }`}
+            ? "border-primary/40 bg-primary/10"
+            : "border-border bg-background/40 hover:border-border-strong hover:bg-background-offset",
+        )}
         onClick={onClick}
         type="button"
       >
@@ -58,6 +73,11 @@ export function EvidenceCard({
     );
   }
 
-  return <Card className="flex items-center gap-3 p-3">{content}</Card>;
+  return (
+    <Card className="flex min-h-14 items-center gap-3 p-3 duration-fast transition-shadow hover:shadow-md">
+      {content}
+    </Card>
+  );
 }
 
+export const EvidenceCard = memo(EvidenceCardComponent);

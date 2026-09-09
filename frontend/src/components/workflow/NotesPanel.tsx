@@ -31,7 +31,7 @@ export function NotesPanel({ caseId }: { caseId: string }) {
       <div className="space-y-3 p-4">
         <form className="space-y-2" onSubmit={(event) => void onCreate(event)}>
           <textarea
-            className="min-h-20 w-full rounded-lg border border-slate-800 bg-slate-950/60 px-3 py-2 text-sm text-slate-200"
+            className="min-h-20 w-full rounded-lg border border-border bg-background/60 px-3 py-2 text-sm text-foreground"
             onChange={(event) => setContent(event.target.value)}
             placeholder="Add an internal note (markdown supported)"
             value={content}
@@ -53,15 +53,15 @@ export function NotesPanel({ caseId }: { caseId: string }) {
         <ul className="space-y-2">
           {items.map((note) => (
             <li
-              className="rounded-lg border border-slate-800 px-3 py-2"
+              className="rounded-lg border border-border px-3 py-2"
               key={note.id}
             >
-              <div className="mb-1 flex gap-2 text-[11px] text-slate-500">
+              <div className="mb-1 flex gap-2 text-[11px] text-muted">
                 <span>{note.category}</span>
                 <span>{note.visibility}</span>
                 <span>{note.created_at}</span>
               </div>
-              <p className="whitespace-pre-wrap text-sm text-slate-200">
+              <p className="whitespace-pre-wrap text-sm text-foreground">
                 {note.content_markdown}
               </p>
             </li>

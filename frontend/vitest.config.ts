@@ -7,5 +7,7 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: "./src/test/setup.ts",
     globals: true,
+    // Must exceed setup.ts asyncUtilTimeout (5s) so waitFor cannot exhaust the test budget.
+    testTimeout: 15_000,
   },
 });

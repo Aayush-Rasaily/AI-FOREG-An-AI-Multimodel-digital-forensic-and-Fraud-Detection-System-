@@ -16,7 +16,7 @@ export function EntityInspector({ entityId, fallback }: EntityInspectorProps) {
 
   return (
     <Panel description="Selected entity details and provenance." title="Entity">
-      <div className="space-y-3 p-4 text-xs text-slate-400">
+      <div className="space-y-3 p-4 text-xs text-muted">
         {!entityId && !fallback ? (
           <EmptyState
             description="Select a node in the graph to inspect it."
@@ -29,23 +29,23 @@ export function EntityInspector({ entityId, fallback }: EntityInspectorProps) {
         {entity ? (
           <>
             <div className="flex flex-wrap gap-2">
-              <Badge tone="cyan">{entity.entity_type}</Badge>
+              <Badge tone="primary">{entity.entity_type}</Badge>
               <Badge tone="neutral">
                 {(entity.confidence * 100).toFixed(0)}% confidence
               </Badge>
             </div>
-            <p className="text-sm text-slate-200">{entity.display_name}</p>
-            <p className="font-mono text-[11px] text-slate-500">
+            <p className="text-sm text-foreground">{entity.display_name}</p>
+            <p className="font-mono text-[11px] text-muted">
               {entity.normalized_key}
             </p>
             {entity.evidence_ids.length ? (
               <div>
-                <p className="mb-1 text-[11px] uppercase tracking-wide text-slate-600">
+                <p className="mb-1 text-[11px] uppercase tracking-wide text-subtle">
                   Evidence links
                 </p>
                 <ul className="space-y-1">
                   {entity.evidence_ids.map((id) => (
-                    <li className="font-mono text-slate-300" key={id}>
+                    <li className="font-mono text-muted" key={id}>
                       {id}
                     </li>
                   ))}
@@ -54,13 +54,13 @@ export function EntityInspector({ entityId, fallback }: EntityInspectorProps) {
             ) : null}
             {entity.provenance?.length ? (
               <div>
-                <p className="mb-1 text-[11px] uppercase tracking-wide text-slate-600">
+                <p className="mb-1 text-[11px] uppercase tracking-wide text-subtle">
                   Provenance
                 </p>
                 <ul className="max-h-40 space-y-1 overflow-y-auto">
                   {entity.provenance.map((item) => (
                     <li key={`${item.source_kind}-${item.source_id}`}>
-                      <span className="text-slate-300">{item.source_kind}</span>:{" "}
+                      <span className="text-muted">{item.source_kind}</span>:{" "}
                       {item.source_id}
                       {item.timeline_id ? ` · timeline ${item.timeline_id}` : ""}
                       {item.correlation_id

@@ -37,30 +37,30 @@ export function HypothesisPanel({
         ) : (
           visible.map((item) => (
             <div
-              className="rounded-lg border border-slate-800 p-3 text-xs text-slate-400"
+              className="rounded-lg border border-border p-3 text-xs text-muted"
               key={item.hypothesis_key}
             >
               <div className="mb-2 flex flex-wrap gap-2">
-                <Badge tone="cyan">{item.priority}</Badge>
+                <Badge tone="primary">{item.priority}</Badge>
                 <Badge tone="neutral">{item.status}</Badge>
                 <Badge tone="neutral">
                   {(item.confidence * 100).toFixed(0)}% confidence
                 </Badge>
               </div>
-              <p className="text-sm text-slate-200">{item.title}</p>
+              <p className="text-sm text-foreground">{item.title}</p>
               <p className="mt-1">{item.explanation}</p>
               {item.supporting_evidence_ids.length ? (
-                <p className="mt-2 font-mono text-[11px] text-slate-500">
+                <p className="mt-2 font-mono text-[11px] text-muted">
                   Support: {item.supporting_evidence_ids.join(", ")}
                 </p>
               ) : null}
               {item.contradicting_evidence_ids.length ? (
-                <p className="mt-1 font-mono text-[11px] text-rose-400/80">
+                <p className="mt-1 font-mono text-[11px] text-danger/80">
                   Contradict: {item.contradicting_evidence_ids.join(", ")}
                 </p>
               ) : null}
               {item.provenance ? (
-                <p className="mt-2 text-[11px] text-slate-600">
+                <p className="mt-2 text-[11px] text-subtle">
                   Provenance engine{" "}
                   {String(item.provenance.engine_version ?? "—")}
                 </p>

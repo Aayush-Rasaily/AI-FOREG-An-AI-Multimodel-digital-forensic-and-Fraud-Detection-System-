@@ -31,16 +31,16 @@ export function ReviewQueuePanel({ items, search }: ReviewQueuePanelProps) {
         ) : (
           visible.map((item) => (
             <div
-              className="rounded-lg border border-slate-800 p-3 text-xs text-slate-400"
+              className="rounded-lg border border-border p-3 text-xs text-muted"
               key={item.queue_key}
             >
               <div className="mb-2 flex flex-wrap gap-2">
-                <Badge tone="cyan">{item.priority}</Badge>
+                <Badge tone="primary">{item.priority}</Badge>
                 <Badge tone="neutral">
                   {(item.priority_score * 100).toFixed(0)}%
                 </Badge>
               </div>
-              <p className="font-mono text-slate-200">{item.evidence_id}</p>
+              <p className="font-mono text-foreground">{item.evidence_id}</p>
               <p className="mt-1">{item.reasons.join(", ")}</p>
             </div>
           ))

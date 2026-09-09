@@ -40,31 +40,31 @@ export function ReleasePanel() {
     >
       <div className="space-y-4 p-4 text-sm">
         <div className="flex flex-wrap gap-2">
-          <Badge tone="green">v{release.application_version}</Badge>
+          <Badge tone="success">v{release.application_version}</Badge>
           <Badge tone="neutral">{release.environment}</Badge>
           <Badge tone="neutral">schema {release.schema_version}</Badge>
         </div>
-        <dl className="grid gap-2 text-xs text-slate-400 sm:grid-cols-2">
+        <dl className="grid gap-2 text-xs text-muted sm:grid-cols-2">
           <div>
-            <dt className="text-slate-600">Migration</dt>
-            <dd className="text-slate-200">{release.migration_version}</dd>
+            <dt className="text-subtle">Migration</dt>
+            <dd className="text-foreground">{release.migration_version}</dd>
           </div>
           <div>
-            <dt className="text-slate-600">Git commit</dt>
-            <dd className="font-mono text-slate-200">
+            <dt className="text-subtle">Git commit</dt>
+            <dd className="font-mono text-foreground">
               {release.git_commit ?? "unavailable"}
             </dd>
           </div>
         </dl>
         <div>
-          <p className="mb-2 text-[11px] uppercase tracking-wide text-slate-600">
+          <p className="mb-2 text-[11px] uppercase tracking-wide text-subtle">
             Policy versions
           </p>
           {policies.length ? (
-            <ul className="space-y-1 text-xs text-slate-400">
+            <ul className="space-y-1 text-xs text-muted">
               {policies.map(([key, value]) => (
                 <li key={key}>
-                  <span className="text-slate-300">{key}</span>: {value}
+                  <span className="text-muted">{key}</span>: {value}
                 </li>
               ))}
             </ul>
@@ -73,14 +73,14 @@ export function ReleasePanel() {
           )}
         </div>
         <div>
-          <p className="mb-2 text-[11px] uppercase tracking-wide text-slate-600">
+          <p className="mb-2 text-[11px] uppercase tracking-wide text-subtle">
             AI engines
           </p>
           {engines.length ? (
-            <ul className="space-y-1 text-xs text-slate-400">
+            <ul className="space-y-1 text-xs text-muted">
               {engines.map(([key, value]) => (
                 <li key={key}>
-                  <span className="text-slate-300">{key}</span>: {value}
+                  <span className="text-muted">{key}</span>: {value}
                 </li>
               ))}
             </ul>

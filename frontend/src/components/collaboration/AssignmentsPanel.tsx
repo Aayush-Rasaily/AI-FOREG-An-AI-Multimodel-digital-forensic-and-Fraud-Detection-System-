@@ -60,16 +60,16 @@ export function AssignmentsPanel({ caseId }: { caseId: string }) {
       <ul className="space-y-2">
         {rows.map((row) => (
           <li
-            className="rounded-lg border border-slate-800 px-3 py-2 text-xs"
+            className="rounded-lg border border-border px-3 py-2 text-xs"
             key={row.id}
           >
-            <p className="text-slate-200">{row.filename}</p>
+            <p className="text-foreground">{row.filename}</p>
             <div className="mt-1 flex flex-wrap gap-2">
-              <Badge tone="cyan">{row.status}</Badge>
+              <Badge tone="primary">{row.status}</Badge>
               <Badge tone="neutral">{row.priority}</Badge>
             </div>
             {row.notes ? (
-              <p className="mt-1 text-slate-500">{row.notes}</p>
+              <p className="mt-1 text-muted">{row.notes}</p>
             ) : null}
           </li>
         ))}

@@ -22,19 +22,19 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        "flex min-h-48 flex-col items-center justify-center px-6 py-10 text-center",
+        "flex min-h-48 flex-col items-center justify-center px-6 py-10 text-center animate-fade-in",
         className,
       )}
+      role="status"
     >
-      <div className="mb-4 rounded-xl border border-slate-800 bg-slate-900 p-3 text-slate-500">
+      <div className="mb-4 rounded-xl border border-border bg-surface-muted p-3 text-subtle">
         {icon || <FileSearch aria-hidden="true" size={20} />}
       </div>
-      <h3 className="text-sm font-medium text-slate-200">{title}</h3>
-      <p className="mt-2 max-w-md text-xs leading-relaxed text-slate-500">
+      <h3 className="text-body font-medium text-foreground">{title}</h3>
+      <p className="mt-2 max-w-md text-caption leading-relaxed text-muted">
         {description}
       </p>
       {action && <div className="mt-5">{action}</div>}
     </div>
   );
 }
-

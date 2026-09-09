@@ -92,8 +92,8 @@ describe("Phase 3 case and evidence workspace", () => {
     );
 
     expect(
-      await screen.findByText(/EVID-000001/, {}, { timeout: 5000 }),
-    ).toBeInTheDocument();
+      (await screen.findAllByText(/EVID-000001/, {}, { timeout: 5000 })).length,
+    ).toBeGreaterThan(0);
     expect(screen.getAllByText(`SHA-256: ${"a".repeat(64)}`).length).toBeGreaterThan(0);
     expect(screen.getAllByText("Select an original evidence file").length).toBeGreaterThan(0);
   });

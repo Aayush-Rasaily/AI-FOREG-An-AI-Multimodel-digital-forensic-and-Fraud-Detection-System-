@@ -15,7 +15,7 @@ export function GraphLegend() {
     <Panel description="Node category colors for the knowledge graph." title="Legend">
       <ul className="grid gap-2 p-4 sm:grid-cols-2">
         {LEGEND.map((item) => (
-          <li className="flex items-center gap-2 text-xs text-slate-400" key={item.type}>
+          <li className="flex items-center gap-2 text-xs text-muted" key={item.type}>
             <span
               aria-hidden="true"
               className="inline-block h-2.5 w-2.5 rounded-full"

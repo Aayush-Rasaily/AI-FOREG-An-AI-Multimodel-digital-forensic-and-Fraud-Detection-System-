@@ -14,11 +14,11 @@ import { ErrorState } from "../ui/ErrorState";
 import { LoadingState } from "../ui/LoadingState";
 import { Panel } from "../ui/Panel";
 
-function toneFor(status: string): "green" | "amber" | "red" | "neutral" {
+function toneFor(status: string): "success" | "warning" | "error" | "neutral" {
   const value = status.toUpperCase();
-  if (value === "PASSED" || value === "READY") return "green";
-  if (value === "DEGRADED" || value === "PARTIAL") return "amber";
-  if (value === "FAILED") return "red";
+  if (value === "PASSED" || value === "READY") return "success";
+  if (value === "DEGRADED" || value === "PARTIAL") return "warning";
+  if (value === "FAILED") return "error";
   return "neutral";
 }
 
@@ -56,7 +56,7 @@ export function DeploymentPanel() {
         {version ? (
           <div className="flex flex-wrap gap-2">
             <Badge tone="neutral">{version.service}</Badge>
-            <Badge tone="green">v{version.application_version}</Badge>
+            <Badge tone="success">v{version.application_version}</Badge>
             <Badge tone="neutral">{version.environment}</Badge>
             <Badge tone="neutral">engine {version.engine_version}</Badge>
           </div>
@@ -108,14 +108,14 @@ export function DeploymentPanel() {
         ) : null}
 
         {validation ? (
-          <div className="space-y-2 rounded-lg border border-slate-800 p-3">
+          <div className="space-y-2 rounded-lg border border-border p-3">
             <div className="flex items-center justify-between">
-              <p className="text-xs font-medium text-slate-300">
+              <p className="text-xs font-medium text-muted">
                 Operational validation
               </p>
               <Badge tone={toneFor(validation.status)}>{validation.status}</Badge>
             </div>
-            <p className="text-[11px] text-slate-500">
+            <p className="text-[11px] text-muted">
               {validation.pass_count} pass · {validation.warn_count} warn ·{" "}
               {validation.fail_count} fail
             </p>
@@ -125,10 +125,10 @@ export function DeploymentPanel() {
                 title="No checks"
               />
             ) : (
-              <ul className="max-h-48 space-y-1 overflow-y-auto text-xs text-slate-400">
+              <ul className="max-h-48 space-y-1 overflow-y-auto text-xs text-muted">
                 {validation.checks.map((item) => (
                   <li key={item.check}>
-                    <span className="text-slate-300">{item.check}</span>:{" "}
+                    <span className="text-muted">{item.check}</span>:{" "}
                     {item.status} — {item.message}
                   </li>
                 ))}
@@ -138,14 +138,14 @@ export function DeploymentPanel() {
         ) : null}
 
         {releaseCheck ? (
-          <div className="space-y-2 rounded-lg border border-slate-800 p-3">
+          <div className="space-y-2 rounded-lg border border-border p-3">
             <div className="flex items-center justify-between">
-              <p className="text-xs font-medium text-slate-300">Release check</p>
+              <p className="text-xs font-medium text-muted">Release check</p>
               <Badge tone={toneFor(releaseCheck.status)}>
                 {releaseCheck.status}
               </Badge>
             </div>
-            <p className="text-[11px] text-slate-500">
+            <p className="text-[11px] text-muted">
               Backup records: {releaseCheck.backup_records.length} · Restore:{" "}
               {String(
                 (releaseCheck.restore as { status?: string }).status ?? "—",

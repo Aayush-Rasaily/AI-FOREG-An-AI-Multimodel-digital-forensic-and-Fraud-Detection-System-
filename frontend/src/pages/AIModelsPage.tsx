@@ -2,7 +2,8 @@ import { BrainCircuit, Cpu, RefreshCw } from "lucide-react";
 
 import { useAIModelsQuery, useInferenceJobsQuery, useReloadModelMutation } from "../hooks/useAI";
 import { ApiClientError } from "../services/api/client";
-import type { AIModel, InferenceJob } from "../types/ai";import { PageHeader } from "../components/layout/PageHeader";
+import type { AIModel, InferenceJob } from "../types/ai";
+import { PageHeader } from "../components/layout/PageHeader";
 import { Badge } from "../components/ui/Badge";
 import { Button } from "../components/ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/Card";
@@ -10,11 +11,11 @@ import { EmptyState } from "../components/ui/EmptyState";
 import { ErrorState } from "../components/ui/ErrorState";
 import { LoadingState } from "../components/ui/LoadingState";
 
-const statusTone: Record<string, "neutral" | "cyan" | "green" | "amber" | "red"> = {
+const statusTone: Record<string, "neutral" | "primary" | "success" | "warning" | "error"> = {
   REGISTERED: "neutral",
-  LOADED: "green",
-  UNLOADED: "amber",
-  FAILED: "red",
+  LOADED: "success",
+  UNLOADED: "warning",
+  FAILED: "error",
 };
 
 export function AIModelsPage() {
@@ -50,7 +51,7 @@ export function AIModelsPage() {
           <Card>
             <CardHeader>
               <CardTitle>Registered models</CardTitle>
-              <BrainCircuit aria-hidden="true" className="text-slate-600" size={17} />
+              <BrainCircuit aria-hidden="true" className="text-subtle" size={17} />
             </CardHeader>
             <CardContent>
               {models.length === 0 ? (
@@ -62,13 +63,13 @@ export function AIModelsPage() {
                 <div className="space-y-3">
                   {models.map((model: AIModel) => (
                     <div
-                      className="rounded-lg border border-slate-800 bg-slate-950/50 p-3"
+                      className="rounded-lg border border-border bg-background/50 p-3"
                       key={model.id}
                     >
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <div>
-                          <p className="text-sm font-medium text-slate-200">{model.name}</p>
-                          <p className="text-[11px] text-slate-500">
+                          <p className="text-sm font-medium text-foreground">{model.name}</p>
+                          <p className="text-[11px] text-muted">
                             v{model.version} · {model.framework}
                           </p>
                         </div>
@@ -89,28 +90,28 @@ export function AIModelsPage() {
                       </div>
                       <dl className="mt-3 grid gap-2 text-[11px] sm:grid-cols-2">
                         <div>
-                          <dt className="text-slate-600">Device</dt>
-                          <dd className="text-slate-300">
+                          <dt className="text-subtle">Device</dt>
+                          <dd className="text-muted">
                             {model.current_device ?? model.required_device}
                           </dd>
                         </div>
                         <div>
-                          <dt className="text-slate-600">Last latency</dt>
-                          <dd className="text-slate-300">
+                          <dt className="text-subtle">Last latency</dt>
+                          <dd className="text-muted">
                             {model.last_latency_ms != null
                               ? `${model.last_latency_ms.toFixed(2)} ms`
                               : "—"}
                           </dd>
                         </div>
                         <div>
-                          <dt className="text-slate-600">Cache</dt>
-                          <dd className="text-slate-300">
+                          <dt className="text-subtle">Cache</dt>
+                          <dd className="text-muted">
                             {model.cache_state?.loaded ? "loaded" : "not cached"}
                           </dd>
                         </div>
                         <div>
-                          <dt className="text-slate-600">Hash</dt>
-                          <dd className="truncate font-mono text-slate-400">
+                          <dt className="text-subtle">Hash</dt>
+                          <dd className="truncate font-mono text-muted">
                             {model.model_hash.slice(0, 16)}…
                           </dd>
                         </div>
@@ -120,7 +121,7 @@ export function AIModelsPage() {
                 </div>
               )}
               {reloadMutation.isError && (
-                <p className="mt-3 text-[11px] text-red-300">
+                <p className="mt-3 text-[11px] text-danger">
                   {reloadMutation.error instanceof ApiClientError
                     ? reloadMutation.error.message
                     : "Model reload failed."}
@@ -133,22 +134,22 @@ export function AIModelsPage() {
             <Card>
               <CardHeader>
                 <CardTitle>Devices & cache</CardTitle>
-                <Cpu aria-hidden="true" className="text-slate-600" size={17} />
+                <Cpu aria-hidden="true" className="text-subtle" size={17} />
               </CardHeader>
               <CardContent className="space-y-3">
                 {devices.map((device: Record<string, unknown>) => (
                   <div
-                    className="flex items-center justify-between rounded border border-slate-800 px-3 py-2 text-xs"
+                    className="flex items-center justify-between rounded border border-border px-3 py-2 text-xs"
                     key={String(device.device_type)}
                   >
-                    <span className="text-slate-400">{String(device.name)}</span>
-                    <Badge tone={device.available ? "green" : "neutral"}>
+                    <span className="text-muted">{String(device.name)}</span>
+                    <Badge tone={device.available ? "success" : "neutral"}>
                       {device.available ? "available" : "unavailable"}
                     </Badge>
                   </div>
                 ))}
                 {cacheStats && (
-                  <div className="rounded border border-slate-800 px-3 py-2 text-[11px] text-slate-400">
+                  <div className="rounded border border-border px-3 py-2 text-[11px] text-muted">
                     Cache hits {cacheStats.hits} · misses {cacheStats.misses} · evictions{" "}
                     {cacheStats.evictions}
                   </div>
@@ -172,16 +173,16 @@ export function AIModelsPage() {
                   <div className="space-y-2">
                     {jobsQuery.data.data.items.slice(0, 6).map((job: InferenceJob) => (
                       <div
-                        className="rounded border border-slate-800 px-2.5 py-2 text-xs text-slate-400"
+                        className="rounded border border-border px-2.5 py-2 text-xs text-muted"
                         key={job.id}
                       >
                         <div className="flex flex-wrap items-center gap-2">
-                          <Badge tone={job.status === "SUCCEEDED" ? "green" : "neutral"}>
+                          <Badge tone={job.status === "SUCCEEDED" ? "success" : "neutral"}>
                             {job.status}
                           </Badge>
                           <span>{job.model_name}</span>
                           {job.latency_ms != null && (
-                            <span className="text-[10px] text-slate-600">
+                            <span className="text-[10px] text-subtle">
                               {job.latency_ms.toFixed(2)} ms
                             </span>
                           )}

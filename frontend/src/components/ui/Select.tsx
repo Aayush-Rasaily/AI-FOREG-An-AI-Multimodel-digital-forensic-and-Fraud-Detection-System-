@@ -9,12 +9,13 @@ export function Select({
   return (
     <select
       className={cn(
-        "h-10 rounded-lg border border-slate-700 bg-slate-950 px-3 text-sm text-slate-300",
-        "focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20",
+        "h-11 w-full rounded-md border border-border bg-surface px-3 text-body text-foreground sm:h-10",
+        "duration-fast transition-colors",
+        "focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring",
+        "disabled:cursor-not-allowed disabled:bg-surface-muted disabled:opacity-60",
         className,
       )}
       {...props}
     />
   );
 }
-

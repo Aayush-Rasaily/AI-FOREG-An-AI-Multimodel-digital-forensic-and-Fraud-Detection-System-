@@ -20,12 +20,12 @@ interface ReportPanelProps {
   caseId: string;
 }
 
-const statusTone: Record<ReportStatus, "neutral" | "cyan" | "green" | "amber" | "red"> =
+const statusTone: Record<ReportStatus, "neutral" | "primary" | "success" | "warning" | "error"> =
   {
     QUEUED: "neutral",
-    GENERATING: "cyan",
-    COMPLETED: "green",
-    FAILED: "red",
+    GENERATING: "primary",
+    COMPLETED: "success",
+    FAILED: "error",
   };
 
 const SECTION_LABELS: Record<string, string> = {
@@ -153,7 +153,7 @@ export function ReportPanel({ caseId }: ReportPanelProps) {
 
         {report?.status === "COMPLETED" && (
           <div className="space-y-3">
-            <div className="rounded-lg border border-slate-800 bg-slate-950/40 p-3 text-xs text-slate-300">
+            <div className="rounded-lg border border-border bg-background/40 p-3 text-xs text-muted">
               <p>Engine {report.engine_version} · Report {report.report_version}</p>
               <p className="mt-1">Evidence hashes: {report.evidence_count}</p>
               {report.report_checksum && (
@@ -177,11 +177,11 @@ export function ReportPanel({ caseId }: ReportPanelProps) {
                     : null;
               return (
                 <div
-                  className="rounded-lg border border-slate-800 bg-slate-950/40 p-3"
+                  className="rounded-lg border border-border bg-background/40 p-3"
                   key={key}
                 >
                   <button
-                    className="flex w-full items-center gap-2 text-left text-sm text-slate-100"
+                    className="flex w-full items-center gap-2 text-left text-sm text-foreground"
                     onClick={() =>
                       setExpanded((current) => ({
                         ...current,
@@ -196,11 +196,11 @@ export function ReportPanel({ caseId }: ReportPanelProps) {
                       <Badge tone="neutral">{count}</Badge>
                     )}
                     {section?.available === false && (
-                      <Badge tone="amber">missing</Badge>
+                      <Badge tone="warning">missing</Badge>
                     )}
                   </button>
                   {isOpen && (
-                    <pre className="mt-2 overflow-x-auto rounded bg-slate-900 p-2 text-[11px] text-slate-400">
+                    <pre className="mt-2 overflow-x-auto rounded bg-background-offset p-2 text-[11px] text-muted">
                       {JSON.stringify(section ?? { available: false }, null, 2)}
                     </pre>
                   )}
@@ -209,11 +209,11 @@ export function ReportPanel({ caseId }: ReportPanelProps) {
             })}
 
             {history.length > 1 && (
-              <div className="rounded-lg border border-slate-800 p-3">
-                <p className="mb-2 text-xs font-medium text-slate-200">
+              <div className="rounded-lg border border-border p-3">
+                <p className="mb-2 text-xs font-medium text-foreground">
                   Previous reports
                 </p>
-                <ul className="space-y-1 text-xs text-slate-400">
+                <ul className="space-y-1 text-xs text-muted">
                   {history.map((item) => (
                     <li key={item.id}>
                       {item.id.slice(0, 8)}… · {item.status} ·{" "}

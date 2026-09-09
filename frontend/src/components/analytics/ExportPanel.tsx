@@ -22,9 +22,9 @@ export function ExportPanel({
           Export JSON
         </Button>
         {lastExport ? (
-          <p className="text-xs text-slate-500">Last export: {lastExport}</p>
+          <p className="text-xs text-muted">Last export: {lastExport}</p>
         ) : (
-          <p className="text-xs text-slate-500">No export yet.</p>
+          <p className="text-xs text-muted">No export yet.</p>
         )}
       </div>
     </Panel>

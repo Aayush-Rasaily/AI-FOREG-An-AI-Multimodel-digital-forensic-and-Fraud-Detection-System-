@@ -38,21 +38,21 @@ export function ReviewPanel({ caseId }: { caseId: string }) {
         )}
         {pending.length > 0 && (
           <div>
-            <h3 className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+            <h3 className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-muted">
               Pending reviews
             </h3>
             <ul className="space-y-2">
               {pending.map((review) => (
                 <li
-                  className="rounded-lg border border-slate-800 px-3 py-2 text-sm text-slate-300"
+                  className="rounded-lg border border-border px-3 py-2 text-sm text-muted"
                   key={review.id}
                 >
                   <div className="flex items-center justify-between gap-2">
                     <span>{review.review_kind}</span>
-                    <Badge tone="amber">{review.status}</Badge>
+                    <Badge tone="warning">{review.status}</Badge>
                   </div>
                   {review.comments && (
-                    <p className="mt-1 text-xs text-slate-500">
+                    <p className="mt-1 text-xs text-muted">
                       {review.comments}
                     </p>
                   )}
@@ -63,26 +63,26 @@ export function ReviewPanel({ caseId }: { caseId: string }) {
         )}
         {evidenceApprovals.length > 0 && (
           <div>
-            <h3 className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+            <h3 className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-muted">
               Evidence approvals
             </h3>
             <ul className="space-y-2">
               {evidenceApprovals.map((review) => (
                 <li
-                  className="rounded-lg border border-slate-800 px-3 py-2 text-sm text-slate-300"
+                  className="rounded-lg border border-border px-3 py-2 text-sm text-muted"
                   key={`ev-${review.id}`}
                 >
                   <div className="flex items-center justify-between gap-2">
-                    <span className="truncate text-xs text-slate-500">
+                    <span className="truncate text-xs text-muted">
                       {review.evidence_id ?? "evidence"}
                     </span>
                     <Badge
                       tone={
                         review.status === "APPROVED"
-                          ? "green"
+                          ? "success"
                           : review.status === "REJECTED"
-                            ? "red"
-                            : "amber"
+                            ? "error"
+                            : "warning"
                       }
                     >
                       {review.status}

@@ -1,3 +1,4 @@
+import { AlertCircle, CheckCircle2 } from "lucide-react";
 import type { ReactNode } from "react";
 
 import { cn } from "../../lib/utils";
@@ -8,6 +9,7 @@ interface FormFieldProps {
   error?: string;
   success?: string;
   hint?: string;
+  required?: boolean;
   children: ReactNode;
   className?: string;
 }
@@ -18,24 +20,32 @@ export function FormField({
   error,
   success,
   hint,
+  required = false,
   children,
   className,
 }: FormFieldProps) {
   return (
-    <label className={cn("block", className)} htmlFor={htmlFor}>
-      <span className="text-caption mb-2 block text-muted">{label}</span>
+    <div className={cn("block", className)}>
+      <label className="mb-2 block text-caption font-medium text-muted" htmlFor={htmlFor}>
+        {label}
+        {required && <span aria-hidden="true" className="text-danger"> *</span>}
+      </label>
       {children}
       {hint && !error && !success && (
-        <span className="text-caption mt-1 block text-subtle">{hint}</span>
+        <span className="mt-1 block text-caption text-subtle">{hint}</span>
       )}
       {error && (
-        <span className="text-caption mt-1 block text-danger" role="alert">
+        <span className="mt-1 flex items-center gap-1 text-caption text-danger" role="alert">
+          <AlertCircle aria-hidden="true" size={12} />
           {error}
         </span>
       )}
       {success && (
-        <span className="text-caption mt-1 block text-success">{success}</span>
+        <span className="mt-1 flex items-center gap-1 text-caption text-success">
+          <CheckCircle2 aria-hidden="true" size={12} />
+          {success}
+        </span>
       )}
-    </label>
+    </div>
   );
 }

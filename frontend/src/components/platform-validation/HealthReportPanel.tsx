@@ -16,7 +16,7 @@ export function HealthReportPanel({ report }: Props) {
     >
       <div className="space-y-3 p-4 text-sm">
         {!report || Object.keys(report).length === 0 ? (
-          <p className="text-slate-600">No health report yet.</p>
+          <p className="text-subtle">No health report yet.</p>
         ) : (
           <>
             <div className="grid gap-2 sm:grid-cols-4">
@@ -29,7 +29,7 @@ export function HealthReportPanel({ report }: Props) {
               {Object.keys(categories)
                 .sort()
                 .map((category) => (
-                  <div className="text-xs text-slate-600" key={category}>
+                  <div className="text-xs text-subtle" key={category}>
                     {category}: {categories[category]?.length ?? 0} checks
                   </div>
                 ))}

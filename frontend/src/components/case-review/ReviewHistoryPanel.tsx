@@ -14,21 +14,21 @@ export function ReviewHistoryPanel({ items }: ReviewHistoryPanelProps) {
     >
       <div className="space-y-3 p-4">
         {items.length === 0 ? (
-          <p className="text-xs text-slate-500">No review history yet.</p>
+          <p className="text-xs text-muted">No review history yet.</p>
         ) : null}
         {items.map((item) => (
           <div
-            className="border-b border-slate-800/80 pb-2 text-xs last:border-0"
+            className="border-b border-border/80 pb-2 text-xs last:border-0"
             key={item.id}
           >
             <div className="flex flex-wrap gap-2">
               <Badge tone="neutral">{item.stage}</Badge>
-              <Badge tone="cyan">{item.status}</Badge>
-              <span className="text-slate-500">
+              <Badge tone="primary">{item.status}</Badge>
+              <span className="text-muted">
                 {new Date(item.created_at).toLocaleString()}
               </span>
             </div>
-            <p className="mt-1 text-slate-500">
+            <p className="mt-1 text-muted">
               Checklist {item.checklist_count} · Approvals {item.approval_count}{" "}
               · Validation {(item.metrics.validation_pct * 100).toFixed(0)}% ·
               engine {item.engine_version}

@@ -3,11 +3,11 @@ import { Badge } from "../ui/Badge";
 
 const tones: Record<
   ComplianceStatus,
-  "green" | "amber" | "red" | "neutral"
+  "success" | "warning" | "error" | "neutral"
 > = {
-  COMPLIANT: "green",
-  PARTIAL: "amber",
-  NON_COMPLIANT: "red",
+  COMPLIANT: "success",
+  PARTIAL: "warning",
+  NON_COMPLIANT: "error",
 };
 
 export function SecurityStatusBadge({

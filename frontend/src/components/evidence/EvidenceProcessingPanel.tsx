@@ -20,14 +20,14 @@ interface EvidenceProcessingPanelProps {
 
 const statusTone: Record<
   ProcessingJobStatus | "REGISTERED" | "READY_FOR_ANALYSIS",
-  "neutral" | "cyan" | "green" | "amber" | "red"
+  "neutral" | "primary" | "success" | "warning" | "error"
 > = {
   REGISTERED: "neutral",
-  QUEUED: "amber",
-  RUNNING: "cyan",
-  SUCCEEDED: "green",
-  READY_FOR_ANALYSIS: "green",
-  FAILED: "red",
+  QUEUED: "warning",
+  RUNNING: "primary",
+  SUCCEEDED: "success",
+  READY_FOR_ANALYSIS: "success",
+  FAILED: "error",
   CANCELLED: "neutral",
 };
 
@@ -58,17 +58,17 @@ export function EvidenceProcessingPanel({
   }, [latestJob?.status, refetchArtifacts]);
 
   return (
-    <div className="mt-2 rounded-lg border border-slate-800 bg-slate-950/50 p-3">
+    <div className="mt-2 rounded-lg border border-border bg-background/50 p-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <span className="text-[11px] uppercase tracking-wider text-slate-600">
+          <span className="text-[11px] uppercase tracking-wider text-subtle">
             Processing
           </span>
           <Badge tone={tone}>
             {displayStatus.replaceAll("_", " ")}
           </Badge>
           {latestJob?.status === "SUCCEEDED" && (
-            <span className="text-[11px] text-emerald-300">
+            <span className="text-[11px] text-success">
               SHA-256 verified
             </span>
           )}
@@ -89,20 +89,20 @@ export function EvidenceProcessingPanel({
       </div>
 
       {processMutation.isError && (
-        <p className="mt-2 text-[11px] text-red-300">
+        <p className="mt-2 text-[11px] text-danger">
           {processMutation.error instanceof ApiClientError
             ? processMutation.error.message
             : "Processing could not be started."}
         </p>
       )}
       {latestJob?.status === "FAILED" && (
-        <p className="mt-2 text-[11px] text-red-300">
+        <p className="mt-2 text-[11px] text-danger">
           {latestJob.error_message || "Processing failed safely."}
         </p>
       )}
 
-      <div className="mt-3 border-t border-slate-800 pt-3">
-        <p className="text-[11px] uppercase tracking-wider text-slate-600">
+      <div className="mt-3 border-t border-border pt-3">
+        <p className="text-[11px] uppercase tracking-wider text-subtle">
           Artifacts
         </p>
         {artifactsQuery.isPending && <LoadingState label="Loading artifacts" />}
@@ -122,16 +122,16 @@ export function EvidenceProcessingPanel({
             <div className="mt-2 space-y-2">
               {artifactsQuery.data.data.items.map((artifact) => (
                 <div
-                  className="rounded border border-slate-800 px-2.5 py-2"
+                  className="rounded border border-border px-2.5 py-2"
                   key={artifact.id}
                 >
                   <div className="flex items-center justify-between gap-2">
-                    <Badge tone="purple">{artifact.artifact_type}</Badge>
-                    <span className="text-[10px] text-slate-600">
+                    <Badge tone="info">{artifact.artifact_type}</Badge>
+                    <span className="text-[10px] text-subtle">
                       {formatBytes(artifact.file_size)} · {artifact.mime_type}
                     </span>
                   </div>
-                  <p className="mt-1 break-all font-mono text-[10px] text-slate-600">
+                  <p className="mt-1 break-all font-mono text-[10px] text-subtle">
                     SHA-256: {artifact.sha256_hash}
                   </p>
                 </div>

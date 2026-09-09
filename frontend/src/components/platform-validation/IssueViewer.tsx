@@ -4,9 +4,9 @@ import type { ValidationIssue } from "../../types/platformValidation";
 
 function toneForSeverity(
   severity: string,
-): "green" | "amber" | "red" | "neutral" {
-  if (severity === "WARN") return "amber";
-  if (severity === "FAIL") return "red";
+): "success" | "warning" | "error" | "neutral" {
+  if (severity === "WARN") return "warning";
+  if (severity === "FAIL") return "error";
   return "neutral";
 }
 
@@ -22,11 +22,11 @@ export function IssueViewer({ issues }: Props) {
     >
       <div className="max-h-80 space-y-2 overflow-auto p-4">
         {issues.length === 0 ? (
-          <p className="text-sm text-slate-600">No issues reported.</p>
+          <p className="text-sm text-subtle">No issues reported.</p>
         ) : (
           issues.map((item) => (
             <div
-              className="rounded border border-slate-200 p-2 text-sm"
+              className="rounded border border-border p-2 text-sm"
               key={`${item.check_key}-${item.severity}`}
             >
               <div className="mb-1 flex items-center gap-2">
@@ -35,7 +35,7 @@ export function IssueViewer({ issues }: Props) {
                 </Badge>
                 <span className="font-medium">{item.check_key}</span>
               </div>
-              <p className="text-xs text-slate-600">{item.message}</p>
+              <p className="text-xs text-subtle">{item.message}</p>
             </div>
           ))
         )}

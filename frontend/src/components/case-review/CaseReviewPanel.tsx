@@ -51,15 +51,15 @@ export function CaseReviewPanel({ caseId }: CaseReviewPanelProps) {
             <div className="flex flex-wrap gap-2">
               {run ? (
                 <>
-                  <Badge tone="cyan">{run.status}</Badge>
+                  <Badge tone="primary">{run.status}</Badge>
                   <Badge tone="neutral">{run.stage}</Badge>
                   <Badge tone="neutral">
                     {(run.metrics.validation_pct * 100).toFixed(0)}% validated
                   </Badge>
-                  <Badge tone="amber">
+                  <Badge tone="warning">
                     {run.metrics.outstanding_issues} outstanding
                   </Badge>
-                  <Badge tone="red">
+                  <Badge tone="error">
                     {run.metrics.blocking_issues} blocking
                   </Badge>
                 </>
@@ -77,7 +77,7 @@ export function CaseReviewPanel({ caseId }: CaseReviewPanelProps) {
           </div>
 
           <div className="flex flex-wrap items-end gap-3">
-            <label className="block text-xs text-slate-400">
+            <label className="block text-xs text-muted">
               Search
               <Input
                 className="mt-1 w-56"
@@ -86,7 +86,7 @@ export function CaseReviewPanel({ caseId }: CaseReviewPanelProps) {
                 value={search}
               />
             </label>
-            <label className="block text-xs text-slate-400">
+            <label className="block text-xs text-muted">
               Status
               <Select
                 className="mt-1 w-44"
@@ -129,7 +129,7 @@ export function CaseReviewPanel({ caseId }: CaseReviewPanelProps) {
           ) : null}
 
           {run?.provenance ? (
-            <div className="text-[11px] text-slate-600">
+            <div className="text-[11px] text-subtle">
               Provenance · engine {String(run.engine_version)} · policy{" "}
               {String(run.policy_version)} · sources{" "}
               {Array.isArray(run.provenance.sources)

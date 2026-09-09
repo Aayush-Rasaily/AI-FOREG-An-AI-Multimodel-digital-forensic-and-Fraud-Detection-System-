@@ -39,7 +39,7 @@ export function PackageHistoryPanel({
     >
       <div className="grid gap-4 p-4 xl:grid-cols-2">
         <div>
-          <p className="mb-2 text-[11px] uppercase tracking-wide text-slate-600">
+          <p className="mb-2 text-[11px] uppercase tracking-wide text-subtle">
             Exports
           </p>
           {!exports.length ? (
@@ -48,11 +48,11 @@ export function PackageHistoryPanel({
               title="Empty"
             />
           ) : (
-            <ul className="space-y-2 text-xs text-slate-400">
+            <ul className="space-y-2 text-xs text-muted">
               {exports.map((item) => (
                 <li key={item.id}>
                   <button
-                    className="flex w-full items-center justify-between gap-2 text-left hover:text-cyan-300"
+                    className="flex w-full items-center justify-between gap-2 text-left hover:text-primary"
                     onClick={() => onSelectExport?.(item.id)}
                     type="button"
                   >
@@ -68,7 +68,7 @@ export function PackageHistoryPanel({
           )}
         </div>
         <div>
-          <p className="mb-2 text-[11px] uppercase tracking-wide text-slate-600">
+          <p className="mb-2 text-[11px] uppercase tracking-wide text-subtle">
             Imports
           </p>
           {!imports.length ? (
@@ -77,7 +77,7 @@ export function PackageHistoryPanel({
               title="Empty"
             />
           ) : (
-            <ul className="space-y-2 text-xs text-slate-400">
+            <ul className="space-y-2 text-xs text-muted">
               {imports.map((item) => (
                 <li
                   className="flex items-center justify-between gap-2"

@@ -31,16 +31,16 @@ export function NotificationsPanel({ caseId }: { caseId: string }) {
         <ul className="space-y-2">
           {items.map((item) => (
             <li
-              className="rounded-lg border border-slate-800 px-3 py-2"
+              className="rounded-lg border border-border px-3 py-2"
               key={item.id}
             >
               <div className="flex items-center justify-between gap-2">
-                <p className="text-sm text-slate-200">{item.title}</p>
-                <Badge tone={item.status === "unread" ? "amber" : "neutral"}>
+                <p className="text-sm text-foreground">{item.title}</p>
+                <Badge tone={item.status === "unread" ? "warning" : "neutral"}>
                   {item.kind}
                 </Badge>
               </div>
-              <p className="mt-1 text-xs text-slate-500">{item.body}</p>
+              <p className="mt-1 text-xs text-muted">{item.body}</p>
             </li>
           ))}
         </ul>

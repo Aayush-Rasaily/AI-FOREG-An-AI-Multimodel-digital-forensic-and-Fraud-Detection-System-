@@ -34,17 +34,17 @@ export function SecurityGovernancePage() {
             {policy && (
               <>
                 <div className="flex flex-wrap gap-2">
-                  <Badge tone="cyan">
+                  <Badge tone="primary">
                     policy {policy.policy_version}
                   </Badge>
                   <Badge tone="neutral">
                     engine {policy.engine_version}
                   </Badge>
                 </div>
-                <ul className="space-y-1 text-xs text-slate-500">
+                <ul className="space-y-1 text-xs text-muted">
                   {policy.policies.map((item) => (
                     <li key={item.code}>
-                      <span className="text-slate-300">{item.code}</span>
+                      <span className="text-muted">{item.code}</span>
                       {" — "}
                       {item.description}
                     </li>

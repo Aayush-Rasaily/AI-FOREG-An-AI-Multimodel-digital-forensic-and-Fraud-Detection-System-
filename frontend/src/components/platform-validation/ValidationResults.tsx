@@ -2,10 +2,10 @@ import { Badge } from "../ui/Badge";
 import { Panel } from "../ui/Panel";
 import type { ValidationResult } from "../../types/platformValidation";
 
-function toneForStatus(status: string): "green" | "amber" | "red" | "neutral" {
-  if (status === "PASS") return "green";
-  if (status === "WARN") return "amber";
-  if (status === "FAIL") return "red";
+function toneForStatus(status: string): "success" | "warning" | "error" | "neutral" {
+  if (status === "PASS") return "success";
+  if (status === "WARN") return "warning";
+  if (status === "FAIL") return "error";
   return "neutral";
 }
 
@@ -21,16 +21,16 @@ export function ValidationResults({ results }: Props) {
     >
       <div className="max-h-96 space-y-2 overflow-auto p-4">
         {results.length === 0 ? (
-          <p className="text-sm text-slate-600">No check results.</p>
+          <p className="text-sm text-subtle">No check results.</p>
         ) : (
           results.map((item) => (
             <div
-              className="flex flex-wrap items-start justify-between gap-2 border-b border-slate-200 pb-2 text-sm"
+              className="flex flex-wrap items-start justify-between gap-2 border-b border-border pb-2 text-sm"
               key={item.check_key}
             >
               <div>
-                <div className="font-medium text-slate-800">{item.label}</div>
-                <div className="text-xs text-slate-500">
+                <div className="font-medium text-foreground">{item.label}</div>
+                <div className="text-xs text-muted">
                   {item.category} · {item.message}
                 </div>
               </div>

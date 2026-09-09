@@ -13,18 +13,18 @@ export function DriftViewer({ drifts }: DriftViewerProps) {
     >
       <div className="space-y-3 p-4">
         {drifts.length === 0 ? (
-          <p className="text-xs text-slate-500">No drift detected.</p>
+          <p className="text-xs text-muted">No drift detected.</p>
         ) : null}
         {drifts.map((item) => (
           <div
-            className="border-b border-slate-800/80 pb-2 text-xs last:border-0"
+            className="border-b border-border/80 pb-2 text-xs last:border-0"
             key={item.drift_key}
           >
-            <p className="text-slate-200">
+            <p className="text-foreground">
               {item.field_name} · evidence {item.evidence_id}
             </p>
-            <p className="mt-1 text-slate-500">{item.message}</p>
-            <p className="mt-1 font-mono text-[11px] text-slate-600">
+            <p className="mt-1 text-muted">{item.message}</p>
+            <p className="mt-1 font-mono text-[11px] text-subtle">
               prev {(item.previous_value ?? "—").slice(0, 24)} → curr{" "}
               {(item.current_value ?? "—").slice(0, 24)}
             </p>

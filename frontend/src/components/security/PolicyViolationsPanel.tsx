@@ -31,22 +31,22 @@ export function PolicyViolationsPanel({ caseId }: { caseId?: string }) {
         <ul className="space-y-2">
           {items.map((item) => (
             <li
-              className="rounded-lg border border-slate-800 px-3 py-2"
+              className="rounded-lg border border-border px-3 py-2"
               key={item.id}
             >
               <div className="flex items-center justify-between gap-2">
-                <p className="text-sm text-slate-200">{item.policy_code}</p>
+                <p className="text-sm text-foreground">{item.policy_code}</p>
                 <Badge
                   tone={
                     item.severity === "CRITICAL" || item.severity === "HIGH"
-                      ? "red"
-                      : "amber"
+                      ? "error"
+                      : "warning"
                   }
                 >
                   {item.severity}
                 </Badge>
               </div>
-              <p className="mt-1 text-xs text-slate-500">{item.message}</p>
+              <p className="mt-1 text-xs text-muted">{item.message}</p>
             </li>
           ))}
         </ul>

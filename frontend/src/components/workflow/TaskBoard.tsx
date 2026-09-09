@@ -59,15 +59,15 @@ export function TaskBoard({ caseId }: { caseId: string }) {
         <ul className="space-y-2">
           {items.map((task) => (
             <li
-              className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-slate-800 px-3 py-2"
+              className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border px-3 py-2"
               key={task.id}
             >
               <div>
-                <p className="text-sm text-slate-200">{task.title}</p>
-                <p className="text-[11px] text-slate-500">{task.task_type}</p>
+                <p className="text-sm text-foreground">{task.title}</p>
+                <p className="text-[11px] text-muted">{task.task_type}</p>
               </div>
               <div className="flex items-center gap-2">
-                <Badge tone="cyan">{task.status}</Badge>
+                <Badge tone="primary">{task.status}</Badge>
                 {task.status !== "COMPLETED" && task.status !== "CANCELLED" && (
                   <Button
                     onClick={() =>

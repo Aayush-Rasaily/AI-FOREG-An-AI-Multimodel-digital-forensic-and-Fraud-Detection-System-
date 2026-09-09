@@ -11,13 +11,13 @@ export function Table({ headers, children, className, ...props }: TableProps) {
   return (
     <div className="overflow-x-auto">
       <table
-        className={cn("w-full border-collapse text-left text-sm", className)}
+        className={cn("ds-table", className)}
         {...props}
       >
         <thead>
-          <tr className="border-b border-slate-800 text-[11px] uppercase tracking-wider text-slate-500">
+          <tr>
             {headers.map((header) => (
-              <th className="px-4 py-3 font-medium" key={header} scope="col">
+              <th key={header} scope="col">
                 {header}
               </th>
             ))}
@@ -29,3 +29,16 @@ export function Table({ headers, children, className, ...props }: TableProps) {
   );
 }
 
+export function TableRow({
+  className,
+  ...props
+}: HTMLAttributes<HTMLTableRowElement>) {
+  return <tr className={className} {...props} />;
+}
+
+export function TableCell({
+  className,
+  ...props
+}: HTMLAttributes<HTMLTableCellElement>) {
+  return <td className={className} {...props} />;
+}

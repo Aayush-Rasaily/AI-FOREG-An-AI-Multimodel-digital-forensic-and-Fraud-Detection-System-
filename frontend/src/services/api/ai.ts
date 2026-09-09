@@ -4,7 +4,8 @@ import type {
   AIModelListData,
   InferenceJob,
   InferenceJobListData,
-} from "../../types/ai";import { apiClient } from "./client";
+} from "../../types/ai";
+import { apiClient } from "./client";
 
 export const aiService = {
   listModels: (limit = 50, offset = 0) =>

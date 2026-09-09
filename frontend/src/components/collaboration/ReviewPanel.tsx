@@ -71,7 +71,7 @@ export function ReviewPanel({ caseId }: { caseId: string }) {
           </Button>
         </div>
       )}
-      {message && <p className="mt-2 text-xs text-slate-400">{message}</p>}
+      {message && <p className="mt-2 text-xs text-muted">{message}</p>}
     </Panel>
   );
 }

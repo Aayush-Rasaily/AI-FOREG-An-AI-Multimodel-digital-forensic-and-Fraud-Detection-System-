@@ -6,7 +6,7 @@ import { EmptyState } from "../components/ui/EmptyState";
 
 export function UnauthorizedPage() {
   return (
-    <div className="flex min-h-[70vh] items-center justify-center">
+    <div className="flex min-h-[70vh] items-center justify-center animate-fade-in">
       <EmptyState
         action={
           <Link to="/dashboard">
@@ -16,7 +16,7 @@ export function UnauthorizedPage() {
             </Button>
           </Link>
         }
-        description="Your account does not have permission to open this area."
+        description="Your account does not have permission to open this area (403)."
         icon={<ShieldOff aria-hidden="true" size={20} />}
         title="Unauthorized"
       />

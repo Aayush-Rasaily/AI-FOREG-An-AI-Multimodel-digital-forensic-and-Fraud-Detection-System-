@@ -1,21 +1,21 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { MemoryRouter } from "react-router-dom";
 import { vi } from "vitest";
 
 import { Sidebar } from "../components/navigation/Sidebar";
+import { TestProviders } from "./render";
 
 describe("Sidebar", () => {
   it("renders workspace and system navigation", () => {
     render(
-      <MemoryRouter>
+      <TestProviders>
         <Sidebar
           collapsed={false}
-          mobileOpen={false}
+          mobileOpen
           onClose={() => undefined}
           onToggle={() => undefined}
         />
-      </MemoryRouter>,
+      </TestProviders>,
     );
 
     expect(screen.getByText("AI-FORGE")).toBeInTheDocument();
@@ -29,18 +29,17 @@ describe("Sidebar", () => {
     const onToggle = vi.fn();
 
     render(
-      <MemoryRouter>
+      <TestProviders>
         <Sidebar
           collapsed={false}
-          mobileOpen={false}
+          mobileOpen
           onClose={() => undefined}
           onToggle={onToggle}
         />
-      </MemoryRouter>,
+      </TestProviders>,
     );
 
     await user.click(screen.getByRole("button", { name: "Collapse sidebar" }));
     expect(onToggle).toHaveBeenCalledOnce();
   });
 });
-

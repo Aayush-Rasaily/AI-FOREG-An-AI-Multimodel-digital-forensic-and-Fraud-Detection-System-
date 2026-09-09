@@ -45,14 +45,14 @@ export function TaskBoard({ caseId }: { caseId: string }) {
       <ul className="space-y-2">
         {items.map((task) => (
           <li
-            className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-slate-800 px-3 py-2 text-xs"
+            className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border px-3 py-2 text-xs"
             key={task.id}
           >
             <div>
-              <p className="text-slate-200">{task.title}</p>
+              <p className="text-foreground">{task.title}</p>
               <div className="mt-1 flex gap-2">
                 <Badge tone="neutral">{task.priority}</Badge>
-                <Badge tone="cyan">{task.status}</Badge>
+                <Badge tone="primary">{task.status}</Badge>
               </div>
             </div>
             {task.status !== "completed" && (

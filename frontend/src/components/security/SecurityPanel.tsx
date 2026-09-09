@@ -23,12 +23,12 @@ export function SecurityPanel() {
         <ul className="space-y-2">
           {items.map((role) => (
             <li
-              className="rounded-lg border border-slate-800 px-3 py-2"
+              className="rounded-lg border border-border px-3 py-2"
               key={role.code}
             >
-              <p className="text-sm text-slate-200">{role.name}</p>
-              <p className="text-xs text-slate-500">{role.description}</p>
-              <p className="mt-1 text-[11px] text-slate-600">
+              <p className="text-sm text-foreground">{role.name}</p>
+              <p className="text-xs text-muted">{role.description}</p>
+              <p className="mt-1 text-[11px] text-subtle">
                 {role.permissions.length} permissions
               </p>
             </li>

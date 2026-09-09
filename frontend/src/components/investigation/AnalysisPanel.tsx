@@ -21,12 +21,12 @@ interface AnalysisPanelProps {
 
 const statusTone: Record<
   string,
-  "neutral" | "cyan" | "green" | "amber" | "red"
+  "neutral" | "primary" | "success" | "warning" | "error"
 > = {
-  SUCCEEDED: "green",
-  RUNNING: "cyan",
-  QUEUED: "amber",
-  FAILED: "red",
+  SUCCEEDED: "success",
+  RUNNING: "primary",
+  QUEUED: "warning",
+  FAILED: "error",
 };
 
 export function AnalysisPanel({ evidence }: AnalysisPanelProps) {
@@ -45,7 +45,7 @@ export function AnalysisPanel({ evidence }: AnalysisPanelProps) {
       <Panel title="Analysis panel">
         <div className="p-4">
           <EmptyState
-            className="min-h-48 rounded-lg border border-dashed border-slate-800"
+            className="min-h-48 rounded-lg border border-dashed border-border"
             description="Select evidence to run deterministic forensic analysis."
             icon={<Layers3 aria-hidden="true" size={19} />}
             title="No evidence selected"
@@ -62,7 +62,7 @@ export function AnalysisPanel({ evidence }: AnalysisPanelProps) {
           <div className="flex items-center gap-2">
             <Badge tone={statusTone[status] ?? "neutral"}>{status}</Badge>
             {summary && summary.findings_count > 0 && (
-              <span className="text-[11px] text-slate-500">
+              <span className="text-[11px] text-muted">
                 {summary.findings_count} findings
               </span>
             )}
@@ -96,20 +96,20 @@ export function AnalysisPanel({ evidence }: AnalysisPanelProps) {
           />
         )}
         {analyzeMutation.isError && (
-          <p className="mt-2 text-[11px] text-red-300">
+          <p className="mt-2 text-[11px] text-danger">
             {analyzeMutation.error instanceof ApiClientError
               ? analyzeMutation.error.message
               : "Analysis could not be started."}
           </p>
         )}
         {summary?.error_code && summary.error_code !== "ANALYSIS_NOT_RUN" && (
-          <p className="mt-2 text-[11px] text-amber-300">
+          <p className="mt-2 text-[11px] text-warning">
             Status: {summary.error_code}
           </p>
         )}
 
         {showHistory && analysisQuery.isSuccess && (
-          <div className="mt-3 space-y-2 border-t border-slate-800 pt-3">
+          <div className="mt-3 space-y-2 border-t border-border pt-3">
             {analysisQuery.data.data.items.length === 0 ? (
               <EmptyState
                 description="No forensic analysis runs have been recorded."
@@ -118,7 +118,7 @@ export function AnalysisPanel({ evidence }: AnalysisPanelProps) {
             ) : (
               analysisQuery.data.data.items.map((run) => (
                 <div
-                  className="rounded border border-slate-800 px-2.5 py-2 text-xs text-slate-400"
+                  className="rounded border border-border px-2.5 py-2 text-xs text-muted"
                   key={run.id}
                 >
                   <div className="flex flex-wrap items-center gap-2">
@@ -126,7 +126,7 @@ export function AnalysisPanel({ evidence }: AnalysisPanelProps) {
                       {run.status}
                     </Badge>
                     <span>{run.findings_count} findings</span>
-                    <span className="text-[10px] text-slate-600">
+                    <span className="text-[10px] text-subtle">
                       Engine v{run.engine_version}
                     </span>
                   </div>

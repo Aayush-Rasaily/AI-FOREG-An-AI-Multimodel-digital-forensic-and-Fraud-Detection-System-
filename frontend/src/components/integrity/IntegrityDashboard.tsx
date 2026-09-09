@@ -45,12 +45,12 @@ export function IntegrityDashboard({ caseId }: IntegrityDashboardProps) {
             <div className="flex flex-wrap gap-2">
               {run ? (
                 <>
-                  <Badge tone="cyan">{run.status}</Badge>
+                  <Badge tone="primary">{run.status}</Badge>
                   <Badge tone="neutral">
                     {(run.metrics.integrity_score * 100).toFixed(0)}% score
                   </Badge>
-                  <Badge tone="amber">{run.alert_count} alerts</Badge>
-                  <Badge tone="red">{run.metrics.critical_alerts} critical</Badge>
+                  <Badge tone="warning">{run.alert_count} alerts</Badge>
+                  <Badge tone="error">{run.metrics.critical_alerts} critical</Badge>
                   <Badge tone="neutral">{run.drift_count} drift</Badge>
                 </>
               ) : (
@@ -66,7 +66,7 @@ export function IntegrityDashboard({ caseId }: IntegrityDashboardProps) {
             </Button>
           </div>
 
-          <label className="block text-xs text-slate-400">
+          <label className="block text-xs text-muted">
             Search alerts
             <Input
               className="mt-1 w-56"
@@ -100,25 +100,25 @@ export function IntegrityDashboard({ caseId }: IntegrityDashboardProps) {
           ) : null}
 
           {run?.provenance ? (
-            <div className="text-[11px] text-slate-600">
+            <div className="text-[11px] text-subtle">
               Provenance · engine {String(run.engine_version)} · policy{" "}
               {String(run.policy_version)} · checks {run.check_count}
             </div>
           ) : null}
 
           {run?.metrics ? (
-            <dl className="grid gap-2 text-xs text-slate-400 sm:grid-cols-3">
+            <dl className="grid gap-2 text-xs text-muted sm:grid-cols-3">
               <div>
-                <dt className="text-slate-600">Passed</dt>
-                <dd className="text-slate-200">{run.metrics.checks_passed}</dd>
+                <dt className="text-subtle">Passed</dt>
+                <dd className="text-foreground">{run.metrics.checks_passed}</dd>
               </div>
               <div>
-                <dt className="text-slate-600">Failed</dt>
-                <dd className="text-slate-200">{run.metrics.checks_failed}</dd>
+                <dt className="text-subtle">Failed</dt>
+                <dd className="text-foreground">{run.metrics.checks_failed}</dd>
               </div>
               <div>
-                <dt className="text-slate-600">Warned</dt>
-                <dd className="text-slate-200">{run.metrics.checks_warned}</dd>
+                <dt className="text-subtle">Warned</dt>
+                <dd className="text-foreground">{run.metrics.checks_warned}</dd>
               </div>
             </dl>
           ) : null}

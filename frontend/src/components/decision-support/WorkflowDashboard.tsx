@@ -51,7 +51,7 @@ export function WorkflowDashboard({ caseId }: WorkflowDashboardProps) {
             <div className="flex flex-wrap gap-2">
               {run ? (
                 <>
-                  <Badge tone="cyan">{run.status}</Badge>
+                  <Badge tone="primary">{run.status}</Badge>
                   <Badge tone="neutral">{run.current_stage}</Badge>
                   <Badge tone="neutral">{run.task_count} tasks</Badge>
                   <Badge tone="neutral">
@@ -73,7 +73,7 @@ export function WorkflowDashboard({ caseId }: WorkflowDashboardProps) {
           </div>
 
           <div className="flex flex-wrap items-end gap-3">
-            <label className="block text-xs text-slate-400">
+            <label className="block text-xs text-muted">
               Search
               <Input
                 className="mt-1 w-56"
@@ -82,7 +82,7 @@ export function WorkflowDashboard({ caseId }: WorkflowDashboardProps) {
                 value={search}
               />
             </label>
-            <label className="block text-xs text-slate-400">
+            <label className="block text-xs text-muted">
               Stage
               <Select
                 className="mt-1 w-44"
@@ -136,7 +136,7 @@ export function WorkflowDashboard({ caseId }: WorkflowDashboardProps) {
           ) : null}
 
           {run?.provenance ? (
-            <div className="text-[11px] text-slate-600">
+            <div className="text-[11px] text-subtle">
               Provenance · engine {String(run.engine_version)} · policy{" "}
               {String(run.policy_version)}
             </div>

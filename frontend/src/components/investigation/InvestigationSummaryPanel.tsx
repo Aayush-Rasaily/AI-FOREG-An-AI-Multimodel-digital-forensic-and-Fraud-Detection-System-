@@ -16,12 +16,12 @@ interface InvestigationSummaryPanelProps {
 
 const riskTone: Record<
   CaseRiskLevel,
-  "green" | "amber" | "red" | "neutral"
+  "success" | "warning" | "error" | "neutral"
 > = {
-  low: "green",
-  medium: "amber",
-  high: "red",
-  critical: "red",
+  low: "success",
+  medium: "warning",
+  high: "error",
+  critical: "error",
 };
 
 function asRecord(value: unknown): Record<string, unknown> {
@@ -93,7 +93,7 @@ export function InvestigationSummaryPanel({
             <Badge tone={riskTone[risk] ?? "neutral"}>
               Risk: {summary.overall_risk}
             </Badge>
-            <Badge tone="cyan">
+            <Badge tone="primary">
               Confidence: {summary.overall_confidence}/100
             </Badge>
             <Button
@@ -104,19 +104,19 @@ export function InvestigationSummaryPanel({
             >
               Regenerate
             </Button>
-            <span className="text-slate-500">
+            <span className="text-muted">
               Generated {new Date(summary.generated_at).toLocaleString()}
             </span>
-            <span className="text-slate-600">
+            <span className="text-subtle">
               engine {summary.engine_version}
             </span>
           </div>
 
           <section>
-            <h3 className="mb-2 text-sm font-medium text-slate-200">
+            <h3 className="mb-2 text-sm font-medium text-foreground">
               Case overview
             </h3>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-muted">
               Evidence: {String(overview.evidence_count ?? 0)} · Analyzed:{" "}
               {String(overview.analyzed_count ?? 0)} · Not analyzed:{" "}
               {String(overview.not_analyzed_count ?? 0)}
@@ -124,13 +124,13 @@ export function InvestigationSummaryPanel({
           </section>
 
           <section className="space-y-2">
-            <h3 className="text-sm font-medium text-slate-200">Narrative</h3>
+            <h3 className="text-sm font-medium text-foreground">Narrative</h3>
             {narrative.map((paragraph) => (
               <p
-                className="rounded-lg border border-slate-800 px-3 py-2 text-xs leading-relaxed text-slate-300"
+                className="rounded-lg border border-border px-3 py-2 text-xs leading-relaxed text-muted"
                 key={`${paragraph.section}-${paragraph.text.slice(0, 24)}`}
               >
-                <span className="mb-1 block text-[10px] uppercase tracking-wide text-slate-500">
+                <span className="mb-1 block text-[10px] uppercase tracking-wide text-muted">
                   {paragraph.section.replaceAll("_", " ")}
                 </span>
                 {paragraph.text}
@@ -140,40 +140,40 @@ export function InvestigationSummaryPanel({
 
           <div className="grid gap-4 md:grid-cols-2">
             <section>
-              <h3 className="mb-2 text-sm font-medium text-slate-200">
+              <h3 className="mb-2 text-sm font-medium text-foreground">
                 Timeline
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-muted">
                 {timeline.available
                   ? `Events: ${String(timeline.event_count ?? 0)}`
                   : "No timeline available."}
               </p>
             </section>
             <section>
-              <h3 className="mb-2 text-sm font-medium text-slate-200">
+              <h3 className="mb-2 text-sm font-medium text-foreground">
                 Correlations
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-muted">
                 {correlation.available
                   ? `Correlations: ${String(correlation.correlation_count ?? 0)}`
                   : "No correlations available."}
               </p>
             </section>
             <section>
-              <h3 className="mb-2 text-sm font-medium text-slate-200">
+              <h3 className="mb-2 text-sm font-medium text-foreground">
                 AI summary
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-muted">
                 Fusion runs:{" "}
                 {String(asRecord(ai.fusion).run_count ?? 0)} · Agreement:{" "}
                 {String(asRecord(ai.fusion).agreement ?? "n/a")}
               </p>
             </section>
             <section>
-              <h3 className="mb-2 text-sm font-medium text-slate-200">
+              <h3 className="mb-2 text-sm font-medium text-foreground">
                 Evidence coverage
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-muted">
                 Types:{" "}
                 {Object.keys(asRecord(overview.mime_types)).join(", ") || "n/a"}
               </p>
@@ -189,11 +189,11 @@ export function InvestigationSummaryPanel({
         <ul className="space-y-2 p-4">
           {summary.recommendations.map((item) => (
             <li
-              className="rounded-lg border border-slate-800 px-3 py-2 text-xs"
+              className="rounded-lg border border-border px-3 py-2 text-xs"
               key={item.code}
             >
-              <p className="font-medium text-slate-200">{item.title}</p>
-              <p className="mt-1 text-slate-500">{item.rationale}</p>
+              <p className="font-medium text-foreground">{item.title}</p>
+              <p className="mt-1 text-muted">{item.rationale}</p>
             </li>
           ))}
         </ul>

@@ -64,21 +64,21 @@ export function ProfilePage() {
             <CardTitle>Account</CardTitle>
             <UserAvatar name={user.display_name} size="md" />
           </CardHeader>
-          <CardContent className="space-y-3 text-sm text-slate-400">
+          <CardContent className="space-y-3 text-sm text-muted">
             <p>
-              <span className="text-slate-500">Username:</span> {user.username}
+              <span className="text-muted">Username:</span> {user.username}
             </p>
             <p>
-              <span className="text-slate-500">Display name:</span>{" "}
+              <span className="text-muted">Display name:</span>{" "}
               {user.display_name}
             </p>
             <p>
-              <span className="text-slate-500">Email:</span>{" "}
+              <span className="text-muted">Email:</span>{" "}
               {user.email || "Not set"}
             </p>
             <div className="flex flex-wrap gap-2 pt-2">
               {user.roles.map((role) => (
-                <Badge key={role} tone="cyan">
+                <Badge key={role} tone="primary">
                   {role}
                 </Badge>
               ))}
@@ -107,9 +107,9 @@ export function ProfilePage() {
                 value={newPassword}
               />
               {message && (
-                <p className="text-xs text-emerald-300">{message}</p>
+                <p className="text-xs text-success">{message}</p>
               )}
-              {error && <p className="text-xs text-red-300">{error}</p>}
+              {error && <p className="text-xs text-danger">{error}</p>}
               <Button
                 disabled={changePassword.isPending}
                 size="sm"
@@ -135,11 +135,11 @@ export function ProfilePage() {
               <ul className="space-y-2">
                 {sessionsQuery.data.items.map((session) => (
                   <li
-                    className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-slate-800 px-3 py-2 text-xs text-slate-400"
+                    className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border px-3 py-2 text-xs text-muted"
                     key={session.id}
                   >
                     <div>
-                      <p className="text-slate-200">
+                      <p className="text-foreground">
                         {session.browser || "Unknown browser"} ·{" "}
                         {session.device_name || "Device"}
                         {session.current ? " (current)" : ""}

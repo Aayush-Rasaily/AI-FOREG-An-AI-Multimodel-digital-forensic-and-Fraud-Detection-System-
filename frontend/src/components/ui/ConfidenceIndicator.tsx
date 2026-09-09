@@ -11,7 +11,7 @@ export function ConfidenceIndicator({
 }: ConfidenceIndicatorProps) {
   if (unavailable || value === undefined) {
     return (
-      <span className="inline-flex items-center gap-1.5 text-xs text-slate-600">
+      <span className="inline-flex items-center gap-1.5 text-caption text-subtle">
         <ShieldCheck aria-hidden="true" size={13} />
         Not available
       </span>
@@ -19,10 +19,9 @@ export function ConfidenceIndicator({
   }
 
   return (
-    <span className="inline-flex items-center gap-1.5 text-xs text-slate-400">
+    <span className="inline-flex items-center gap-1.5 text-caption text-muted">
       <ShieldCheck aria-hidden="true" size={13} />
       {Math.round(value * 100)}% confidence
     </span>
   );
 }
-

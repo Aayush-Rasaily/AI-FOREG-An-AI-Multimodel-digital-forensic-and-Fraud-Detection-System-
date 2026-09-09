@@ -13,16 +13,16 @@ export function ActivityTimeline({ data }: ActivityTimelineProps) {
     <Panel description="Recent operational audit events." title="Recent Activity">
       <div className="p-4">
         {events.length === 0 ? (
-          <p className="text-xs text-slate-500">No recent activity.</p>
+          <p className="text-xs text-muted">No recent activity.</p>
         ) : (
           <ul className="space-y-2">
             {events.map((event) => (
               <li
-                className="rounded-lg border border-slate-800 px-3 py-2 text-xs"
+                className="rounded-lg border border-border px-3 py-2 text-xs"
                 key={String(event.id)}
               >
-                <p className="text-slate-200">{String(event.operation)}</p>
-                <p className="mt-1 text-slate-500">
+                <p className="text-foreground">{String(event.operation)}</p>
+                <p className="mt-1 text-muted">
                   {String(event.user)} ·{" "}
                   {event.timestamp
                     ? new Date(String(event.timestamp)).toLocaleString()

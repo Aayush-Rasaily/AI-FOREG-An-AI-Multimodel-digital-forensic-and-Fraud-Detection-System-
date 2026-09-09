@@ -31,17 +31,17 @@ export function CaseAccessPanel({ caseId }: { caseId: string }) {
         <ul className="space-y-2">
           {items.map((item) => (
             <li
-              className="rounded-lg border border-slate-800 px-3 py-2"
+              className="rounded-lg border border-border px-3 py-2"
               key={item.id}
             >
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <p className="truncate text-xs text-slate-400">{item.user_id}</p>
-                <Badge tone={item.active ? "green" : "neutral"}>
+                <p className="truncate text-xs text-muted">{item.user_id}</p>
+                <Badge tone={item.active ? "success" : "neutral"}>
                   {item.access_level}
                 </Badge>
               </div>
               {item.reason && (
-                <p className="mt-1 text-xs text-slate-500">{item.reason}</p>
+                <p className="mt-1 text-xs text-muted">{item.reason}</p>
               )}
             </li>
           ))}

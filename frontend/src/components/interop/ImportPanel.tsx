@@ -51,13 +51,13 @@ export function ImportPanel() {
           />
         ) : null}
         {importMutation.data?.data ? (
-          <div className="space-y-2 text-xs text-slate-400">
+          <div className="space-y-2 text-xs text-muted">
             <IntegrityBadge
               label="Integrity"
               status={importMutation.data.data.integrity_status}
             />
             {importMutation.data.data.conflicts.length ? (
-              <p className="text-amber-300">
+              <p className="text-warning">
                 Conflicts: {importMutation.data.data.conflicts.join(", ")}
               </p>
             ) : null}
@@ -77,13 +77,13 @@ export function ImportPanel() {
             title="No imports"
           />
         ) : (
-          <ul className="space-y-2 text-xs text-slate-400">
+          <ul className="space-y-2 text-xs text-muted">
             {importsQuery.data.data.items.map((item) => (
               <li
-                className="flex items-center justify-between gap-2 rounded-lg border border-slate-800 px-3 py-2"
+                className="flex items-center justify-between gap-2 rounded-lg border border-border px-3 py-2"
                 key={item.id}
               >
-                <span className="text-slate-200">
+                <span className="text-foreground">
                   {item.source_filename ?? item.id}
                 </span>
                 <IntegrityBadge status={item.integrity_status} />

@@ -1,6 +1,8 @@
 import { useRef, useState } from "react";
 import type { CSSProperties, ReactNode, UIEvent } from "react";
 
+import { cn } from "../../lib/utils";
+
 type VirtualListProps<T> = {
   items: T[];
   rowHeight?: number;
@@ -8,6 +10,7 @@ type VirtualListProps<T> = {
   overscan?: number;
   getKey: (item: T, index: number) => string;
   renderRow: (item: T, index: number) => ReactNode;
+  ariaLabel?: string;
 };
 
 /** Lightweight windowed list for large collections (no extra dependency). */
@@ -18,15 +21,18 @@ export function VirtualList<T>({
   overscan = 6,
   getKey,
   renderRow,
+  ariaLabel = "Virtualized list",
 }: VirtualListProps<T>) {
   const [scrollTop, setScrollTop] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
   if (items.length <= 40) {
     return (
-      <div className="divide-y divide-slate-800">
+      <div aria-label={ariaLabel} className="divide-y divide-border" role="list">
         {items.map((item, index) => (
-          <div key={getKey(item, index)}>{renderRow(item, index)}</div>
+          <div key={getKey(item, index)} role="listitem">
+            {renderRow(item, index)}
+          </div>
         ))}
       </div>
     );
@@ -55,16 +61,22 @@ export function VirtualList<T>({
 
   return (
     <div
+      aria-label={ariaLabel}
       className="overflow-auto"
       onScroll={onScroll}
       ref={containerRef}
+      role="list"
       style={{ height }}
     >
       <div style={windowStyle}>
-        <div className="divide-y divide-slate-800" style={sliceStyle}>
+        <div className={cn("divide-y divide-border")} style={sliceStyle}>
           {items.slice(start, end).map((item, offset) => {
             const index = start + offset;
-            return <div key={getKey(item, index)}>{renderRow(item, index)}</div>;
+            return (
+              <div key={getKey(item, index)} role="listitem">
+                {renderRow(item, index)}
+              </div>
+            );
           })}
         </div>
       </div>

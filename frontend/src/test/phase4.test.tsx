@@ -191,6 +191,7 @@ describe("Phase 4 evidence processing", () => {
       </TestProviders>,
     );
 
+    await user.click(await screen.findByRole("tab", { name: "Evidence" }));
     expect(await screen.findByText("No artifacts yet")).toBeInTheDocument();
     await user.click(
       await screen.findByRole("button", { name: "Process evidence" }),

@@ -45,15 +45,15 @@ export function CommentsPanel({ caseId }: { caseId: string }) {
       <ul className="space-y-2">
         {items.map((comment) => (
           <li
-            className="rounded-lg border border-slate-800 px-3 py-2 text-xs"
+            className="rounded-lg border border-border px-3 py-2 text-xs"
             key={comment.id}
           >
-            <p className="text-slate-500">
+            <p className="text-muted">
               {comment.author_username || "user"} ·{" "}
               {new Date(comment.created_at).toLocaleString()}
               {comment.parent_id ? " · reply" : ""}
             </p>
-            <p className="mt-1 text-slate-200">{comment.body}</p>
+            <p className="mt-1 text-foreground">{comment.body}</p>
           </li>
         ))}
       </ul>

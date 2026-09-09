@@ -25,22 +25,22 @@ export function StoragePanel() {
         {data && (
           <div className="space-y-3">
             <Badge tone="neutral">{data.backend} backend</Badge>
-            <dl className="divide-y divide-slate-800 text-xs">
+            <dl className="divide-y divide-border text-xs">
               <div className="flex justify-between py-2">
-                <dt className="text-slate-500">Used</dt>
-                <dd className="text-slate-200">{data.used_mb} MB</dd>
+                <dt className="text-muted">Used</dt>
+                <dd className="text-foreground">{data.used_mb} MB</dd>
               </div>
               <div className="flex justify-between py-2">
-                <dt className="text-slate-500">Disk usage</dt>
-                <dd className="text-slate-200">
+                <dt className="text-muted">Disk usage</dt>
+                <dd className="text-foreground">
                   {data.disk_percent != null
                     ? `${data.disk_percent}%`
                     : "—"}
                 </dd>
               </div>
               <div className="flex justify-between py-2">
-                <dt className="text-slate-500">Max upload</dt>
-                <dd className="text-slate-200">
+                <dt className="text-muted">Max upload</dt>
+                <dd className="text-foreground">
                   {data.max_upload_size_mb} MB
                 </dd>
               </div>

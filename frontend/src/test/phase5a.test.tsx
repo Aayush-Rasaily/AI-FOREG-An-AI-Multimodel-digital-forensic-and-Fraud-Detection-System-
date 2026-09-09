@@ -143,6 +143,7 @@ describe("Phase 5A extraction workspace", () => {
       </TestProviders>,
     );
 
+    await user.click(await screen.findByRole("tab", { name: "Evidence" }));
     await user.click(
       await screen.findByRole("button", { name: "Extract evidence" }),
     );

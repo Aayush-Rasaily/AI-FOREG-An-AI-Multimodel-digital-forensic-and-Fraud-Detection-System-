@@ -14,10 +14,13 @@ export function ErrorState({
   onRetry,
 }: ErrorStateProps) {
   return (
-    <div className="flex min-h-48 flex-col items-center justify-center px-6 text-center">
-      <AlertCircle aria-hidden="true" className="text-amber-300" size={22} />
-      <h3 className="mt-3 text-sm font-medium text-slate-200">{title}</h3>
-      <p className="mt-2 max-w-md text-xs leading-relaxed text-slate-500">
+    <div
+      className="flex min-h-48 flex-col items-center justify-center px-6 text-center animate-fade-in"
+      role="alert"
+    >
+      <AlertCircle aria-hidden="true" className="text-warning" size={22} />
+      <h3 className="mt-3 text-body font-medium text-foreground">{title}</h3>
+      <p className="mt-2 max-w-md text-caption leading-relaxed text-muted">
         {description}
       </p>
       {onRetry && (
@@ -28,4 +31,3 @@ export function ErrorState({
     </div>
   );
 }
-

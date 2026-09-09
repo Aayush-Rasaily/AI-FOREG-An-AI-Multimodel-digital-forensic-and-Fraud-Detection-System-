@@ -15,16 +15,16 @@ export function CompatibilityPanel({ compatibility }: Props) {
       title="Compatibility Panel"
     >
       <div className="space-y-2 p-4 text-sm">
-        <div className="text-xs text-slate-500">
+        <div className="text-xs text-muted">
           AI re-run: {String(compatibility?.ai_rerun ?? false)} · Forecasting:{" "}
           {String(compatibility?.forecasting ?? false)}
         </div>
         {entries.length === 0 ? (
-          <p className="text-slate-600">No module versions available.</p>
+          <p className="text-subtle">No module versions available.</p>
         ) : (
           entries.map(([name, version]) => (
             <div
-              className="flex justify-between border-b border-slate-100 py-1"
+              className="flex justify-between border-b border-border py-1"
               key={name}
             >
               <span>{name}</span>
