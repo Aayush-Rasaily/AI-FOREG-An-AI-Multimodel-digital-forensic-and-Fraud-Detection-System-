@@ -5,8 +5,10 @@ import { ProtectedRoute } from "../components/auth/ProtectedRoute";
 import { RoleGuard } from "../components/auth/RoleGuard";
 import { DefaultHomeRedirect } from "../components/routing/DefaultHomeRedirect";
 import { LoadingState } from "../components/ui/LoadingState";
-import { AppShell } from "../layouts/AppShell";
 
+const AppShell = lazy(() =>
+  import("../layouts/AppShell").then((module) => ({ default: module.AppShell })),
+);
 const DashboardPage = lazy(() =>
   import("../pages/DashboardPage").then((module) => ({ default: module.DashboardPage })),
 );
@@ -25,6 +27,11 @@ const InvestigationsPage = lazy(() =>
 );
 const LoginPage = lazy(() =>
   import("../pages/LoginPage").then((module) => ({ default: module.LoginPage })),
+);
+const RegisterPage = lazy(() =>
+  import("../pages/RegisterPage").then((module) => ({
+    default: module.RegisterPage,
+  })),
 );
 const NotFoundPage = lazy(() =>
   import("../pages/NotFoundPage").then((module) => ({ default: module.NotFoundPage })),
@@ -90,9 +97,11 @@ const PlatformHealthPage = lazy(() =>
 function ShellRoute() {
   return (
     <ProtectedRoute>
-      <AppShell>
-        <Outlet />
-      </AppShell>
+      <Suspense fallback={<LoadingState label="Loading workspace" />}>
+        <AppShell>
+          <Outlet />
+        </AppShell>
+      </Suspense>
     </ProtectedRoute>
   );
 }
@@ -102,6 +111,7 @@ export function AppRoutes() {
     <Suspense fallback={<LoadingState label="Loading workspace" />}>
       <Routes>
         <Route element={<LoginPage />} path="/login" />
+        <Route element={<RegisterPage />} path="/register" />
         <Route element={<ShellRoute />}>
           <Route element={<DefaultHomeRedirect />} path="/" />
           <Route element={<DashboardPage />} path="/dashboard" />

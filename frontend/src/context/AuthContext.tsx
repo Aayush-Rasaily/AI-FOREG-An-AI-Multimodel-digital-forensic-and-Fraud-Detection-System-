@@ -17,12 +17,13 @@ import {
   hasRememberedSession,
   setTokens,
 } from "../services/api/tokenStore";
-import type { AuthUser, LoginPayload } from "../types/auth";
+import type { AuthUser, LoginPayload, RegisterPayload } from "../types/auth";
 
 interface AuthContextValue {
   user: AuthUser | null;
   loading: boolean;
   login: (payload: LoginPayload) => Promise<void>;
+  register: (payload: RegisterPayload) => Promise<void>;
   logout: () => Promise<void>;
   refreshProfile: () => Promise<void>;
   hasPermission: (permission: string) => boolean;
@@ -100,6 +101,12 @@ export function AuthProvider({
     setUser(response.data.user);
   }, []);
 
+  const register = useCallback(async (payload: RegisterPayload) => {
+    const response = await authApi.register(payload);
+    setTokens(response.data.access_token, response.data.refresh_token, false);
+    setUser(response.data.user);
+  }, []);
+
   const logout = useCallback(async () => {
     try {
       await authApi.logout(getRefreshToken());
@@ -116,13 +123,14 @@ export function AuthProvider({
       user,
       loading,
       login,
+      register,
       logout,
       refreshProfile,
       hasPermission: (permission: string) =>
         Boolean(user?.permissions.includes(permission)),
       hasRole: (role: string) => Boolean(user?.roles.includes(role)),
     }),
-    [user, loading, login, logout, refreshProfile],
+    [user, loading, login, register, logout, refreshProfile],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

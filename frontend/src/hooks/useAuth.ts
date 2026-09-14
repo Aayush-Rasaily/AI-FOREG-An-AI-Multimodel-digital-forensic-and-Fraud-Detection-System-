@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { useAuth } from "../context/AuthContext";
 import { authApi } from "../services/api/auth";
-import type { LoginPayload, UserCreatePayload, UserUpdatePayload } from "../types/auth";
+import type { LoginPayload, RegisterPayload, UserCreatePayload, UserUpdatePayload } from "../types/auth";
 
 export function useAuthSession() {
   return useAuth();
@@ -12,6 +12,13 @@ export function useLoginMutation() {
   const { login } = useAuth();
   return useMutation({
     mutationFn: (payload: LoginPayload) => login(payload),
+  });
+}
+
+export function useRegisterMutation() {
+  const { register } = useAuth();
+  return useMutation({
+    mutationFn: (payload: RegisterPayload) => register(payload),
   });
 }
 

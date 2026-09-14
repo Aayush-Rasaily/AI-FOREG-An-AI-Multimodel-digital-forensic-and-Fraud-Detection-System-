@@ -50,7 +50,7 @@ async def auth_client(
         log_config_path=tmp_path / "missing-logging.json",
         jwt_secret=SecretStr(JWT_SECRET),
         auth_bootstrap_username="admin",
-        auth_bootstrap_password=SecretStr("AdminPassw0rd!"),
+        auth_bootstrap_password=None,
     )
     engine = create_async_engine(
         settings.database_url,
@@ -86,7 +86,7 @@ async def auth_client(
 async def login(
     client: httpx.AsyncClient,
     username: str = "admin",
-    password: str = "AdminPassw0rd!",
+    password: str = "admin",
 ) -> dict[str, object]:
     response = await client.post(
         "/api/v1/auth/login",
@@ -98,9 +98,9 @@ async def login(
 
 class TestPasswordHashing:
     def test_argon2_round_trip(self) -> None:
-        digest = hash_password("AdminPassw0rd!")
-        assert digest != "AdminPassw0rd!"
-        assert verify_password("AdminPassw0rd!", digest)
+        digest = hash_password("admin")
+        assert digest != "admin"
+        assert verify_password("admin", digest)
         assert not verify_password("wrong-password", digest)
 
 
@@ -160,6 +160,90 @@ class TestAuthApi:
             json={"username": "admin", "password": "WrongPassw0rd!"},
         )
         assert response.status_code == 401
+
+    @pytest.mark.asyncio
+    async def test_register_success(
+        self,
+        auth_client: tuple[
+            httpx.AsyncClient, async_sessionmaker[AsyncSession], Settings
+        ],
+    ) -> None:
+        client, _, _ = auth_client
+        response = await client.post(
+            "/api/v1/auth/register",
+            json={
+                "username": "newuser1",
+                "password": "secret",
+                "confirm_password": "secret",
+            },
+        )
+        assert response.status_code == 200, response.text
+        data = response.json()["data"]
+        assert data["user"]["username"] == "newuser1"
+        assert "Viewer" in data["user"]["roles"]
+        assert "password" not in data["user"]
+        assert "password_hash" not in data["user"]
+        assert "access_token" in data
+
+    @pytest.mark.asyncio
+    async def test_register_password_mismatch(
+        self,
+        auth_client: tuple[
+            httpx.AsyncClient, async_sessionmaker[AsyncSession], Settings
+        ],
+    ) -> None:
+        client, _, _ = auth_client
+        response = await client.post(
+            "/api/v1/auth/register",
+            json={
+                "username": "newuser2",
+                "password": "secret",
+                "confirm_password": "different",
+            },
+        )
+        assert response.status_code == 400
+
+    @pytest.mark.asyncio
+    async def test_register_duplicate_username(
+        self,
+        auth_client: tuple[
+            httpx.AsyncClient, async_sessionmaker[AsyncSession], Settings
+        ],
+    ) -> None:
+        client, _, _ = auth_client
+        first = await client.post(
+            "/api/v1/auth/register",
+            json={
+                "username": "dupuser",
+                "password": "secret",
+                "confirm_password": "secret",
+            },
+        )
+        assert first.status_code == 200
+        second = await client.post(
+            "/api/v1/auth/register",
+            json={
+                "username": "dupuser",
+                "password": "secret",
+                "confirm_password": "secret",
+            },
+        )
+        assert second.status_code == 409
+
+    @pytest.mark.asyncio
+    async def test_default_admin_seed_is_idempotent(
+        self,
+        auth_client: tuple[
+            httpx.AsyncClient, async_sessionmaker[AsyncSession], Settings
+        ],
+    ) -> None:
+        client, session_factory, settings = auth_client
+        async with session_factory() as session:
+            await AuthService(session, settings).ensure_seeded()
+            await AuthService(session, settings).ensure_seeded()
+        data = await login(client)
+        assert data["user"]["username"] == "admin"
+        assert "Administrator" in data["user"]["roles"]
 
     @pytest.mark.asyncio
     async def test_refresh_and_logout(

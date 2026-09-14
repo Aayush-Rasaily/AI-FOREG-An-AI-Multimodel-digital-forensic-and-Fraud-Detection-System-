@@ -26,10 +26,7 @@ def _packaged_model_path() -> Path:
 
     # config.py → signature → document → ai → models/signature/siamese_best.pt
     return (
-        Path(__file__).resolve().parents[2]
-        / "models"
-        / "signature"
-        / "siamese_best.pt"
+        Path(__file__).resolve().parents[2] / "models" / "signature" / "siamese_best.pt"
     )
 
 

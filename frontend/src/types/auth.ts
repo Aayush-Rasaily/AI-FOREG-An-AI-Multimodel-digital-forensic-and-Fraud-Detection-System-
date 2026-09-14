@@ -32,6 +32,12 @@ export interface LoginPayload {
   remember_me?: boolean;
 }
 
+export interface RegisterPayload {
+  username: string;
+  password: string;
+  confirm_password: string;
+}
+
 export interface UserCreatePayload {
   username: string;
   password: string;

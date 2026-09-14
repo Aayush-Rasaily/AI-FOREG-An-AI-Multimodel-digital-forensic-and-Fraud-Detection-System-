@@ -5,8 +5,19 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
-ENV_FILE="${ENV_FILE:-.env.production}"
-if [[ -f "$ENV_FILE" ]]; then
+# Prefer local .env for native development; fall back to production env file.
+if [[ -n "${ENV_FILE:-}" ]]; then
+  :
+elif [[ -f .env ]]; then
+  ENV_FILE=".env"
+elif [[ -f .env.production ]]; then
+  ENV_FILE=".env.production"
+else
+  ENV_FILE=""
+fi
+
+if [[ -n "$ENV_FILE" && -f "$ENV_FILE" ]]; then
+  echo "[migrate] Loading $ENV_FILE"
   set -a
   # shellcheck disable=SC1090
   source "$ENV_FILE"

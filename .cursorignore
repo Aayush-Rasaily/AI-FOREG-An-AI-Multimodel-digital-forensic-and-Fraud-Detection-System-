@@ -1,0 +1,127 @@
+# AI-FORGE — Cursor indexing exclusions
+# Reduce workspace memory pressure (OOM). Do not index generated/vendor/binary bulk.
+# Source, tests, config, migrations, and docs remain indexed.
+
+# --- Python environments & packaging ---
+.venv/
+venv/
+env/
+.Python/
+**/*.egg-info/
+**/site-packages/
+
+# --- Python bytecode & tool caches ---
+**/__pycache__/
+**/*.py[cod]
+**/*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.nox/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.hypothesis/
+.cache/
+
+# --- Node / frontend build & deps ---
+**/node_modules/
+frontend/dist/
+frontend/coverage/
+frontend/.vite/
+frontend/.turbo/
+frontend/.cache/
+**/.npm/
+**/npm-debug.log*
+**/yarn-error.log*
+**/pnpm-debug.log*
+
+# --- Generic build / dist ---
+build/
+dist/
+**/dist/
+out/
+*.egg
+
+# --- ML model weights (binary; not source) ---
+**/*.pt
+**/*.pth
+**/*.onnx
+**/*.bin
+**/*.safetensors
+**/*.ckpt
+**/*.h5
+**/*.pkl
+**/*.pickle
+**/*.joblib
+
+# --- Local data, datasets, forensic artifacts, uploads ---
+data/
+postgres-data/
+redis-data/
+rabbitmq-data/
+manual-phase3-data/
+tmp/
+tmp-*/
+.tmp*/
+**/uploads/
+**/temp/
+**/tmp/
+STORAGE/
+storage/local/
+
+# --- Generated reports, charts, exports ---
+reports/
+**/exports/
+**/generated/
+
+# --- Logs & scratch output ---
+*.log
+logs/
+**/*.log
+build11b.txt
+vitest11b.txt
+
+# --- Databases (local / sqlite dumps) ---
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+*.sqlitedb
+
+# --- Media / large binary blobs often produced by forensics pipelines ---
+**/*.mp4
+**/*.avi
+**/*.mkv
+**/*.mov
+**/*.webm
+**/*.wav
+**/*.flac
+**/*.mp3
+**/*.zip
+**/*.tar
+**/*.tar.gz
+**/*.tgz
+**/*.7z
+**/*.rar
+**/*.parquet
+**/*.feather
+**/*.arrow
+**/*.npz
+**/*.h5ad
+
+# --- Secrets / local env (example env files stay indexed) ---
+.env
+.env.*
+!.env.example
+!.env.production.example
+!frontend/.env.development
+!frontend/.env.production
+
+# --- OS / IDE noise ---
+.DS_Store
+Thumbs.db
+*.swp
+.idea/

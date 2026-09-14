@@ -3,6 +3,7 @@ import type { ApiResponse } from "../../types/api";
 import type {
   AuthUser,
   LoginPayload,
+  RegisterPayload,
   PermissionInfo,
   RoleInfo,
   SessionList,
@@ -15,6 +16,9 @@ import type {
 export const authApi = {
   login(payload: LoginPayload) {
     return apiClient.postJson<ApiResponse<TokenPair>>("/auth/login", payload);
+  },
+  register(payload: RegisterPayload) {
+    return apiClient.postJson<ApiResponse<TokenPair>>("/auth/register", payload);
   },
   refresh(refreshToken: string) {
     return apiClient.postJson<ApiResponse<TokenPair>>("/auth/refresh", {

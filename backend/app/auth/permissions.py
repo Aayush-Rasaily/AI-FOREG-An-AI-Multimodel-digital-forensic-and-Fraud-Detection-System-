@@ -140,6 +140,7 @@ PUBLIC_PATHS: frozenset[tuple[str, str]] = frozenset(
         ("GET", "/system/liveness"),
         ("GET", "/system/readiness"),
         ("POST", "/auth/login"),
+        ("POST", "/auth/register"),
         ("POST", "/auth/refresh"),
     }
 )

@@ -1,4 +1,10 @@
-@import "tailwindcss";
+/* Disable automatic project-wide scanning (can walk monorepo neighbors,
+   dist/, and other large trees and exhaust the Vite/Node heap on Windows).
+   Register only the app UI sources Tailwind needs for class detection. */
+@import "tailwindcss" source(none);
+@source "../../index.html";
+@source "../**/*.{ts,tsx}";
+@source not "../test/**/*";
 
 /* ============================================================
    AI-FORGE — Phase 11A Enterprise Design System

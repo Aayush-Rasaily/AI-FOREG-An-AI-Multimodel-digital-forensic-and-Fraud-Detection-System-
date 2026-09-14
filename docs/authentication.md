@@ -119,9 +119,14 @@ Supported operations:
 
 ## Bootstrap
 
-When `JWT_SECRET` and `AUTH_BOOTSTRAP_PASSWORD` are set and no users exist,
-the service seeds built-in roles/permissions and creates the bootstrap administrator
-(`AUTH_BOOTSTRAP_USERNAME`, default `admin`).
+When `JWT_SECRET` is set, the first authenticated request seeds built-in
+roles/permissions. If username `admin` does not exist, the service creates a
+default Administrator with password `admin`, stored only as an Argon2id hash.
+If `admin` already exists, seeding does nothing (password is never overwritten).
+
+Public registration is available at `POST /api/v1/auth/register` and creates a
+`Viewer` account (standard user). Change passwords after first login via
+`/profile`.
 
 ## Related docs
 

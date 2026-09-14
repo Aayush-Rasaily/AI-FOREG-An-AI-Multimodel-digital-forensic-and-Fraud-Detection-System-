@@ -18,6 +18,16 @@ class LoginRequest(BaseModel):
     remember_me: bool = False
 
 
+class RegisterRequest(BaseModel):
+    """Public registration payload."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    username: str = Field(min_length=1, max_length=64)
+    password: str = Field(min_length=1, max_length=128)
+    confirm_password: str = Field(min_length=1, max_length=128)
+
+
 class TokenResponse(BaseModel):
     """Access and refresh token pair."""
 

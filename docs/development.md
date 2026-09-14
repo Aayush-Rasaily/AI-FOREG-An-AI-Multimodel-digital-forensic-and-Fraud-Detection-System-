@@ -5,27 +5,54 @@ Phase 10H documentation index: [README.md](README.md). Contributor map:
 [coding-standards.md](coding-standards.md). Contributions:
 [contributing.md](contributing.md).
 
-## Setup
+## Setup (native — no Docker)
 
 Requirements: Python 3.12, [uv](https://docs.astral.sh/uv/), Node.js 22,
-Docker.
+**native PostgreSQL**.
 
-```bash
+Redis, RabbitMQ, and Celery are optional for normal API + evidence + AI work
+when `JOB_QUEUE_MODE=local` (default). Docker is optional and reserved for
+Compose / production packaging.
+
+```powershell
 copy .env.example .env
+# Point DATABASE_URL at localhost PostgreSQL (not the Compose hostname "postgres")
+# Set JWT_SECRET and AUTH_BOOTSTRAP_PASSWORD in .env before the first login
+# (see Authentication credentials below).
+
 uv sync --dev
 uv run alembic -c backend/alembic.ini upgrade head
-uv run uvicorn backend.app.main:app --reload
+uv run uvicorn backend.app.main:app --host 127.0.0.1 --port 8000 --reload
 ```
+
+Or: `.\scripts\dev.ps1`
 
 Frontend:
 
-```bash
+```powershell
 cd frontend
 npm ci
 npm run dev
 ```
 
-`VITE_API_BASE_URL` defaults to `/api/v1` (Vite proxies `/api`).
+`VITE_API_BASE_URL` defaults to `/api/v1` (Vite proxies `/api` to
+`VITE_BACKEND_URL`, default `http://127.0.0.1:8000`).
+
+CORS for direct browser→API calls should include Vite origins
+(`http://localhost:5173` / `http://127.0.0.1:5173`) via `CORS_ORIGINS` in `.env`.
+
+## Authentication credentials
+
+Login is backend JWT + database users (see [authentication.md](authentication.md)).
+The React login page never embeds credentials.
+
+1. Copy `.env.example` → `.env` (gitignored) and set `JWT_SECRET`.
+2. On first auth request, if username `admin` is missing, the API seeds
+   Administrator `admin` / `admin` with an Argon2id hash (never plaintext).
+3. Sign in at `/login`, or create a Viewer account at `/register`.
+4. Change the default admin password via `/profile` after first login.
+
+Do not commit a real `.env`.
 
 ## Project structure
 
@@ -48,6 +75,15 @@ belongs in `backend/app/api`.
 The composition root is `backend/app/main.py` for the API and
 `backend/app/infrastructure/messaging/celery_app.py` for workers. Avoid
 creating infrastructure clients inside domain or application modules.
+
+## Background jobs
+
+- Default: `JOB_QUEUE_MODE=local` — FastAPI `BackgroundTasks` (no broker).
+- Distributed: set `JOB_QUEUE_MODE=celery`, run Redis + RabbitMQ, then:
+
+```powershell
+uv run celery -A backend.app.infrastructure.messaging.celery_app:celery_app worker --loglevel=INFO --concurrency=2
+```
 
 ## Testing
 
@@ -78,6 +114,9 @@ them from every API replica.
 uv run alembic -c backend/alembic.ini revision --autogenerate -m "describe"
 uv run alembic -c backend/alembic.ini upgrade head
 ```
+
+On Windows, Alembic already selects `WindowsSelectorEventLoopPolicy` so
+psycopg async works with native PostgreSQL.
 
 Pin `EXPECTED_MIGRATION_HEAD` when the release train moves. CI verifies a
 single matching head.

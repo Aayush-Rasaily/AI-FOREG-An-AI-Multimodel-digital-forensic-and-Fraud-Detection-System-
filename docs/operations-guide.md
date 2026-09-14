@@ -20,7 +20,9 @@ Compose and Kubernetes steps: [deployment.md](deployment.md).
 - Workers scale by queue class (see [scalability.md](scalability.md)).
 - PostgreSQL pool size × replicas must stay under the database connection
   budget. Optional `DATABASE_READ_URL` for read offload.
-- Redis for cache and rate limits; RabbitMQ when `JOB_QUEUE_MODE` is Celery.
+- Redis for cache and rate limits (optional on local with
+  `RATE_LIMIT_USE_REDIS=false`); RabbitMQ when `JOB_QUEUE_MODE` is Celery.
+  Native local development defaults to `JOB_QUEUE_MODE=local` (no broker).
 
 ## Upgrades
 

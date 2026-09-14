@@ -56,8 +56,9 @@ jobs:
       - name: Validate Compose production file
         if: ${{ !inputs.push }}
         run: |
+          cp .env.production.example .env.production
           docker compose -f deployment/compose/docker-compose.production.yml \
-            --env-file .env.production.example \
+            --env-file .env.production \
             config >/dev/null
           echo "compose_config_ok"
 
@@ -121,7 +122,7 @@ jobs:
           provenance: false
 
       - name: Container vulnerability scan (API)
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.28.0
         with:
           image-ref: ${{ steps.meta.outputs.api }}:${{ steps.meta.outputs.sha }}
           format: table
@@ -130,7 +131,7 @@ jobs:
           ignore-unfixed: true
 
       - name: Container vulnerability scan (frontend)
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.28.0
         with:
           image-ref: ${{ steps.meta.outputs.web }}:${{ steps.meta.outputs.sha }}
           format: table

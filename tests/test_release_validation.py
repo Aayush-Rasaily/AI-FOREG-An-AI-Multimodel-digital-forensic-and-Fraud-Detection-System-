@@ -151,7 +151,7 @@ class TestAuthenticationAndAuthorization:
             log_config_path=tmp_path / "missing-logging.json",
             jwt_secret=SecretStr(JWT_SECRET),
             auth_bootstrap_username="admin",
-            auth_bootstrap_password=SecretStr("AdminPassw0rd!"),
+            auth_bootstrap_password=None,
             rate_limit_enabled=False,
         )
         engine = create_async_engine(

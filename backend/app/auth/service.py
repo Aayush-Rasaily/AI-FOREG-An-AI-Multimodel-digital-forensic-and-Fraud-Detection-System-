@@ -26,6 +26,7 @@ from backend.app.auth.roles import (
     ROLE_ADMINISTRATOR,
     ROLE_DESCRIPTIONS,
     ROLE_PERMISSIONS,
+    ROLE_VIEWER,
 )
 from backend.app.auth.schemas import (
     PermissionResponse,
@@ -49,6 +50,10 @@ from backend.app.core.exceptions import ResourceNotFoundError
 from backend.app.models.role import Permission, Role
 from backend.app.models.session import RefreshToken, UserSession
 from backend.app.models.user import User
+
+# Default local administrator (password hashed with Argon2id; never stored plaintext).
+DEFAULT_ADMIN_USERNAME = "admin"
+DEFAULT_ADMIN_PASSWORD = "admin"
 
 
 def _token_hash(raw_token: str) -> str:
@@ -109,18 +114,22 @@ class AuthService:
         await self.session.flush()
 
     async def ensure_seeded(self) -> None:
-        """Create built-in roles, permissions, and optional bootstrap admin."""
+        """Create built-in roles/permissions and an idempotent default admin."""
 
         await self.ensure_rbac_seeded()
-        bootstrap_password = self.settings.auth_bootstrap_password
-        if bootstrap_password is not None and await self.repository.count_users() == 0:
+        existing_admin = await self.repository.get_user_by_username(
+            DEFAULT_ADMIN_USERNAME
+        )
+        if existing_admin is None:
+            # Seed once: hashed "admin" password. Never overwrite an existing admin.
             await self._create_user_record(
-                username=self.settings.auth_bootstrap_username,
-                password=bootstrap_password.get_secret_value(),
+                username=DEFAULT_ADMIN_USERNAME,
+                password=DEFAULT_ADMIN_PASSWORD,
                 display_name="Administrator",
                 email=None,
                 role_names=[ROLE_ADMINISTRATOR],
                 is_active=True,
+                enforce_password_policy=False,
             )
         await self.session.commit()
 
@@ -133,14 +142,18 @@ class AuthService:
         email: str | None,
         role_names: list[str],
         is_active: bool,
+        enforce_password_policy: bool = True,
     ) -> User:
         username = validate_username(username)
-        validate_password(password)
+        if not password:
+            raise PasswordPolicyError("Password cannot be empty.")
+        if enforce_password_policy:
+            validate_password(password)
         if await self.repository.get_user_by_username(username) is not None:
             raise AuthConflictError("That username is already registered.")
         if email and await self.repository.get_user_by_email(email) is not None:
             raise AuthConflictError("That email is already registered.")
-        names = role_names or ["Viewer"]
+        names = role_names or [ROLE_VIEWER]
         roles = await self._load_roles(names)
         user = User(
             username=username,
@@ -411,6 +424,42 @@ class AuthService:
         if user is None:
             raise ResourceNotFoundError("The user was not found.")
         return self._user_response(user)
+
+    async def register(
+        self,
+        *,
+        username: str,
+        password: str,
+        confirm_password: str,
+        ip_address: str | None,
+        user_agent: str | None,
+    ) -> TokenResponse:
+        """Public registration for a standard Viewer account, then sign in."""
+
+        await self.ensure_seeded()
+        if not username or not username.strip():
+            raise PasswordPolicyError("Username cannot be empty.")
+        if not password:
+            raise PasswordPolicyError("Password cannot be empty.")
+        if password != confirm_password:
+            raise PasswordPolicyError("Password and confirmation do not match.")
+        await self._create_user_record(
+            username=username,
+            password=password,
+            display_name=username.strip(),
+            email=None,
+            role_names=[ROLE_VIEWER],
+            is_active=True,
+            enforce_password_policy=False,
+        )
+        await self.session.commit()
+        return await self.login(
+            username=username.strip(),
+            password=password,
+            remember_me=False,
+            ip_address=ip_address,
+            user_agent=user_agent,
+        )
 
     async def create_user(
         self,

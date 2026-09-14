@@ -1,34 +1,46 @@
 import { type FormEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import { useLoginMutation } from "../../hooks/useAuth";
+import { useRegisterMutation } from "../../hooks/useAuth";
 import { ApiClientError } from "../../services/api/client";
 import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
 
-export function LoginForm() {
+export function RegisterForm() {
   const navigate = useNavigate();
-  const loginMutation = useLoginMutation();
+  const registerMutation = useRegisterMutation();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
     setError(null);
+    if (!username.trim()) {
+      setError("Username cannot be empty.");
+      return;
+    }
+    if (!password) {
+      setError("Password cannot be empty.");
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError("Password and confirmation do not match.");
+      return;
+    }
     try {
-      await loginMutation.mutateAsync({
-        username,
+      await registerMutation.mutateAsync({
+        username: username.trim(),
         password,
-        remember_me: rememberMe,
+        confirm_password: confirmPassword,
       });
       navigate("/dashboard", { replace: true });
     } catch (err) {
       if (err instanceof ApiClientError) {
         setError(err.message);
       } else {
-        setError("Sign-in failed.");
+        setError("Registration failed.");
       }
     }
   }
@@ -47,21 +59,22 @@ export function LoginForm() {
       <label className="block">
         <span className="mb-2 block text-xs text-muted">Password</span>
         <Input
-          autoComplete="current-password"
+          autoComplete="new-password"
           onChange={(event) => setPassword(event.target.value)}
           required
           type="password"
           value={password}
         />
       </label>
-      <label className="flex items-center gap-2 text-xs text-muted">
-        <input
-          checked={rememberMe}
-          className="rounded border-border-strong"
-          onChange={(event) => setRememberMe(event.target.checked)}
-          type="checkbox"
+      <label className="block">
+        <span className="mb-2 block text-xs text-muted">Confirm password</span>
+        <Input
+          autoComplete="new-password"
+          onChange={(event) => setConfirmPassword(event.target.value)}
+          required
+          type="password"
+          value={confirmPassword}
         />
-        Remember me
       </label>
       {error && (
         <p className="rounded-lg border border-danger/20 bg-danger-soft px-3 py-2 text-xs text-danger">
@@ -70,18 +83,18 @@ export function LoginForm() {
       )}
       <Button
         className="w-full"
-        disabled={loginMutation.isPending}
+        disabled={registerMutation.isPending}
         type="submit"
         variant="primary"
       >
-        {loginMutation.isPending ? "Signing in…" : "Login"}
+        {registerMutation.isPending ? "Creating account…" : "Register"}
       </Button>
-      <Link
-        className="inline-flex h-10 w-full items-center justify-center rounded-lg border border-border bg-surface text-sm font-medium text-foreground duration-fast transition-[colors,transform,opacity] hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        to="/register"
-      >
-        Register
-      </Link>
+      <p className="text-center text-xs text-muted">
+        Already have an account?{" "}
+        <Link className="font-medium text-primary hover:underline" to="/login">
+          Sign in
+        </Link>
+      </p>
     </form>
   );
 }

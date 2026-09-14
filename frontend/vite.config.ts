@@ -9,8 +9,30 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react(), tailwindcss()],
+    optimizeDeps: {
+      // Keep the lucide barrel prebundled so dev never fans out into
+      // thousands of per-icon ESM requests (ERR_INSUFFICIENT_RESOURCES).
+      include: [
+        "lucide-react",
+        "react",
+        "react-dom",
+        "react-dom/client",
+        "react-router-dom",
+        "@tanstack/react-query",
+      ],
+    },
     server: {
       port: 5173,
+      watch: {
+        ignored: [
+          "**/dist/**",
+          "**/coverage/**",
+          "**/.venv/**",
+          "**/venv/**",
+          "**/backend/**",
+          "**/.git/**",
+        ],
+      },
       proxy: {
         "/api": {
           target: backendUrl,

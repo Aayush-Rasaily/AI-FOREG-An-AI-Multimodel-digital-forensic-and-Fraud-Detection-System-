@@ -10,6 +10,7 @@ from backend.app.auth.schemas import (
     LogoutRequest,
     PasswordChangeRequest,
     RefreshRequest,
+    RegisterRequest,
     TokenResponse,
     UserResponse,
 )
@@ -38,6 +39,28 @@ async def login(
         username=payload.username,
         password=payload.password,
         remember_me=payload.remember_me,
+        ip_address=client_ip(request),
+        user_agent=request.headers.get("user-agent"),
+    )
+    return ApiResponse(data=tokens, request_id=get_request_id())
+
+
+@router.post(
+    "/register",
+    response_model=ApiResponse[TokenResponse],
+    summary="Register a new account",
+)
+async def register(
+    payload: RegisterRequest,
+    request: Request,
+    service: AuthServiceDependency,
+) -> ApiResponse[TokenResponse]:
+    """Create a standard user account and issue session tokens."""
+
+    tokens = await service.register(
+        username=payload.username,
+        password=payload.password,
+        confirm_password=payload.confirm_password,
         ip_address=client_ip(request),
         user_agent=request.headers.get("user-agent"),
     )

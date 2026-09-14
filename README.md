@@ -251,58 +251,87 @@ embedded here.
 
 - Python 3.12
 - [uv](https://docs.astral.sh/uv/)
-- Docker (for Compose: PostgreSQL, Redis, RabbitMQ)
-- PostgreSQL (Compose service or local instance)
-- Redis (Compose service or local instance)
+- **Native PostgreSQL** (required for local API / migrations)
+- Node.js 22 (frontend)
+- Redis / RabbitMQ / Celery — **optional** for normal local development
+- Docker — **optional** (production / Compose only; not required locally)
 
-Copy environment defaults and install Python dependencies:
+### Local Development — No Docker
 
-```bash
-copy .env.example .env   # Windows
-# cp .env.example .env  # Unix
+Primary laptop workflow (Windows PowerShell). Docker Desktop is not needed.
+
+1. Create the Python environment and install dependencies  
+2. Install and start native PostgreSQL  
+3. Create database/role `ai_forge`  
+4. Configure `.env` from `.env.example` (uses `localhost`, not Compose hostnames)  
+5. Run Alembic migrations  
+6. Start FastAPI  
+7. Start the React frontend  
+
+```powershell
+# From the repository root
+copy .env.example .env
+# Edit .env: set DATABASE_URL user/password to match your PostgreSQL install
 
 uv sync --dev
-```
 
-### Docker Compose
+# Create DB (example with psql; adjust for your install)
+# psql -U postgres -c "CREATE USER ai_forge WITH PASSWORD 'ai_forge';"
+# psql -U postgres -c "CREATE DATABASE ai_forge OWNER ai_forge;"
 
-Starts the API, database, Redis, broker, and runs migrations:
-
-```bash
-docker compose up
-```
-
-API: `http://127.0.0.1:8000`  
-Liveness: `GET /api/v1/health/live`
-
-Production-oriented Compose and images:
-[docs/deployment-guide.md](docs/deployment-guide.md).
-
-### Local API (without Compose)
-
-Point `DATABASE_URL` at PostgreSQL, then:
-
-```bash
 uv run alembic -c backend/alembic.ini upgrade head
-uv run uvicorn backend.app.main:app --reload
+uv run uvicorn backend.app.main:app --host 127.0.0.1 --port 8000 --reload
 ```
 
-Equivalent commands without `uv run` after activating the project
-environment: `alembic -c backend/alembic.ini upgrade head` and
-`uvicorn backend.app.main:app`.
+Helper (checks Postgres, migrates, starts API):
 
-## Frontend
+```powershell
+.\scripts\dev.ps1
+```
 
-Node.js 22 is recommended.
+In a second terminal:
 
-```bash
+```powershell
 cd frontend
 npm install
 npm run dev
 ```
 
-`VITE_API_BASE_URL` defaults to `/api/v1`. The Vite dev server proxies
-`/api` to the backend. Details:
+- API: `http://127.0.0.1:8000`  
+- UI: `http://localhost:5173` (Vite proxies `/api` → backend)  
+- Liveness: `GET /api/v1/health/live`  
+- Health: `GET /api/v1/health`  
+- System info: `GET /api/v1/system/info`
+
+**Local service matrix**
+
+| Service | Local need |
+| --- | --- |
+| PostgreSQL | Required |
+| FastAPI / Uvicorn | Required |
+| React / Vite | Required for UI |
+| Redis | Optional (rate-limit/cache; in-memory rate-limit fallback exists) |
+| RabbitMQ + Celery worker | Optional (`JOB_QUEUE_MODE=local` is default — jobs run in-process) |
+
+Set `JOB_QUEUE_MODE=celery` and run a worker only when you need distributed queues.
+See [docs/scalability.md](docs/scalability.md).
+
+### Docker Compose (optional / production-style)
+
+Compose remains supported for CI and full-stack container runs. It is **not**
+required for day-to-day local development.
+
+```bash
+docker compose up
+```
+
+Production-oriented Compose and images:
+[docs/deployment-guide.md](docs/deployment-guide.md).
+
+## Frontend
+
+Node.js 22 is recommended. `frontend/.env.development` points
+`VITE_BACKEND_URL` at `http://127.0.0.1:8000`. Details:
 [docs/development.md](docs/development.md).
 
 ## Running Tests

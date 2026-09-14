@@ -9,8 +9,15 @@ __pycache__
 .env
 tests
 docs
-deployment
 scripts
 postgres-data
 redis-data
 rabbitmq-data
+
+# Keep deployment/docker and deployment/nginx in the build context
+# (frontend image COPY needs nginx conf). Exclude heavy/unused deploy trees.
+deployment/compose
+deployment/scripts
+deployment/k8s
+deployment/monitoring
+deployment/README.md

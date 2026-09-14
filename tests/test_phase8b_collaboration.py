@@ -47,7 +47,7 @@ async def collab_client(
         log_config_path=tmp_path / "missing-logging.json",
         jwt_secret=SecretStr(JWT_SECRET),
         auth_bootstrap_username="admin",
-        auth_bootstrap_password=SecretStr("AdminPassw0rd!"),
+        auth_bootstrap_password=None,
     )
     engine = create_async_engine(
         settings.database_url,
@@ -83,7 +83,7 @@ async def collab_client(
 async def login(
     client: httpx.AsyncClient,
     username: str = "admin",
-    password: str = "AdminPassw0rd!",
+    password: str = "admin",
 ) -> dict[str, object]:
     response = await client.post(
         "/api/v1/auth/login",
